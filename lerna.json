@@ -1,0 +1,15 @@
+{
+    "registry": "https://registry.npmjs.org/",
+    "publishConfig": {
+        "access": "public"
+    },
+    "packages": ["@convey/*"],
+    "version": "independent",
+    "npmClient": "yarn",
+    "useWorkspaces": true,
+    "command": {
+        "publish": {
+            "conventionalCommits": true
+        }
+    }
+}

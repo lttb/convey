@@ -1,0 +1,24 @@
+{
+    "name": "@convey/react",
+    "type": "module",
+    "version": "0.0.1",
+    "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lttb/convey.git",
+        "directory": "@convey/react"
+    },
+    "scripts": {
+        "test": "",
+        "prebuild": "rm -rf lib",
+        "build": "rollup -c"
+    },
+    "peerDependencies": {
+        "@convey/core": "^0.0.1",
+        "react": ">=16.0.0"
+    }
+}

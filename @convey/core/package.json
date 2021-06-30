@@ -1,0 +1,28 @@
+{
+    "name": "@convey/core",
+    "type": "module",
+    "version": "0.0.1",
+    "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lttb/convey.git",
+        "directory": "@convey/core"
+    },
+    "scripts": {
+        "test": "",
+        "prebuild": "rm -rf lib",
+        "build": "rollup -c"
+    },
+    "dependencies": {
+        "@types/warning": "3.0.0",
+        "@types/invariant": "2.2.34",
+        "@microsoft/fetch-event-source": "2.0.0",
+        "warning": "4.0.3",
+        "invariant": "2.2.4",
+        "isomorphic-unfetch": "3.1.0"
+    }
+}
