@@ -1,0 +1,25 @@
+{
+    "name": "@convey/babel-plugin",
+    "version": "0.0.1",
+    "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lttb/convey.git",
+        "directory": "@convey/babel-plugin"
+    },
+    "scripts": {
+        "test": "",
+        "prebuild": "rm -rf lib",
+        "build": "rollup -c"
+    },
+    "dependencies": {
+        "@babel/core": "^7.13.8",
+        "@babel/types": "^7.13.0",
+        "string-hash": "^1.1.3",
+        "minimatch": "^3.0.4"
+    }
+}
