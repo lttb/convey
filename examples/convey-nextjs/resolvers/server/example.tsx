@@ -13,6 +13,8 @@ export const getServerDate = createResolverStream(async function* () {
 
 export const getHello = createResolver(
     async function (name: string) {
+        throw new Error('PROBLEM')
+
         const date = (await promisify(exec)('date')).stdout.toString();
 
         return `Hello, ${name} / ${date}`;

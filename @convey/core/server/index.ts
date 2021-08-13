@@ -17,17 +17,32 @@ export async function handleResolver(req, res, structure) {
             );
         }
 
-        const value = await resolve(structure);
+        try {
+            const value = await resolve(structure);
 
-        const content = JSON.stringify({payload: value, options})
+            const content = JSON.stringify({payload: value, options});
 
-        res.writeHead(200, {
-            Connection: 'close',
-            'Content-Type': 'application/json',
-            'Content-Length': content.length,
-        });
+            res.writeHead(200, {
+                Connection: 'close',
+                'Content-Type': 'application/json',
+                'Content-Length': content.length,
+            });
 
-        res.end(content);
+            res.end(content);
+        } catch (error) {
+            const content = JSON.stringify({
+                payload: JSON.stringify(error),
+                options,
+            });
+
+            res.writeHead(500, {
+                Connection: 'close',
+                'Content-Type': 'application/json',
+                'Content-Length': content.length,
+            });
+
+            res.end(content);
+        }
 
         return;
     }
