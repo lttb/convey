@@ -1,7 +1,7 @@
 {
     "name": "@convey/core",
     "type": "module",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "publishConfig": {
@@ -18,11 +18,11 @@
         "build": "rollup -c"
     },
     "dependencies": {
-        "@types/warning": "3.0.0",
-        "@types/invariant": "2.2.34",
         "@microsoft/fetch-event-source": "2.0.0",
-        "warning": "4.0.3",
+        "@types/invariant": "2.2.34",
+        "@types/warning": "3.0.0",
         "invariant": "2.2.4",
-        "isomorphic-unfetch": "3.1.0"
+        "isomorphic-unfetch": "3.1.0",
+        "warning": "4.0.3"
     }
 }

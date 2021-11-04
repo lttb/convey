@@ -1,6 +1,6 @@
 {
     "name": "@convey/babel-plugin",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "publishConfig": {
@@ -19,7 +19,7 @@
     "dependencies": {
         "@babel/core": "^7.13.8",
         "@babel/types": "^7.13.0",
-        "string-hash": "^1.1.3",
-        "minimatch": "^3.0.4"
+        "minimatch": "^3.0.4",
+        "string-hash": "^1.1.3"
     }
 }
