@@ -8,26 +8,44 @@ export async function handleResolver(req, res, structure) {
     const {options, stream} = structure;
 
     if (!stream) {
-        let cacheOptions = getCacheOptions(options, 'remote');
+        try {
+            const value = await resolve(structure);
 
-        if (cacheOptions.level === CACHE_TRANSPORT_LEVEL) {
-            res.setHeader(
-                'Cache-Control',
-                `max-age=${cacheOptions.ttl / 1000}`
-            );
+            const content = JSON.stringify({payload: value, options});
+
+            let cacheOptions = getCacheOptions(options, 'remote');
+
+            if (cacheOptions.level === CACHE_TRANSPORT_LEVEL) {
+                res.setHeader(
+                    'Cache-Control',
+                    `max-age=${cacheOptions.ttl / 1000}`
+                );
+            }
+
+            res.writeHead(200, {
+                Connection: 'close',
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(content, 'utf-8'),
+            });
+
+            res.end(content);
+        } catch (error) {
+            const content = JSON.stringify({
+                payload: {
+                    message: error.message,
+                },
+                options,
+                error: true,
+            });
+
+            res.writeHead(500, {
+                Connection: 'close',
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(content, 'utf-8'),
+            });
+
+            res.end(content);
         }
-
-        const value = await resolve(structure);
-
-        const content = JSON.stringify({payload: value, options})
-
-        res.writeHead(200, {
-            Connection: 'close',
-            'Content-Type': 'application/json',
-            'Content-Length': content.length,
-        });
-
-        res.end(content);
 
         return;
     }

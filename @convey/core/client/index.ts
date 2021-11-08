@@ -11,6 +11,7 @@ const JSONContentType = 'application/json';
 type MessageData = {
     options: ResolverOptions;
     payload: any;
+    error?: boolean;
 };
 
 type Message = {

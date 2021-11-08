@@ -28,7 +28,11 @@ export async function fetchResolver(structure) {
     }
 
     for await (const value of config.fetch!(structure)) {
-        const {payload, options} = value.data;
+        const {payload, options, error} = value.data;
+
+        if (error) {
+            throw new Error(payload.message);
+        }
 
         return {type: 'remote', options, payload};
     }
