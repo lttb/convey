@@ -24,9 +24,9 @@ const config =
                         dest: 'lib',
                         transform: (contents, filename) =>
                             JSON.stringify({
-                                ...JSON.parse(contents.toString()),
                                 main: 'index.mjs',
                                 types: 'index.d.ts',
+                                ...JSON.parse(contents.toString()),
                             }),
                     },
                 ],
