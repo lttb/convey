@@ -4,7 +4,7 @@ import type {Resolver, ResolverOptions} from './types';
 
 // TODO: exclude "createResolverFetcher" from the main bundle
 import {createResolverFetcher} from './client';
-import {getResolverHash} from './utils';
+import {getResolverHash, resolve} from './utils';
 import {setConfig} from './config';
 
 export * from './config';
@@ -33,13 +33,17 @@ const createBaseResolver = <
     options,
     resolver,
     stream = false,
-}: {
-    options: Options;
-    resolver: any;
-    stream?: boolean;
 }) =>
     Object.assign(
         function (this: Context, ...params: Params) {
+            const executor = async (res, rej) => {
+                try {
+                    res(await resolve(structure as any));
+                } catch (error) {
+                    rej(error);
+                }
+            };
+            let _promise;
             const structure = {
                 /** detect if there is any special context */
                 context: this === defaultThis ? null : this,
@@ -47,6 +51,18 @@ const createBaseResolver = <
                 params,
                 options,
                 stream,
+                then(onRes, onRej) {
+                    _promise = _promise || new Promise(executor);
+                    return _promise.then(onRes, onRej);
+                },
+                catch(onRej) {
+                    _promise = _promise || new Promise(executor);
+                    return _promise.catch(onRej);
+                },
+                finally(onFin) {
+                    _promise = _promise || new Promise(executor);
+                    return _promise.finally(onFin);
+                },
             };
 
             return structure;
@@ -71,7 +87,7 @@ export const createResolver = <
     createBaseResolver({
         resolver,
         options: Object.assign({cacheable: true}, options),
-    });
+    }) as any;
 
 export const createResolverStream = <
     Params extends any[],
@@ -90,6 +106,6 @@ export const createResolverStream = <
         options: Object.assign({cacheable: true}, options),
 
         stream: true,
-    });
+    }) as any;
 
 export {invalidate, subscribe, subscribeStream};

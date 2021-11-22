@@ -70,7 +70,7 @@ interface ResolverFunction<
         options: Options;
 
         stream: boolean;
-    };
+    } & Promise<Result>;
     options: Options;
 }
 
