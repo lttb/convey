@@ -14,27 +14,27 @@ export async function fetchResolver(structure) {
     const {resolver, options} = structure;
 
     if (typeof resolver === 'function') {
-        const result = execResolver(structure);
+        try {
+            const result = await execResolver(structure);
 
-        if (!structure.stream) {
-            return {type: 'local', options, payload: result};
+            if (!structure.stream) {
+                return {type: 'local', options, payload: result};
+            }
+
+            let {value} = await result.next();
+
+            result.return(undefined);
+
+            return {type: 'local', options, payload: value};
+        } catch (error) {
+            return {type: 'local', options, error: true, payload: error};
         }
-
-        let {value} = await result.next();
-
-        result.return(undefined);
-
-        return {type: 'local', options, payload: value};
     }
 
     for await (const value of config.fetch!(structure)) {
         const {payload, options, error} = value.data;
 
-        if (error) {
-            throw new Error(payload.message);
-        }
-
-        return {type: 'remote', options, payload};
+        return {type: 'remote', options, payload, error};
     }
 }
 
@@ -78,7 +78,13 @@ export async function resolve(structure) {
         localCache.set(structure, fetchResolver(structure) as any);
     }
 
-    return localCache.get(structure);
+    return localCache.get(structure).then((data) => {
+        if (data.error) {
+            throw data.payload;
+        }
+
+        return data;
+    });
 }
 
 export async function* resolveStream<Params extends any[], Result>(

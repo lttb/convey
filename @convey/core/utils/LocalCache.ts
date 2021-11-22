@@ -54,6 +54,9 @@ class StorageCache<K = any, V = any> {
             JSON.stringify({value, ttl, liveUntil: Date.now() + ttl})
         );
     }
+    delete(structure, hash) {
+        this.storage.removeItem(getCacheKey(structure, hash));
+    }
 }
 
 type Data<T> = T | Promise<T>;
@@ -109,9 +112,22 @@ export class LocalCache {
         );
     }
 
+    delete(structure) {
+        const hash = config.getResolverHash(structure);
+
+        this.sessionStorageCache.delete(structure, hash);
+        this.localStorageCache.delete(structure, hash);
+        this.resolverCache.get(structure.resolver)?.delete(hash);
+    }
+
     set(
         structure,
-        data: Data<{payload: any; options: any; type: ResolverType}>
+        data: Data<{
+            payload: any;
+            options: any;
+            type: ResolverType;
+            error?: boolean;
+        }>
     ) {
         if (!this.resolverCache.has(structure.resolver)) {
             this.resolverCache.set(structure.resolver, new LRUCache(this.size));
@@ -124,6 +140,10 @@ export class LocalCache {
         cache.set(
             hash,
             data.then((x) => {
+                if (x.error) {
+                    throw x.payload;
+                }
+
                 invalidate(structure);
 
                 return x.payload;
