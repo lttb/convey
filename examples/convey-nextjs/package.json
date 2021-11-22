@@ -8,8 +8,8 @@
         "start": "next start"
     },
     "dependencies": {
-        "@convey/core": "0.0.1",
-        "@convey/react": "0.0.1",
+        "@convey/core": "*",
+        "@convey/react": "*",
         "ansi-html": "0.0.7",
         "ansi-to-html": "0.6.14",
         "ansi-to-react": "6.1.4",
@@ -24,7 +24,7 @@
         "spdy": "^4.0.2"
     },
     "devDependencies": {
-        "@convey/babel-plugin": "0.0.1",
+        "@convey/babel-plugin": "*",
         "@types/react": "^17.0.0"
     }
 }

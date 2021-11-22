@@ -11,8 +11,12 @@ export default async function handle(req, res) {
     const id = query.id;
     const {params} = query.b ? JSON.parse(query.b) : req.body;
 
-    // TODO: handle wrong resolver id
-    const structure = resolversMap[id as string].apply({}, params);
+    try {
+        // TODO: handle wrong resolver id
+        const structure = resolversMap[id as string].apply({}, params);
 
-    await handleResolver(req, res, structure);
+        await handleResolver(req, res, structure);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
 }
