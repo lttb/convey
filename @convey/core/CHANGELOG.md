@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/lttb/convey/compare/@convey/core@0.2.0...@convey/core@0.2.1) (2021-11-23)
+
+
+### Bug Fixes
+
+* **core:** fix cache processing ([73a940b](https://github.com/lttb/convey/commit/73a940b9a08fea2adac180d83eaf1854e150c2eb))
+
+
+
+
+
 # [0.2.0](https://github.com/lttb/convey/compare/@convey/core@0.1.1...@convey/core@0.2.0) (2021-11-22)
 
 
