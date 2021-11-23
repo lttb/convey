@@ -4,16 +4,18 @@ import {promisify} from 'util';
 
 import {wait} from '../../utils';
 
+const getDate = () => promisify(exec)('date').then((x) => x.stdout.toString());
+
 export const getServerDate = createResolverStream(async function* () {
     while (true) {
-        yield (await promisify(exec)('date')).stdout.toString();
+        yield await getDate();
         await wait(1000);
     }
 });
 
 export const getHello = createResolver(
     async function (name: string) {
-        const date = (await promisify(exec)('date')).stdout.toString();
+        const date = await getDate();
 
         return `Hello, ${name} / ${date}`;
     },

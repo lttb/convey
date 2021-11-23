@@ -78,13 +78,17 @@ export async function resolve(structure) {
         localCache.set(structure, fetchResolver(structure) as any);
     }
 
-    return localCache.get(structure).then((data) => {
-        if (data.error) {
-            throw data.payload;
-        }
+    const result = localCache.get(structure);
 
-        return data;
-    });
+    return result?.then
+        ? result.then((data) => {
+              if (data.error) {
+                  throw data.payload;
+              }
+
+              return data;
+          })
+        : result;
 }
 
 export async function* resolveStream<Params extends any[], Result>(
