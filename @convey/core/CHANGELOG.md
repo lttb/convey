@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/lttb/convey/compare/@convey/core@0.3.0...@convey/core@0.4.0) (2021-11-24)
+
+
+### Bug Fixes
+
+* **core:** fix server-side handler ([d08098e](https://github.com/lttb/convey/commit/d08098e8c4008b33a7fc6526d8f3f226f4414cf8))
+
+
+### Features
+
+* **core:** support async iterable out of the box ([72d95f6](https://github.com/lttb/convey/commit/72d95f6a9e230c7ad7ece3964d1c21e3f6b45f00))
+
+
+
+
+
 # [0.3.0](https://github.com/lttb/convey/compare/@convey/core@0.2.2...@convey/core@0.3.0) (2021-11-24)
 
 
