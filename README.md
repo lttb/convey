@@ -129,11 +129,11 @@ import { createResolver, createResolverStream } from '@convey/core';
 export const getServerHello = createResolver({}, {
   id: "3296945930:getServerHello"
 });
+
 /**
  * It is also possible to declare the stream via generator function.
  * By default, the data will be streamed by SSE (Server Sent Events)
  */
-
 export const getServerHelloStream = createResolverStream({}, {
   id: "3296945930:getServerHelloStream"
 });
