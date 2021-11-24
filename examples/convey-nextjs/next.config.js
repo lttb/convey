@@ -3,4 +3,6 @@ const withTM = require('next-transpile-modules')([
     '@convey/react',
 ]);
 
-module.exports = withTM();
+module.exports = withTM({
+    compress: false,
+});

@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+import '@convey-example/nextjs/styles/globals.css';
 
 import {setConfig} from '@convey/core';
 

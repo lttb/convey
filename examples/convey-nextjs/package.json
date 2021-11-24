@@ -10,18 +10,11 @@
     "dependencies": {
         "@convey/core": "*",
         "@convey/react": "*",
-        "ansi-html": "0.0.7",
-        "ansi-to-html": "0.6.14",
-        "ansi-to-react": "6.1.4",
-        "compression": "^1.7.4",
         "devcert": "1.1.3",
-        "express": "4.17.1",
-        "nanoid": "^3.1.20",
         "next": "10.0.5",
         "next-transpile-modules": "^6.0.0",
         "react": "17.0.1",
-        "react-dom": "17.0.1",
-        "spdy": "^4.0.2"
+        "react-dom": "17.0.1"
     },
     "devDependencies": {
         "@convey/babel-plugin": "*",

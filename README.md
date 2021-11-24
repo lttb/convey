@@ -1,12 +1,14 @@
 # convey
 
-- [@convey/core](@convey/core)
-- [@convey/babel-plugin](@convey/babel-plugin)
-- [@convey/react](@convey/react)
+-   [@convey/core](@convey/core)
+-   [@convey/babel-plugin](@convey/babel-plugin)
+-   [@convey/react](@convey/react)
+
+> This project is still at an early stage and is not production ready
 
 ## Examples
 
-- [nextjs](examples/convey-nextjs)
+-   [nextjs](examples/convey-nextjs)
 
 ## Quick Start
 
@@ -23,6 +25,10 @@ Optional for usage with `react`:
 npm install --save @convey/react
 ```
 
+### Babel config
+
+> See [nextjs pages/api/resolver/[id].ts](examples/convey-nextjs/babel.config.js) for example
+
 Add `@convey/babel-plugin` to your babel config:
 
 ```js
@@ -30,23 +36,131 @@ Add `@convey/babel-plugin` to your babel config:
 
 module.exports = {
     plugins: [
-        ['@convey', {
-            /**
-             * Determine "remote" resolvers
-             *
-             * So "server" resolvers will be processed as remote for the client code, and vice versa
-             */
-            remote: process.env.TARGET === 'client'
-                ? /resolvers\/server/
-                : /resolvers\/client/
-        }]
-    ]
+        [
+            '@convey',
+            {
+                /**
+                 * Determine "remote" resolvers
+                 *
+                 * "server" resolvers will be processed as remote for the "client" code, and vice versa
+                 */
+                remote:
+                    process.env.TARGET === 'client'
+                        ? /resolvers\/server/
+                        : /resolvers\/client/,
+            },
+        ],
+    ],
+};
+```
+
+### Server handler config
+
+> See [nextjs pages/api/resolver/[id].ts](examples/convey-nextjs/pages/api/resolver/[id].ts) for example
+
+```ts
+import {createResolverHandler} from '@convey/core/server';
+
+import * as resolvers from '../../../resolvers/server';
+
+const handleResolver = createResolverHandler(resolvers);
+
+export default async function handle(req, res) {
+    await handleResolver(req, res);
 }
+```
+
+### Client config
+
+> See [nextjs pages/\_app.tsx](examples/convey-nextjs/pages/_app.tsx) for example
+
+```
+import {setConfig} from '@convey/core';
+import {createResolverFetcher} from '@convey/core/client';
+
+setConfig({
+    fetch: createResolverFetcher(),
+});
+```
+
+### Declare and use resolvers
+
+#### Server resolver
+
+_resolvers/server/index.tsx_
+
+```ts
+import {createResolver, createResolverStream} from '@convey/core';
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * This code will be executed on the server side
+ */
+export const getServerHello = createResolver(
+    (name: string) => `Hello, ${name}`
+);
+
+/**
+ * It is also possible to declare the stream via generator function.
+ * By default, the data will be streamed by SSE (Server Sent Events)
+ */
+export const getServerHelloStream = createResolverStream(async function* (
+    name: string
+) {
+    while (true) {
+        /**
+         * Resolvers could be called as normal functions on server side too
+         */
+        yield await getServerHello(`${name}-${Date.now()}`);
+        await wait(1000);
+    }
+});
+```
+
+#### Client resolver usage
+
+Direct usage:
+
+```ts
+import {getServerHello, getServerHelloStream} from 'app/resolvers/server';
+
+console.log(await getServerHello('world')); // `Hello, world`
+
+for await (let hello of getServerHelloStream('world')) {
+    console.log(hello); // `Hello, world-1637759100546` every second
+}
+```
+
+Usage with React:
+
+```tsx
+import {useResolver} from '@convey/react';
+import {getServerHello, getServerHelloStream} from 'app/resolvers/server';
+
+export const HelloComponent = () => {
+    /**
+     * Component will be automatically invalidated on data invalidation
+     */
+    const [hello] = useResolver(getServerHello('world'));
+    /**
+     * If resolver is a stream, then component will be rerendered
+     * on each new chunk of data
+     */
+    const [helloStream] = useResolver(getServerHelloStream('world'));
+
+    return (
+        <div>
+            <p>Single hello: {hello}</p>
+            <p>Stream hello: {helloStream}</p>
+        </div>
+    );
+};
 ```
 
 ## Thanks
 
 This project was heavily inspired by work of amazing engineers at Yandex.Market:
 
-- [@loyd](https://github.com/loyd)
-- [@pavelrevers](https://github.com/pavelrevers)
+-   [@loyd](https://github.com/loyd)
+-   [@pavelrevers](https://github.com/pavelrevers)
