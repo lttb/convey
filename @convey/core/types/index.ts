@@ -68,7 +68,8 @@ export type ResolverResult<
     options: Options;
 
     stream: boolean;
-} & Promise<Result>;
+} & Promise<Result> &
+    AsyncIterable<Result>;
 
 interface ResolverFunction<
     Result,

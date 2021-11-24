@@ -4,7 +4,7 @@ import type {Resolver, ResolverOptions} from './types';
 
 // TODO: exclude "createResolverFetcher" from the main bundle
 import {createResolverFetcher} from './client';
-import {getResolverHash, resolve} from './utils';
+import {getResolverHash, resolve, resolveStream} from './utils';
 import {setConfig} from './config';
 
 export * from './config';
@@ -44,6 +44,7 @@ const createBaseResolver = <
                 }
             };
             let _promise;
+            let _iter;
             const structure = {
                 /** detect if there is any special context */
                 context: this === defaultThis ? null : this,
@@ -62,6 +63,13 @@ const createBaseResolver = <
                 finally(onFin) {
                     _promise = _promise || new Promise(executor);
                     return _promise.finally(onFin);
+                },
+                async *[Symbol.asyncIterator]() {
+                    _iter = _iter || resolveStream(structure as any);
+
+                    for await (const value of _iter) {
+                        yield value;
+                    }
                 },
             };
 
