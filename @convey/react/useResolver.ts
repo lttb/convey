@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 
 import {subscribeStream, subscribe, resolveStream, config} from '@convey/core';
 
-import type {Resolver, Unbox} from '@convey/core';
+import type {Unbox, ResolverResult} from '@convey/core';
 
 type MetaBase = {refresh: () => void};
 
@@ -17,8 +17,8 @@ type HookResult<Result> =
               ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error})
       ];
 
-export function useResolver<Params extends any[], Result>(
-    resolver: null | ReturnType<Resolver<Params, Result>>
+export function useResolver<Result, Params extends any[] = any[]>(
+    resolver: null | ResolverResult<Result, Params>
 ): HookResult<Result>;
 
 export function useResolver(structure) {

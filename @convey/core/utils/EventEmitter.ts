@@ -21,7 +21,7 @@ export class EventEmitter {
     }
 
     private async *subscribeGeneral<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Params, Result>>
+        structure: ReturnType<Resolver<Result, Params>>
     ): CancellableAsyncGenerator<Unbox<Result>> {
         const {resolver, params} = structure;
 
@@ -49,7 +49,7 @@ export class EventEmitter {
     }
 
     async *subscribeStream<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Params, Result>>
+        structure: ReturnType<Resolver<Result, Params>>
     ): CancellableAsyncGenerator<Unbox<Result>> {
         const {resolver, params} = structure;
 
@@ -70,7 +70,7 @@ export class EventEmitter {
      * Subscribe on resolvers invalidation
      */
     async *subscribe<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Params, Result>>
+        structure: ReturnType<Resolver<Result, Params>>
     ): CancellableAsyncGenerator<Unbox<Result>> {
         yield resolve(structure);
 
@@ -78,7 +78,7 @@ export class EventEmitter {
     }
 
     emit<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Params, Result>>,
+        structure: ReturnType<Resolver<Result, Params>>,
         dataPromise: Promise<Unbox<Result>>
     ) {
         const {resolver, params} = structure;
@@ -93,7 +93,7 @@ export class EventEmitter {
     }
 
     invalidate<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Params, Result>>
+        structure: ReturnType<Resolver<Result, Params>>
     ): void {
         this.emit(structure, resolve(structure));
     }

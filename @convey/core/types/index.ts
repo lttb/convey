@@ -53,33 +53,40 @@ export type ResolverOptions = {
     getHash?: (structure: ResolverStructure<any, any>) => string;
 };
 
-interface ResolverFunction<
-    Params extends any[],
+export type ResolverResult<
     Result,
+    Params extends any[] = any,
+    Options extends ResolverOptions = ResolverOptions,
+    Context = any
+> = {
+    resolver: (...params: Params) => Result;
+    /**
+     * Context usage is under the draft at the moment
+     */
+    context: Context;
+    params: Params;
+    options: Options;
+
+    stream: boolean;
+} & Promise<Result>;
+
+interface ResolverFunction<
+    Result,
+    Params extends any[] = any,
     Options extends ResolverOptions = ResolverOptions,
     Context = any
 > {
     // TODO: think about this type
-    (...params: Params): {
-        resolver: (...params: Params) => Result;
-        /**
-         * Context usage is under the draft at the moment
-         */
-        context: Context;
-        params: Params;
-        options: Options;
-
-        stream: boolean;
-    } & Promise<Result>;
+    (...params: Params): ResolverResult<Result, Params, Options, Context>;
     options: Options;
 }
 
 export type Resolver<
-    Params extends any[],
     Result,
+    Params extends any[] = any[],
     Options extends ResolverOptions = ResolverOptions,
     Context = any
-> = ResolverFunction<Params, Result, Options, Context>;
+> = ResolverFunction<Result, Params, Options, Context>;
 
 /**
  * If true, then terminate the stream and call others termination

@@ -67,8 +67,8 @@ export async function* fetchResolverStream(structure) {
 
 let localCache: LocalCache;
 
-export async function resolve<Params extends any[], Result>(
-    structure: ReturnType<Resolver<Params, Result>>
+export async function resolve<Result, Params extends any[]>(
+    structure: ReturnType<Resolver<Result, Params>>
 ): Promise<Unbox<Result>>;
 
 export async function resolve(structure) {
@@ -92,7 +92,7 @@ export async function resolve(structure) {
 }
 
 export async function* resolveStream<Params extends any[], Result>(
-    structure: ReturnType<Resolver<Params, Result>>
+    structure: ReturnType<Resolver<Result, Params>>
 ): AsyncGenerator<Unbox<Result>> {
     localCache = localCache || new LocalCache();
 

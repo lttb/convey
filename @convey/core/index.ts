@@ -83,7 +83,7 @@ export const createResolver = <
 >(
     resolver: (this: Context, ...params: Params) => Result,
     options?: Options
-): Resolver<Params, Result, Options, Context> =>
+): Resolver<Result, Params, Options, Context> =>
     createBaseResolver({
         resolver,
         options: Object.assign({cacheable: true}, options),
@@ -100,7 +100,7 @@ export const createResolverStream = <
         ...params: Params
     ) => AsyncGenerator<Result> | Generator<Result>,
     options?: Options
-): Resolver<Params, Result, Options, Context> =>
+): Resolver<Result, Params, Options, Context> =>
     createBaseResolver({
         resolver,
         options: Object.assign({cacheable: true}, options),
