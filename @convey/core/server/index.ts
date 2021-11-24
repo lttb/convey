@@ -1,4 +1,9 @@
-import {resolve, resolveStream, terminateStream} from '@convey/core';
+import {
+    resolve,
+    resolveStream,
+    terminateStream,
+    buildResolverMap,
+} from '@convey/core';
 
 import {getCacheOptions} from '@convey/core/utils/resolvers';
 
@@ -23,7 +28,6 @@ export async function handleResolver(req, res, structure) {
             }
 
             res.writeHead(200, {
-                Connection: 'close',
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(content, 'utf-8'),
             });
@@ -39,7 +43,6 @@ export async function handleResolver(req, res, structure) {
             });
 
             res.writeHead(500, {
-                Connection: 'close',
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(content, 'utf-8'),
             });
@@ -76,11 +79,10 @@ export async function handleResolver(req, res, structure) {
         res.write(`event: ${options.id}\n`);
         res.write(`data: ${JSON.stringify({payload: value, options})}\n\n`);
 
-        res.flush();
+        res.flushHeaders();
     }
 
     res.writeHead(200, {
-        Connection: 'keep-alive',
         'Content-Type': 'text/event-stream;charset=utf-8',
         'Cache-Control': 'no-cache, no-transform',
     });
@@ -96,4 +98,22 @@ export async function handleResolver(req, res, structure) {
     }
 
     res.end();
+}
+
+export function createResolverHandler(
+    resolvers: Parameters<typeof buildResolverMap>[0]
+): (req: any, res: any) => Promise<void> {
+    const resolversMap = buildResolverMap(resolvers);
+
+    return async function handler(req, res) {
+        const {query} = req;
+
+        const id = query.id;
+        const {params} = query.b ? JSON.parse(query.b) : req.body;
+
+        // TODO: handle wrong resolver id
+        const structure = resolversMap[id as string].apply(this || {}, params);
+
+        await handleResolver(req, res, structure);
+    };
 }
