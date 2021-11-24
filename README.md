@@ -61,7 +61,7 @@ module.exports = {
 ```ts
 import {createResolverHandler} from '@convey/core/server';
 
-import * as resolvers from '../../../resolvers/server';
+import * as resolvers from '@app/resolvers/server';
 
 const handleResolver = createResolverHandler(resolvers);
 
@@ -74,7 +74,7 @@ export default async function handle(req, res) {
 
 > See [nextjs pages/\_app.tsx](examples/convey-nextjs/pages/_app.tsx) for example
 
-```
+```ts
 import {setConfig} from '@convey/core';
 import {createResolverFetcher} from '@convey/core/client';
 
@@ -123,7 +123,7 @@ export const getServerHelloStream = createResolverStream(async function* (
 Direct usage:
 
 ```ts
-import {getServerHello, getServerHelloStream} from 'app/resolvers/server';
+import {getServerHello, getServerHelloStream} from '@app/resolvers/server';
 
 console.log(await getServerHello('world')); // `Hello, world`
 
@@ -136,7 +136,7 @@ Usage with React:
 
 ```tsx
 import {useResolver} from '@convey/react';
-import {getServerHello, getServerHelloStream} from 'app/resolvers/server';
+import {getServerHello, getServerHelloStream} from '@app/resolvers/server';
 
 export const HelloComponent = () => {
     /**
