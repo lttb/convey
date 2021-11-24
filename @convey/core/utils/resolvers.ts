@@ -82,7 +82,7 @@ export async function resolve(structure) {
 
     return result?.then
         ? result.then((data) => {
-              if (data.error) {
+              if (data && data.error) {
                   throw data.payload;
               }
 
