@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/lttb/convey/compare/@convey/react@0.2.0...@convey/react@0.3.0) (2021-11-24)
+
+
+### Features
+
+* **core, react:** improve types ([161799f](https://github.com/lttb/convey/commit/161799feb8747be85e3c66313b44d63025acaf0b))
+
+
+
+
+
 # [0.2.0](https://github.com/lttb/convey/compare/@convey/react@0.1.0...@convey/react@0.2.0) (2021-11-22)
 
 
