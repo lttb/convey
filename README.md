@@ -118,6 +118,28 @@ export const getServerHelloStream = createResolverStream(async function* (
 });
 ```
 
+After processing, on the client-side the actual code will be like:
+
+```js
+import { createResolver, createResolverStream } from '@convey/core';
+
+/**
+ * This code will be executed on the server side
+ */
+export const getServerHello = createResolver({}, {
+  id: "3296945930:getServerHello"
+});
+/**
+ * It is also possible to declare the stream via generator function.
+ * By default, the data will be streamed by SSE (Server Sent Events)
+ */
+
+export const getServerHelloStream = createResolverStream({}, {
+  id: "3296945930:getServerHelloStream"
+});
+```
+
+
 #### Client resolver usage
 
 Direct usage:
