@@ -36,7 +36,7 @@ npm install --save @convey/react
 
 ### Babel config
 
-> See [nextjs pages/api/resolver/[id].ts](examples/convey-nextjs/babel.config.js) for example
+> See [nextjs babel.config.js](examples/convey-nextjs/babel.config.js) for example
 
 Add `@convey/babel-plugin` to your babel config:
 
