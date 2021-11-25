@@ -162,7 +162,7 @@ import {getServerHello, getServerHelloStream} from '@app/resolvers/server';
 
 export const HelloComponent = () => {
     /**
-     * Component will be automatically invalidated on data invalidation
+     * Component will be automatically rerendered on data invalidation
      */
     const [hello] = useResolver(getServerHello('world'));
     /**
