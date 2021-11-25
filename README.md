@@ -10,9 +10,10 @@
 
 - Seameless code usage between client and server – call server functions just as normal functions (and vice-versa 😉).
 - Out of the box streaming support (with Server Sent Events by default)
+- Framework agnostic
 - Strong Typescript support
 - Advanced resolver caching options: from HTTP-level to session storage
-- Performant React component level subscriptions and cache invalidation triggering
+- Performant React component subscriptions, and automatic cache invalidation rerendering
 
 ## Examples
 
