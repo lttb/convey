@@ -4,7 +4,15 @@
 -   [@convey/babel-plugin](@convey/babel-plugin)
 -   [@convey/react](@convey/react)
 
-> This project is still at an early stage and is not production ready
+> This project is still at an early stage and is not production ready. API could be changed.
+
+## Key Features
+
+- Seameless code usage between client and server – call server functions just as normal functions (and vice-versa 😉).
+- Out of the box streaming support (with Server Sent Events by default)
+- Strong Typescript support
+- Advanced resolver caching options: from HTTP-level to session storage
+- Performant React component level subscriptions and cache invalidation triggering
 
 ## Examples
 
