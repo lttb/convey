@@ -19,6 +19,8 @@
 
 -   [nextjs](examples/convey-nextjs)
 
+[![codesandbox example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/upbeat-tess-zxk1e?file=/pages/index.tsx)
+
 ## Quick Start
 
 Install dependencies:
