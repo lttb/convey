@@ -101,6 +101,9 @@ setConfig({
 _resolvers/server/index.tsx_
 
 ```ts
+import { exec } from "child_process";
+import { promisify } from "util";
+
 import {createResolver, createResolverStream} from '@convey/core';
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -108,6 +111,10 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /**
  * This code will be executed on the server side
  */
+export const getServerDate = createResolver(async () =>
+    promisify(exec)("date").then((x) => x.stdout.toString())
+);
+
 export const getServerHello = createResolver(
     (name: string) => `Hello, ${name}`
 );
@@ -123,7 +130,7 @@ export const getServerHelloStream = createResolverStream(async function* (
         /**
          * Resolvers could be called as normal functions on server side too
          */
-        yield await getServerHello(`${name}-${Date.now()}`);
+        yield await getServerHello(`${name}-${await getServerDate()}`);
         await wait(1000);
     }
 });
@@ -137,6 +144,10 @@ import { createResolver, createResolverStream } from '@convey/core';
 /**
  * This code will be executed on the server side
  */
+export const getServerDate = createResolver({}, {
+  id: "3296945930:getServerDate"
+}); 
+ 
 export const getServerHello = createResolver({}, {
   id: "3296945930:getServerHello"
 });
