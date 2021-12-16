@@ -9,8 +9,8 @@ export type UnboxGenerator<T> = T extends AsyncGenerator<infer G>
 export type Unbox<T> = UnboxPromise<UnboxGenerator<T>>;
 
 export type ResolverStructure<
-    Params extends any[],
     Result,
+    Params extends any[],
     Options extends ResolverOptions = ResolverOptions,
     Context = any
 > = {
@@ -55,11 +55,11 @@ export type ResolverOptions = {
 
 export type ResolverResult<
     Result,
-    Params extends any[] = any,
+    Params extends any[] = any[],
     Options extends ResolverOptions = ResolverOptions,
     Context = any
 > = {
-    resolver: (...params: Params) => Result;
+    resolver: (this: Context, ...params: Params) => Result;
     /**
      * Context usage is under the draft at the moment
      */
@@ -73,12 +73,16 @@ export type ResolverResult<
 
 interface ResolverFunction<
     Result,
-    Params extends any[] = any,
+    Params extends any[] = any[],
     Options extends ResolverOptions = ResolverOptions,
-    Context = any
+    Context extends any = any
 > {
-    // TODO: think about this type
-    (...params: Params): ResolverResult<Result, Params, Options, Context>;
+    (this: Context, ...params: Params): ResolverResult<
+        Result,
+        Params,
+        Options,
+        Context
+    >;
     options: Options;
 }
 
@@ -86,7 +90,7 @@ export type Resolver<
     Result,
     Params extends any[] = any[],
     Options extends ResolverOptions = ResolverOptions,
-    Context = any
+    Context extends any = any
 > = ResolverFunction<Result, Params, Options, Context>;
 
 /**

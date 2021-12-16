@@ -12,7 +12,9 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "jsx": "preserve",
-        "declaration": true
+        "declaration": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true
     },
     "exclude": [
         "node_modules",
