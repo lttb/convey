@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/lttb/convey/compare/@convey/react@0.6.0...@convey/react@0.6.1) (2022-01-09)
+
+
+### Bug Fixes
+
+* **react:** fix refresh type ([a4fd975](https://github.com/lttb/convey/commit/a4fd97596af6edcab4c6717aae1d6e1c16e9477b))
+
+
+
+
+
 # [0.6.0](https://github.com/lttb/convey/compare/@convey/react@0.5.0...@convey/react@0.6.0) (2022-01-09)
 
 
