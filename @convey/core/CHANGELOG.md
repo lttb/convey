@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/lttb/convey/compare/@convey/core@0.6.0...@convey/core@0.7.0) (2022-01-09)
+
+
+### Features
+
+* **react:** refresh as promise ([f1ef0bc](https://github.com/lttb/convey/commit/f1ef0bcf4666e47899de446ab15bb9fe5d124e7b))
+
+
+
+
+
 # [0.6.0](https://github.com/lttb/convey/compare/@convey/core@0.5.0...@convey/core@0.6.0) (2021-12-16)
 
 
