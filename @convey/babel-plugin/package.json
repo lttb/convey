@@ -4,6 +4,7 @@
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "main": "index.js",
+    "exports": null,
     "publishConfig": {
         "access": "public"
     },

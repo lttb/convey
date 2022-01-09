@@ -7,6 +7,20 @@
     "publishConfig": {
         "access": "public"
     },
+    "exports": {
+        ".": {
+            "import": "./index.js",
+            "require": "./index.cjs"
+        },
+        "./server": {
+            "import": "./server/index.js",
+            "require": "./server/index.cjs"
+        },
+        "./client": {
+            "import": "./client/index.js",
+            "require": "./client/index.cjs"
+        }
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/lttb/convey.git",

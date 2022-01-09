@@ -8,7 +8,10 @@ const config =
     // * ref: <https://github.com/microsoft/TypeScript/issues/37582>
     {
         preserveModules: true, // or `false` to bundle as a single file
-        output: [{dir: 'lib', format: 'esm', entryFileNames: '[name].mjs'}],
+        output: [
+            {dir: 'lib', format: 'esm', entryFileNames: '[name].js'},
+            {dir: 'lib', format: 'cjs', entryFileNames: '[name].cjs'},
+        ],
         plugins: [
             typescript({
                 tsconfig: 'tsconfig.json',
@@ -24,8 +27,15 @@ const config =
                         dest: 'lib',
                         transform: (contents, filename) =>
                             JSON.stringify({
-                                main: 'index.mjs',
+                                main: 'index.cjs',
+                                module: 'index.js',
                                 types: 'index.d.ts',
+                                exports: {
+                                    '.': {
+                                        import: './index.js',
+                                        require: './index.cjs',
+                                    },
+                                },
                                 ...JSON.parse(contents.toString()),
                             }),
                     },
