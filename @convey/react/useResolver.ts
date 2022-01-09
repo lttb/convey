@@ -1,7 +1,12 @@
 import {useState, useEffect} from 'react';
 
-import {subscribeStream, subscribe, resolveStream, config} from '@convey/core';
-import {_Promise} from '@convey/core/utils/_Promise';
+import {
+    subscribeStream,
+    subscribe,
+    resolveStream,
+    config,
+    _Promise,
+} from '@convey/core';
 
 import type {Unbox, ResolverResult} from '@convey/core';
 

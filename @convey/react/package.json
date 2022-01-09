@@ -1,6 +1,5 @@
 {
     "name": "@convey/react",
-    "type": "module",
     "version": "0.5.0",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
