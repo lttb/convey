@@ -10,7 +10,7 @@ import {
 
 import type {Unbox, ResolverResult} from '@convey/core';
 
-type MetaBase<Result> = {refresh: () => Promise<Result>};
+type MetaBase<Result> = {refresh: () => Result};
 
 type HookResult<Result> =
     | [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
