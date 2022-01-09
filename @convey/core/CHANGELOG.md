@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/lttb/convey/compare/@convey/core@0.7.0...@convey/core@0.8.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **core, react:** fix build ([b99ea2c](https://github.com/lttb/convey/commit/b99ea2c4ce524b4401a8e8708ccd242c62d55825))
+
+
+
+
+
 # [0.7.0](https://github.com/lttb/convey/compare/@convey/core@0.6.0...@convey/core@0.7.0) (2022-01-09)
 
 
