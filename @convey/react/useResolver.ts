@@ -1,19 +1,17 @@
 import {useState, useEffect} from 'react';
 
 import {subscribeStream, subscribe, resolveStream, config} from '@convey/core';
+import {_Promise} from '@convey/core/utils/_Promise';
 
 import type {Unbox, ResolverResult} from '@convey/core';
 
-type MetaBase = {refresh: () => void};
-
-type Meta = MetaBase &
-    ({status: 'PENDING' | 'UNSET' | 'DONE'} | {status: 'ERROR'; error: Error});
+type MetaBase<Result> = {refresh: () => Promise<Result>};
 
 type HookResult<Result> =
-    | [Unbox<Result>, MetaBase & {status: 'DONE'}]
+    | [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
     | [
           undefined,
-          MetaBase &
+          MetaBase<Result> &
               ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error})
       ];
 
@@ -24,10 +22,17 @@ export function useResolver<Result, Params extends any[] = any[]>(
 export function useResolver(structure) {
     const {resolver} = structure ?? {};
 
-    const [counter, setCounter] = useState(0);
-    const [meta, setMeta] = useState<Meta>({
+    const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(
+        null
+    );
+    const [meta, setMeta] = useState<HookResult<any>[1]>({
         status: 'UNSET',
-        refresh: () => setCounter((x) => x + 1),
+        refresh: async () => {
+            const newResultPromise = new _Promise();
+            setResultPromise(newResultPromise);
+
+            return newResultPromise;
+        },
     });
     const [data, setData] = useState(undefined);
 
@@ -56,10 +61,11 @@ export function useResolver(structure) {
 
                     setData(() => value);
                     setMeta((meta) => ({...meta, status: 'DONE'}));
+                    resultPromise?.resolve(value);
                 }
             } catch (error) {
-                console.error({error, iter, structure});
                 setMeta((meta) => ({...meta, status: 'ERROR', error}));
+                resultPromise?.reject(error);
             }
         }
 
@@ -71,7 +77,7 @@ export function useResolver(structure) {
             iter.return();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resolver, config.getResolverHash(structure), counter]);
+    }, [resolver, config.getResolverHash(structure), resultPromise]);
 
     return [data, meta] as any;
 }
