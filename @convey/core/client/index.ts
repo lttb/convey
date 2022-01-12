@@ -2,7 +2,7 @@ import unfetch from 'isomorphic-unfetch';
 
 import {fetchEventSource} from '@microsoft/fetch-event-source';
 
-import {callbackToIter} from '../utils';
+import {callbackToIter, entityReviver} from '../utils';
 import type {CancellableAsyncGenerator, ResolverOptions} from '../types';
 
 const EventStreamContentType = 'text/event-stream';
@@ -33,14 +33,21 @@ type FetchedResolver = {
     stream: boolean;
 };
 
+type RequestHeaders = Record<string, string>;
+
 const GET_LIMIT = 2048;
 
-export function createResolverFetcher(
-    options: {
-        url?: string | ((structure: FetchedResolver) => string);
-        openWhenHidden?: boolean;
-    } = {}
-) {
+export function createResolverFetcher({
+    url,
+    openWhenHidden,
+    reviver = entityReviver,
+    headers = {},
+}: {
+    url?: string | ((structure: FetchedResolver) => string);
+    openWhenHidden?: boolean;
+    reviver?: typeof entityReviver;
+    headers?: RequestHeaders | ((structure: FetchedResolver) => RequestHeaders);
+} = {}) {
     return async function* fetchResolver(
         structure: FetchedResolver
     ): CancellableAsyncGenerator<Message> {
@@ -56,9 +63,9 @@ export function createResolverFetcher(
             } = structure;
 
             let link =
-                typeof options.url === 'function'
-                    ? options.url(structure)
-                    : options.url || `/api/resolver/${id}`;
+                typeof url === 'function'
+                    ? url(structure)
+                    : url || `/api/resolver/${id}`;
 
             const body = JSON.stringify({params, id});
 
@@ -79,20 +86,26 @@ export function createResolverFetcher(
 
                 signal: ctrl?.signal ?? undefined,
 
-                openWhenHidden: options.openWhenHidden ?? false,
+                openWhenHidden,
 
                 headers: {
                     accept: [JSONContentType, EventStreamContentType].join(
                         ', '
                     ),
                     'content-type': JSONContentType,
+
+                    ...(typeof headers === 'function'
+                        ? headers(structure)
+                        : headers),
                 },
 
                 async onopen(response) {
                     const contentType = response.headers.get('content-type');
 
                     if (contentType?.startsWith(JSONContentType)) {
-                        throw new ExpectedError(await response.json());
+                        throw new ExpectedError(
+                            JSON.parse(await response.text(), reviver)
+                        );
                     }
 
                     if (!contentType?.startsWith(EventStreamContentType)) {
@@ -113,7 +126,7 @@ export function createResolverFetcher(
                 },
 
                 onmessage(message) {
-                    next({data: JSON.parse(message.data)});
+                    next({data: JSON.parse(message.data, reviver)});
                 },
 
                 onclose() {
