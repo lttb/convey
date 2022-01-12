@@ -67,6 +67,10 @@ export function createEntityNamespace(name: string) {
             static register(name: string) {
                 const key = `${ns}.${name}`;
 
+                if (classesByKey[key]) {
+                    return;
+                }
+
                 classesByKey[key] = this;
                 keysByClass.set(this, key);
             }
