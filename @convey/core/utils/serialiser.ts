@@ -26,7 +26,11 @@ export interface IEntity<R> {
     value: R;
 }
 
-type WrapData<T> = (T extends Primitive ? {data: T} : T) & IEntity<T>;
+const ENTITY_VALUE: unique symbol = Symbol('entity_value');
+
+type WrapData<T> = Readonly<
+    (T extends Primitive ? {[ENTITY_VALUE]: T} : T) & IEntity<T>
+>;
 
 export function createEntityNamespace(name: string) {
     const ns = `__entity_namespace_${name}`;
@@ -62,7 +66,7 @@ export function createEntityNamespace(name: string) {
         return class Entity extends Parent {
             [DATA_KEY]: T;
 
-            value: any;
+            [ENTITY_VALUE]: R;
 
             static register(name: string) {
                 const key = `${ns}.${name}`;
@@ -76,7 +80,7 @@ export function createEntityNamespace(name: string) {
             }
 
             equal(value: any) {
-                return value === this.value;
+                return value === this[ENTITY_VALUE];
             }
 
             [Symbol.toPrimitive]?: () => any;
@@ -104,7 +108,7 @@ export function createEntityNamespace(name: string) {
                 this.valueOf = () => value;
                 this.toString = () => String(value);
 
-                this.value = value;
+                this[ENTITY_VALUE] = value;
             }
 
             toJSON() {
