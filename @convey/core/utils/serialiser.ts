@@ -7,6 +7,7 @@
 const classesByKey = {};
 
 const ENTITY_KEY = '__entity__8c9e4dd6-8877-4026-a2b8-b3dea53b75dc';
+const DATA_KEY = Symbol('data');
 
 type Primitive =
     | string
@@ -59,17 +60,12 @@ export function createEntityNamespace(name: string) {
         const keysByClass = new WeakMap();
 
         return class Entity extends Parent {
-            data: T;
-            value: any;
+            [DATA_KEY]: T;
 
-            static [ENTITY_KEY]: true;
+            value: any;
 
             static register(name: string) {
                 const key = `${ns}.${name}`;
-
-                if (classesByKey[key]) {
-                    return;
-                }
 
                 classesByKey[key] = this;
                 keysByClass.set(this, key);
@@ -88,7 +84,7 @@ export function createEntityNamespace(name: string) {
             constructor(...args: [...T]) {
                 super(...args);
 
-                this.data = args;
+                this[DATA_KEY] = args;
 
                 Entity.register(this.constructor.name);
 
@@ -122,7 +118,7 @@ export function createEntityNamespace(name: string) {
 
                 return {
                     [ENTITY_KEY]: key,
-                    [key]: JSON.stringify(this.data),
+                    [key]: JSON.stringify(this[DATA_KEY]),
                 };
             }
         };
@@ -144,5 +140,5 @@ export const entityReviver = (key: string, value: any) => {
     const CL = classesByKey[key];
     if (!CL) return value;
 
-    return new CL(...JSON.parse(value));
+    return new CL(...JSON.parse(value, entityReviver));
 };
