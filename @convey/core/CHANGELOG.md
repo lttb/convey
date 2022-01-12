@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.2](https://github.com/lttb/convey/compare/@convey/core@0.10.1...@convey/core@0.10.2) (2022-01-12)
+
+
+### Bug Fixes
+
+* **core:** fix entityReviver ([8a28418](https://github.com/lttb/convey/commit/8a28418612017de840759ab48a545794febb581c))
+
+
+
+
+
 ## [0.10.1](https://github.com/lttb/convey/compare/@convey/core@0.10.0...@convey/core@0.10.1) (2022-01-12)
 
 
