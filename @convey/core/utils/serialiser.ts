@@ -21,7 +21,7 @@ type Primitive =
     | (number & object);
 
 export interface IEntity<R> {
-    is(value: unknown): value is this;
+    contains(value: unknown): value is this;
     equal(value: any): boolean;
     value: R;
 }
@@ -72,7 +72,7 @@ export function createEntityNamespace(name: string) {
                 keysByClass.set(this, key);
             }
 
-            is(value: unknown): value is this {
+            contains(value: unknown): value is this {
                 return value instanceof this.constructor;
             }
 
