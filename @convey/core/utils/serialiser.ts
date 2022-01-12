@@ -59,7 +59,7 @@ export function createEntityNamespace(name: string) {
         const keysByClass = new WeakMap();
 
         return class extends Parent {
-            #data: T;
+            data: T;
             value: any;
 
             static [ENTITY_KEY]: true;
@@ -84,7 +84,7 @@ export function createEntityNamespace(name: string) {
             constructor(...args: [...T]) {
                 super(...args);
 
-                this.#data = args;
+                this.data = args;
 
                 if (isConstructor) return;
 
@@ -116,7 +116,7 @@ export function createEntityNamespace(name: string) {
 
                 return {
                     [ENTITY_KEY]: key,
-                    [key]: JSON.stringify(this.#data),
+                    [key]: JSON.stringify(this.data),
                 };
             }
         };
