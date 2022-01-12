@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/lttb/convey/compare/@convey/core@0.9.1...@convey/core@0.10.0) (2022-01-12)
+
+
+### Features
+
+* **core:** register entities on init ([340b6c9](https://github.com/lttb/convey/commit/340b6c9aeccd965ad111788e922fa5a2b20ccb09))
+
+
+
+
+
 ## [0.9.1](https://github.com/lttb/convey/compare/@convey/core@0.9.0...@convey/core@0.9.1) (2022-01-12)
 
 
