@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/lttb/convey/compare/@convey/core@0.10.0...@convey/core@0.10.1) (2022-01-12)
+
+
+### Bug Fixes
+
+* **core:** avoid unnecessary register ([5d522b3](https://github.com/lttb/convey/commit/5d522b3955baf914e3a374978d0c770e0166afee))
+
+
+
+
+
 # [0.10.0](https://github.com/lttb/convey/compare/@convey/core@0.9.1...@convey/core@0.10.0) (2022-01-12)
 
 

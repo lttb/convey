@@ -1,6 +1,6 @@
 {
     "name": "@convey/core",
-    "version": "0.10.0",
+    "version": "0.10.1",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "publishConfig": {
