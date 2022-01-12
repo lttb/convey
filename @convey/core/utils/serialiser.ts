@@ -22,12 +22,22 @@ type Primitive =
 
 export interface IEntity<R> {
     contains(value: unknown): value is this;
-    equal(value: any): boolean;
+    eq(value: this): boolean;
     value: R;
 }
 
 type WrapData<T> = (T extends Primitive ? Readonly<{value: T}> : T) &
     Readonly<IEntity<T>>;
+
+const toPrimitive = (value: any) => {
+    if (!value) return value;
+
+    if (value[Symbol.toPrimitive]) return value[Symbol.toPrimitive]();
+    if (value.valueOf) return value.valueOf();
+    if (value.toString) return value.toString();
+
+    return value;
+};
 
 export function createEntityNamespace(name: string) {
     const ns = `__entity_namespace_${name}`;
@@ -76,8 +86,8 @@ export function createEntityNamespace(name: string) {
                 return value instanceof this.constructor;
             }
 
-            equal(value: any) {
-                return value === this.value;
+            eq(value: this) {
+                return toPrimitive(value) === toPrimitive(this);
             }
 
             [Symbol.toPrimitive]?: () => any;
