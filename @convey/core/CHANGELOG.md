@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/lttb/convey/compare/@convey/core@0.11.2...@convey/core@0.12.0) (2022-01-12)
+
+
+### Features
+
+* **core:** entity equal -> eq ([78f4489](https://github.com/lttb/convey/commit/78f4489b98a7dc836cd8ab1b5a6ff0cf0b9b01b8))
+
+
+
+
+
 ## [0.11.2](https://github.com/lttb/convey/compare/@convey/core@0.11.1...@convey/core@0.11.2) (2022-01-12)
 
 
