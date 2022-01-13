@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.com/lttb/convey/compare/@convey/core@0.12.0...@convey/core@0.12.1) (2022-01-13)
+
+
+### Bug Fixes
+
+* **core:** serialiser fix ([2622bae](https://github.com/lttb/convey/commit/2622baee80bbcfff0ae63ead8fca3157a1baddf1))
+
+
+
+
+
 # [0.12.0](https://github.com/lttb/convey/compare/@convey/core@0.11.2...@convey/core@0.12.0) (2022-01-12)
 
 
