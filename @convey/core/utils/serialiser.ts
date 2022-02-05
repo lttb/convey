@@ -70,7 +70,7 @@ export function createEntityNamespace(name: string) {
 
         const keysByClass = new WeakMap();
 
-        return class extends Parent {
+        return class extends Parent implements IEntity<R> {
             [DATA_KEY]: T;
 
             value: R;
@@ -137,8 +137,12 @@ export function createEntityNamespace(name: string) {
 }
 
 // TODO: use Entity class as a type instead of any
-export const registerEntities = (...cls: any[]) => {
-    cls.forEach((cls) => cls.register && cls.register(cls.name));
+export const registerEntities = (
+    entityMap: Record<string, IEntity<any> & {register: (name: string) => void}>
+) => {
+    Object.entries(entityMap).forEach(
+        ([name, cls]) => cls.register && cls.register(name)
+    );
 };
 
 export const entityReviver = (key: string, value: any) => {
