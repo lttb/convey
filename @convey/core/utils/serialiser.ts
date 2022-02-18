@@ -39,24 +39,30 @@ const toPrimitive = (value: any) => {
     return value;
 };
 
+export interface IRegistrar {
+    register(name: string): void;
+}
+
 export function createEntityNamespace(name: string) {
     const ns = `__entity_namespace_${name}`;
 
-    function entity<T = void>(): new (data: T) => WrapData<T>;
+    function entity<T = void>(): IRegistrar & (new (data: T) => WrapData<T>);
 
     function entity<C extends new (...args: void[]) => any>(
         constr: C
-    ): new (...args: ConstructorParameters<C> | []) => WrapData<
-        InstanceType<C>
-    >;
+    ): IRegistrar &
+        (new (...args: ConstructorParameters<C> | []) => WrapData<
+            InstanceType<C>
+        >);
 
     function entity<C extends new (...args: any[]) => any>(
         constr: C
-    ): new (...args: ConstructorParameters<C>) => WrapData<InstanceType<C>>;
+    ): IRegistrar &
+        (new (...args: ConstructorParameters<C>) => WrapData<InstanceType<C>>);
 
     function entity<C extends (...args: any[]) => any>(
         constr: C
-    ): new (...args: Parameters<C>) => WrapData<ReturnType<C>>;
+    ): IRegistrar & (new (...args: Parameters<C>) => WrapData<ReturnType<C>>);
 
     function entity<T extends any[], R>(
         constr?: new (...args: [...T]) => R
@@ -137,9 +143,7 @@ export function createEntityNamespace(name: string) {
 }
 
 // TODO: use Entity class as a type instead of any
-export const registerEntities = (
-    entityMap: Record<string, IEntity<any> & {register: (name: string) => void}>
-) => {
+export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
     Object.entries(entityMap).forEach(
         ([name, cls]) => cls.register && cls.register(name)
     );
