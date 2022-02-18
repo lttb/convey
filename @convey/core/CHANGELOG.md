@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/lttb/convey/compare/@convey/core@0.12.1...@convey/core@0.13.0) (2022-02-18)
+
+
+### Bug Fixes
+
+* **core:** fix serialiser type ([3a8229e](https://github.com/lttb/convey/commit/3a8229e4b99e186c2baa775e7e61e8c00c7b27d3))
+
+
+### Features
+
+* **core:** change registerEntities signature ([199618f](https://github.com/lttb/convey/commit/199618ff07770655ec97fa9d2fa5e174194a4d77))
+
+
+
+
+
 ## [0.12.1](https://github.com/lttb/convey/compare/@convey/core@0.12.0...@convey/core@0.12.1) (2022-01-13)
 
 
