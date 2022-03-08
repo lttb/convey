@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/lttb/convey/compare/@convey/core@0.13.0...@convey/core@0.14.0) (2022-03-08)
+
+
+### Features
+
+* **core:** update cache control header ([ffcdb0e](https://github.com/lttb/convey/commit/ffcdb0e18cbbf3b3a8061f3dd14d27b6fbd91f40))
+
+
+
+
+
 # [0.13.0](https://github.com/lttb/convey/compare/@convey/core@0.12.1...@convey/core@0.13.0) (2022-02-18)
 
 
