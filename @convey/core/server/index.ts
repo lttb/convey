@@ -23,7 +23,7 @@ export async function handleResolver(req, res, structure) {
             if (cacheOptions.level === CACHE_TRANSPORT_LEVEL) {
                 res.setHeader(
                     'Cache-Control',
-                    `max-age=${cacheOptions.ttl / 1000}`
+                    `max-age=${Math.round(cacheOptions.ttl / 1000)}, public`
                 );
             }
 
