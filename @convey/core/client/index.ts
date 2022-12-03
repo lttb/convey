@@ -76,7 +76,10 @@ export function createResolverFetcher({
                 const getParams = new URLSearchParams({b: body}).toString();
                 link += (link.includes('?') ? `&` : `?`) + getParams;
             } else {
-                methodOptions = {method: 'POST', body};
+                methodOptions = {
+                    method: 'POST',
+                    body: JSON.stringify({b: body}),
+                };
             }
 
             fetchEventSource(link, {

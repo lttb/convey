@@ -6,6 +6,7 @@ import {
 } from '@convey/core';
 
 import {getCacheOptions} from '@convey/core/utils/resolvers';
+import {entityReviver} from '@convey/core/utils/serialiser';
 
 const CACHE_TRANSPORT_LEVEL = 'transport';
 
@@ -109,7 +110,10 @@ export function createResolverHandler(
         const {query} = req;
 
         const id = query.id;
-        const {params} = query.b ? JSON.parse(query.b) : req.body;
+        const {params} = JSON.parse(
+            query.b ? query.b : req.body.b,
+            entityReviver
+        );
 
         // TODO: handle wrong resolver id
         const structure = resolversMap[id as string].apply(this || {}, params);
