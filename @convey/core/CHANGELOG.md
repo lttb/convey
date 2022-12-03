@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.1](https://github.com/lttb/convey/compare/@convey/core@0.14.0...@convey/core@0.14.1) (2022-12-03)
+
+
+### Bug Fixes
+
+* **core:** hash value ([a1648e1](https://github.com/lttb/convey/commit/a1648e159b5947790c14a25d2c0c8ed42a143299))
+* **core:** server entity deserialisation ([db1e6af](https://github.com/lttb/convey/commit/db1e6af98a2bb20bd4a8dbcff7be035663f05226))
+
+
+
+
+
 # [0.14.0](https://github.com/lttb/convey/compare/@convey/core@0.13.0...@convey/core@0.14.0) (2022-03-08)
 
 
