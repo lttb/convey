@@ -85,7 +85,7 @@ export function createResolverFetcher({
             fetchEventSource(link, {
                 ...methodOptions,
 
-                fetch: unfetch,
+                fetch: typeof fetch === 'undefined' ? unfetch : fetch,
 
                 signal: ctrl?.signal ?? undefined,
 
