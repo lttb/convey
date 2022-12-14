@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.2](https://github.com/lttb/convey/compare/@convey/core@0.14.1...@convey/core@0.14.2) (2022-12-14)
+
+
+### Bug Fixes
+
+* **core:** fallback to unifetch only if necessary ([dc30f02](https://github.com/lttb/convey/commit/dc30f02e08449185ac172432cddd25603d41bfce))
+
+
+
+
+
 ## [0.14.1](https://github.com/lttb/convey/compare/@convey/core@0.14.0...@convey/core@0.14.1) (2022-12-03)
 
 
