@@ -67,12 +67,22 @@ export async function* fetchResolverStream(structure) {
 
 let localCache: LocalCache;
 
+let current = null;
+const contextMap = new WeakMap();
+
+export function getContext() {
+    return contextMap.get(current);
+}
+
 export async function resolve<Result, Params extends any[]>(
     structure: ResolverResult<Result, Params>
 ): Promise<Unbox<Result>>;
 
 export async function resolve(structure) {
     localCache = localCache || new LocalCache();
+    const prev = current;
+    current = structure;
+    contextMap.set(structure, {});
 
     if (!localCache.has(structure)) {
         localCache.set(structure, fetchResolver(structure) as any);
@@ -80,8 +90,10 @@ export async function resolve(structure) {
 
     const result = localCache.get(structure);
 
-    return result?.then
+    const r = result?.then
         ? result.then((data) => {
+              current = prev;
+
               if (data && data.error) {
                   throw data.payload;
               }
@@ -89,6 +101,10 @@ export async function resolve(structure) {
               return data;
           })
         : result;
+
+    current = prev;
+
+    return r;
 }
 
 export async function* resolveStream<Result, Params extends any[]>(
