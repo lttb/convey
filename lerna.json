@@ -3,7 +3,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "packages": ["@convey/*", "examples/*"],
+    "packages": ["@convey/*", "@examples/*"],
     "version": "independent",
     "npmClient": "yarn",
     "useWorkspaces": true,
