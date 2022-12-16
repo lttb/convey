@@ -25,8 +25,10 @@ const config =
                     {
                         src: 'package.json',
                         dest: 'lib',
-                        transform: (contents, filename) =>
-                            JSON.stringify({
+                        transform: (contents, filename) => {
+                            const packageJson = JSON.parse(contents.toString());
+
+                            return JSON.stringify({
                                 main: 'index.cjs',
                                 module: 'index.js',
                                 types: 'index.d.ts',
@@ -35,9 +37,22 @@ const config =
                                         import: './index.js',
                                         require: './index.cjs',
                                     },
+
+                                    ...(packageJson.name === '@convey/core' && {
+                                        './server': {
+                                            import: './server/index.js',
+                                            require: './server/index.cjs',
+                                        },
+                                        './client': {
+                                            import: './client/index.js',
+                                            require: './client/index.cjs',
+                                        },
+                                    }),
                                 },
-                                ...JSON.parse(contents.toString()),
-                            }),
+
+                                ...packageJson,
+                            });
+                        },
                     },
                 ],
             }),
