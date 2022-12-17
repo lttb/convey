@@ -5,7 +5,7 @@ import {
     buildResolverMap,
 } from '@convey/core';
 
-import {getCacheOptions, _resolve} from '@convey/core/utils/resolvers';
+import {getCacheOptions, getDeps} from '@convey/core/utils/resolvers';
 import {entityReviver} from '@convey/core/utils/serialiser';
 
 const CACHE_TRANSPORT_LEVEL = 'transport';
@@ -15,13 +15,11 @@ export async function handleResolver(req, res, structure) {
 
     if (!stream) {
         try {
-            const [p, result] = await _resolve(structure);
-            const value = await p;
+            const value = await resolve(structure);
 
             const content = JSON.stringify({
                 payload: value,
                 options,
-                deps: result.deps,
             });
 
             // console.log(result.deps);

@@ -144,7 +144,7 @@ export class LocalCache {
                     throw x.payload;
                 }
 
-                invalidate(structure);
+                invalidate(structure, true);
 
                 return x.payload;
             })

@@ -97,7 +97,6 @@ export async function fetchResolver(structure) {
                     type: 'local',
                     options,
                     payload: result,
-                    deps: getDeps(structure),
                 };
             }
 
@@ -146,29 +145,6 @@ export async function* fetchResolverStream(structure) {
 }
 
 let localCache: LocalCache;
-
-export async function _resolve(structure) {
-    localCache = localCache || new LocalCache();
-
-    if (!localCache.has(structure)) {
-        localCache.set(structure, fetchResolver(structure) as any);
-    }
-
-    const result = localCache.get(structure);
-
-    const r = result?.then
-        ? result.then((data) => {
-              if (data && data.error) {
-                  throw data.payload;
-              }
-
-              return data;
-          })
-        : result;
-
-    return [r, result];
-}
-
 
 export async function resolve<Result, Params extends any[]>(
     structure: ResolverResult<Result, Params>

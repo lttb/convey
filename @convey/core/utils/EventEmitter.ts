@@ -93,19 +93,20 @@ export class EventEmitter {
     }
 
     invalidate<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Result, Params>>
+        structure: ReturnType<Resolver<Result, Params>>,
+        internal = false
     ): void {
-        removeDep(structure, structure.prev)
-        structure.prev = null
+        if (structure.prev && !internal) {
+            removeDep(structure, structure.prev);
+            structure.prev = null;
+        }
 
         this.emit(structure, resolve(structure));
 
         const deps = getDeps(structure);
 
-        console.log('invalidate', structure, deps);
-
         deps.forEach((dep) => {
-            this.invalidate(dep);
+            this.invalidate(dep, true);
         });
     }
 }
@@ -118,5 +119,5 @@ export const subscribeStream: typeof ee.subscribeStream = (structure) =>
 export const subscribe: typeof ee.subscribe = (structure) =>
     ee.subscribe(structure);
 
-export const invalidate: typeof ee.invalidate = (structure) =>
-    ee.invalidate(structure);
+export const invalidate: typeof ee.invalidate = (structure, internal) =>
+    ee.invalidate(structure, internal);
