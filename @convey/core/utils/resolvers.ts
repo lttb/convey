@@ -1,3 +1,5 @@
+import 'core-js/actual/set-immediate';
+
 import {config} from '../config';
 
 import {LocalCache} from './LocalCache';
@@ -6,8 +8,67 @@ import type {ResolverResult, Unbox} from '../types';
 
 export {getCacheOptions} from './LocalCache';
 
-export function execResolver({resolver, context, params}) {
-    return context ? resolver.apply(context, params) : resolver(...params);
+let current = null;
+const contextMap = new WeakMap();
+
+const dependencyMap = new Map();
+
+export function getCurrentContext() {
+    return contextMap.get(current);
+}
+
+export function getDeps(structure) {
+    const hash = config.getResolverHash(structure);
+
+    return Object.values(
+        dependencyMap.get(structure.resolver)?.get(hash) || {}
+    );
+}
+
+export function addDep(structure, dep) {
+    if (!dep || structure.resolver === dep.resolver) return;
+
+    const hash = config.getResolverHash(structure);
+
+    if (!dependencyMap.has(structure.resolver)) {
+        dependencyMap.set(structure.resolver, new Map());
+    }
+
+    const deps = dependencyMap.get(structure.resolver);
+
+    if (!deps.has(hash)) {
+        deps.set(hash, {});
+    }
+
+    const depHash = config.getResolverHash(dep);
+
+    deps.get(hash)[depHash] = dep;
+}
+
+export function regDep(structure) {
+    structure.prev = current;
+
+    addDep(structure, current);
+}
+
+export function execResolver(structure) {
+    const {resolver, context, params} = structure;
+
+    current = structure;
+
+    const result = context
+        ? resolver.apply(context, params)
+        : resolver(...params);
+
+    current = structure.prev;
+
+    if (result instanceof Promise) {
+        result?.then(() => {
+            current = structure.prev;
+        });
+    }
+
+    return result;
 }
 
 export async function fetchResolver(structure) {
@@ -67,22 +128,12 @@ export async function* fetchResolverStream(structure) {
 
 let localCache: LocalCache;
 
-let current = null;
-const contextMap = new WeakMap();
-
-export function getContext() {
-    return contextMap.get(current);
-}
-
 export async function resolve<Result, Params extends any[]>(
     structure: ResolverResult<Result, Params>
 ): Promise<Unbox<Result>>;
 
 export async function resolve(structure) {
     localCache = localCache || new LocalCache();
-    const prev = current;
-    current = structure;
-    contextMap.set(structure, {});
 
     if (!localCache.has(structure)) {
         localCache.set(structure, fetchResolver(structure) as any);
@@ -92,8 +143,6 @@ export async function resolve(structure) {
 
     const r = result?.then
         ? result.then((data) => {
-              current = prev;
-
               if (data && data.error) {
                   throw data.payload;
               }
@@ -101,8 +150,6 @@ export async function resolve(structure) {
               return data;
           })
         : result;
-
-    current = prev;
 
     return r;
 }

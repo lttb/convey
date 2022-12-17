@@ -6,6 +6,7 @@ import type {Resolver, ResolverOptions} from './types';
 import {createResolverFetcher} from './client';
 import {getResolverHash, resolve, resolveStream} from './utils';
 import {setConfig} from './config';
+import {regDep} from './utils/resolvers';
 
 export * from './config';
 export * from './utils';
@@ -72,6 +73,8 @@ const createBaseResolver = <
                     }
                 },
             };
+
+            regDep(structure);
 
             return structure;
         },

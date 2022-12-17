@@ -8,6 +8,7 @@
         "start": "next start"
     },
     "dependencies": {
+        "core-js": "^3.26.1",
         "devcert": "1.2.2",
         "next": "13.0.7",
         "next-transpile-modules": "10.0.0",

@@ -1,6 +1,6 @@
 import {config} from '../config';
 import {callbackToIter, terminateStream} from './callbackToIter';
-import {resolve, resolveStream} from './resolvers';
+import {getDeps, resolve, resolveStream} from './resolvers';
 
 import type {Resolver, CancellableAsyncGenerator, Unbox} from '../types';
 
@@ -96,6 +96,14 @@ export class EventEmitter {
         structure: ReturnType<Resolver<Result, Params>>
     ): void {
         this.emit(structure, resolve(structure));
+
+        const deps = getDeps(structure);
+
+        console.log('invalidate', structure, deps);
+
+        deps.forEach((dep) => {
+            this.invalidate(dep);
+        });
     }
 }
 
