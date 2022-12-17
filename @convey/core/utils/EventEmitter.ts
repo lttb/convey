@@ -1,6 +1,6 @@
 import {config} from '../config';
 import {callbackToIter, terminateStream} from './callbackToIter';
-import {getDeps, resolve, resolveStream} from './resolvers';
+import {getDeps, removeDep, resolve, resolveStream} from './resolvers';
 
 import type {Resolver, CancellableAsyncGenerator, Unbox} from '../types';
 
@@ -95,6 +95,9 @@ export class EventEmitter {
     invalidate<Params extends any[], Result>(
         structure: ReturnType<Resolver<Result, Params>>
     ): void {
+        removeDep(structure, structure.prev)
+        structure.prev = null
+
         this.emit(structure, resolve(structure));
 
         const deps = getDeps(structure);

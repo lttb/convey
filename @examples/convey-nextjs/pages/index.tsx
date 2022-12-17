@@ -1,7 +1,12 @@
 import {createResolver, invalidate, resolve} from '@convey/core';
 import {useResolver} from '@convey/react';
 
-import {getServerDate, getHello} from '../resolvers/server/example';
+import {
+    getServerDate,
+    getHello,
+    getUserName,
+    setUserName,
+} from '../resolvers/server/example';
 
 const getData1 = createResolver(async function (id: number) {
     console.log('call', 'getData1', id);
@@ -21,6 +26,7 @@ export default function Simple() {
     const [hello] = useResolver(getHello('world'));
     const [serverDate] = useResolver(getServerDate());
     const [dateTest] = useResolver(getDateTest());
+    const [userName] = useResolver(getUserName());
 
     const [data1] = useResolver(getData(1));
     const [data2] = useResolver(getData(2));
@@ -40,6 +46,15 @@ export default function Simple() {
                 }}
             >
                 update
+            </button>
+
+            <p>user name: {userName}</p>
+            <button
+                onClick={async () => {
+                    await setUserName('Alex');
+                }}
+            >
+                update user name
             </button>
         </div>
     );

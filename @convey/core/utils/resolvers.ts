@@ -45,6 +45,20 @@ export function addDep(structure, dep) {
     deps.get(hash)[depHash] = dep;
 }
 
+export function removeDep(structure, dep) {
+    if (!dep || structure.resolver === dep.resolver) return;
+
+    const hash = config.getResolverHash(structure);
+
+    const deps = dependencyMap.get(structure.resolver);
+
+    if (!deps || !deps.has(hash)) return;
+
+    const depHash = config.getResolverHash(dep);
+
+    delete deps.get(hash)[depHash];
+}
+
 export function regDep(structure) {
     structure.prev = current;
 
@@ -79,7 +93,12 @@ export async function fetchResolver(structure) {
             const result = await execResolver(structure);
 
             if (!structure.stream) {
-                return {type: 'local', options, payload: result};
+                return {
+                    type: 'local',
+                    options,
+                    payload: result,
+                    deps: getDeps(structure),
+                };
             }
 
             let {value} = await result.next();
@@ -127,6 +146,29 @@ export async function* fetchResolverStream(structure) {
 }
 
 let localCache: LocalCache;
+
+export async function _resolve(structure) {
+    localCache = localCache || new LocalCache();
+
+    if (!localCache.has(structure)) {
+        localCache.set(structure, fetchResolver(structure) as any);
+    }
+
+    const result = localCache.get(structure);
+
+    const r = result?.then
+        ? result.then((data) => {
+              if (data && data.error) {
+                  throw data.payload;
+              }
+
+              return data;
+          })
+        : result;
+
+    return [r, result];
+}
+
 
 export async function resolve<Result, Params extends any[]>(
     structure: ResolverResult<Result, Params>

@@ -1,4 +1,4 @@
-import {createResolver, createResolverStream} from '@convey/core';
+import {createResolver, createResolverStream, invalidate} from '@convey/core';
 import {exec} from 'child_process';
 import {promisify} from 'util';
 
@@ -28,3 +28,15 @@ export const getHello = createResolver(
         },
     }
 );
+
+const db = {name: 'John'};
+
+export const getUserName = createResolver(async function () {
+    return db.name;
+});
+
+export const setUserName = createResolver(async function (name: string) {
+    db.name = name;
+
+    invalidate(getUserName());
+});
