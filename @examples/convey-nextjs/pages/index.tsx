@@ -2,7 +2,7 @@ import {createResolver, createResolverStream, invalidate} from '@convey/core';
 import {useResolver} from '@convey/react';
 
 import {getServerDate, getHello} from '../resolvers/server/example';
-import { wait } from '../utils';
+import {wait} from '../utils';
 
 const getOffer = createResolver(async function getOffer(id: number) {
     console.log('call', 'getDataById', id);
@@ -18,9 +18,9 @@ const getTotalPrice = createResolver(async function getTotalPrice(id: number) {
 const getTimestamp = createResolverStream(async function* getTimestamp() {
     while (true) {
         yield Date.now();
-        await wait(10)
+        await wait(10);
     }
-})
+});
 
 const getCart = createResolver(async function getCart() {
     console.log('go 1');
@@ -40,7 +40,7 @@ export default function Simple() {
     // const [userName] = useResolver(getUserName());
 
     const [data1] = useResolver(getTotalPrice(5));
-    useResolver(getTimestamp())
+    useResolver(getTimestamp());
     // const [data2] = useResolver(getData(2));
 
     return (
@@ -62,14 +62,6 @@ export default function Simple() {
                 }}
             >
                 update 2
-            </button>
-
-            <button
-                onClick={async () => {
-                    await setUserName('Alex');
-                }}
-            >
-                update user name
             </button>
         </div>
     );

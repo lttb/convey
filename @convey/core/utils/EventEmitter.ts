@@ -96,7 +96,7 @@ export class EventEmitter {
     invalidate<Params extends any[], Result>(
         structure: ReturnType<Resolver<Result, Params>>,
         force = false,
-        visited = new Set(),
+        visited = new Set()
     ): void {
         if (visited.has(structure)) return;
 
@@ -105,10 +105,10 @@ export class EventEmitter {
         visited.add(structure);
         const deps = getDeps(structure);
 
-        console.log(structure, deps)
+        console.log(structure, deps);
 
         deps.forEach((dep) => {
-            this.invalidate(dep, true, visited);
+            this.invalidate(dep as any, true, visited);
         });
     }
 }

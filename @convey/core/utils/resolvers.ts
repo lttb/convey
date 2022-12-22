@@ -68,7 +68,8 @@ export async function* fetchResolverStream(structure) {
 let localCache: LocalCache;
 
 export async function resolve<Result, Params extends any[]>(
-    structure: ResolverResult<Result, Params>
+    structure: ResolverResult<Result, Params>,
+    force?: boolean
 ): Promise<Unbox<Result>>;
 
 export async function resolve(structure, force = false) {

@@ -89,13 +89,13 @@ const createBaseResolver = <
             stream,
         };
 
-        current_str = structure
+        current_str = structure;
 
         const prev = ref.current;
         ref.current = structure;
 
-        contexts.set(ref.current, prev)
-        addDep(ref.current, prev)
+        contexts.set(ref.current, prev);
+        addDep(ref.current, prev);
 
         const result = resolve(structure as any);
 
@@ -113,7 +113,7 @@ const createBaseResolver = <
     return Object.assign(
         function (...args) {
             current_str = null;
-            const p = fn.apply(this, args);
+            const p = fn.apply(this, args as any);
             structures.set(p, current_str);
 
             return p;
@@ -123,7 +123,7 @@ const createBaseResolver = <
 };
 
 const structures = new WeakMap();
-export const getStructure = (p) => p?.resolver ? p : structures.get(p);
+export const getStructure = (p) => (p?.resolver ? p : structures.get(p));
 
 /** isomorphic global this alternative */
 const defaultThis = (function () {

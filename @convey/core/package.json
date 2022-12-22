@@ -14,7 +14,7 @@
     "scripts": {
         "test": "",
         "prebuild": "rm -rf lib",
-        "build": "rollup -c"
+        "build": "rollup -c --bundleConfigAsCjs"
     },
     "dependencies": {
         "@microsoft/fetch-event-source": "2.0.1",
