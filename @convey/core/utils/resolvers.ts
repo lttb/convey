@@ -19,16 +19,20 @@ export function getCurrentContext() {
 
 export function getDeps(structure) {
     const hash = config.getResolverHash(structure);
+    const depMap = dependencyMap.get(structure.resolver)?.get(hash);
 
-    return Object.values(
-        dependencyMap.get(structure.resolver)?.get(hash) || {}
-    );
+    if (!depMap) return [];
+
+    return [...depMap.values()].flatMap((x) => Object.values(x));
 }
 
 export function addDep(structure, dep) {
     if (!dep || structure.resolver === dep.resolver) return;
 
-    const hash = config.getResolverHash(structure);
+    structure.prev = current;
+
+    console.log('addDep', structure.options.id, current?.options.id);
+
 
     if (!dependencyMap.has(structure.resolver)) {
         dependencyMap.set(structure.resolver, new Map());
@@ -36,13 +40,23 @@ export function addDep(structure, dep) {
 
     const deps = dependencyMap.get(structure.resolver);
 
+    const hash = config.getResolverHash(structure);
+
     if (!deps.has(hash)) {
-        deps.set(hash, {});
+        deps.set(hash, new Map());
+    }
+
+    const depMap = deps.get(hash);
+
+    if (!depMap.has(dep.resolver)) {
+        depMap.set(dep.resolver, {});
     }
 
     const depHash = config.getResolverHash(dep);
 
-    deps.get(hash)[depHash] = dep;
+    depMap.get(dep.resolver)[depHash] = dep;
+
+    console.log(dependencyMap)
 }
 
 export function removeDep(structure, dep) {
@@ -60,30 +74,24 @@ export function removeDep(structure, dep) {
 }
 
 export function regDep(structure) {
-    structure.prev = current;
 
     addDep(structure, current);
+
 }
 
 export function execResolver(structure) {
     const {resolver, context, params} = structure;
 
-    current = structure;
-
     const result = context
         ? resolver.apply(context, params)
         : resolver(...params);
 
-    current = structure.prev;
-
-    if (result instanceof Promise) {
-        result?.then(() => {
-            current = structure.prev;
-        });
-    }
-
     return result;
 }
+export const setBack = (structure, source) => {
+    current = structure.prev;
+    console.log('set back', source, structure.options.id, current?.options.id);
+};
 
 export async function fetchResolver(structure) {
     const {resolver, options} = structure;
@@ -151,6 +159,10 @@ export async function resolve<Result, Params extends any[]>(
 ): Promise<Unbox<Result>>;
 
 export async function resolve(structure) {
+    current = structure;
+
+    console.log('current', structure.options.id);
+
     localCache = localCache || new LocalCache();
 
     if (!localCache.has(structure)) {
@@ -168,6 +180,9 @@ export async function resolve(structure) {
               return data;
           })
         : result;
+
+
+    setBack(structure, 'sync')
 
     return r;
 }

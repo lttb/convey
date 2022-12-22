@@ -6,7 +6,7 @@ import type {Resolver, ResolverOptions} from './types';
 import {createResolverFetcher} from './client';
 import {getResolverHash, resolve, resolveStream} from './utils';
 import {setConfig} from './config';
-import {regDep} from './utils/resolvers';
+import {regDep, setBack} from './utils/resolvers';
 
 export * from './config';
 export * from './utils';
@@ -39,7 +39,11 @@ const createBaseResolver = <
         function (this: Context, ...params: Params) {
             const executor = async (res, rej) => {
                 try {
-                    res(await resolve(structure as any));
+                    const result = await resolve(structure as any);
+                    res(result);
+                    queueMicrotask(() => {
+                        setBack(structure, 'resolve');
+                    });
                 } catch (error) {
                     rej(error);
                 }
@@ -55,7 +59,16 @@ const createBaseResolver = <
                 stream,
                 then(onRes, onRej) {
                     _promise = _promise || new Promise(executor);
-                    return _promise.then(onRes, onRej);
+                    console.log('then', structure.options.id);
+                    return _promise.then((res) => {
+                        console.log(
+                            'result',
+                            structure.options.id,
+                            structure.prev?.options.id
+                        );
+
+                        onRes(res);
+                    }, onRej);
                 },
                 catch(onRej) {
                     _promise = _promise || new Promise(executor);
