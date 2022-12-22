@@ -34,7 +34,7 @@ const getCart = createResolver(async function getCart () {
 export default function Simple() {
     console.log('render');
     // const [hello] = useResolver(getHello('world'));
-    const [serverDate] = useResolver(getServerDate());
+    // const [serverDate] = useResolver(getServerDate());
     const [dateTest] = useResolver(getCart());
     // const [userName] = useResolver(getUserName());
 

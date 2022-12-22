@@ -31,8 +31,12 @@ export function addDep(structure, dep) {
 
     structure.prev = current;
 
-    console.log('addDep', structure.options.id, structure.params, current?.options.id);
-
+    console.log(
+        'addDep',
+        structure.options.id,
+        structure.params,
+        current?.options.id
+    );
 
     if (!dependencyMap.has(structure.resolver)) {
         dependencyMap.set(structure.resolver, new Map());
@@ -56,7 +60,7 @@ export function addDep(structure, dep) {
 
     depMap.get(dep.resolver)[depHash] = dep;
 
-    console.log(dependencyMap)
+    console.log(dependencyMap);
 }
 
 export function removeDep(structure, dep) {
@@ -74,9 +78,7 @@ export function removeDep(structure, dep) {
 }
 
 export function regDep(structure) {
-
     addDep(structure, current);
-
 }
 
 export function execResolver(structure) {
@@ -181,8 +183,9 @@ export async function resolve(structure) {
           })
         : result;
 
+    // setBack(structure, 'sync');
 
-    setBack(structure, 'sync')
+    current = null
 
     return r;
 }
