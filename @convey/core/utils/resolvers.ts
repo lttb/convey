@@ -71,8 +71,12 @@ export async function resolve<Result, Params extends any[]>(
     structure: ResolverResult<Result, Params>
 ): Promise<Unbox<Result>>;
 
-export async function resolve(structure) {
+export async function resolve(structure, force = false) {
     localCache = localCache || new LocalCache();
+
+    if (force) {
+        localCache.delete(structure);
+    }
 
     if (!localCache.has(structure)) {
         localCache.set(structure, fetchResolver(structure) as any);

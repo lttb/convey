@@ -3,6 +3,7 @@ import {callbackToIter, terminateStream} from './callbackToIter';
 import {resolve, resolveStream} from './resolvers';
 
 import type {Resolver, CancellableAsyncGenerator, Unbox} from '../types';
+import {getDeps, getStructure} from '..';
 
 export class EventEmitter {
     list: Map<any, Record<string, any>>;
@@ -93,19 +94,32 @@ export class EventEmitter {
     }
 
     invalidate<Params extends any[], Result>(
-        structure: ReturnType<Resolver<Result, Params>>
+        structure: ReturnType<Resolver<Result, Params>>,
+        force = false,
+        visited = new Set(),
     ): void {
-        this.emit(structure, resolve(structure));
+        if (visited.has(structure)) return;
+
+        this.emit(structure, resolve(structure, force));
+
+        visited.add(structure);
+        const deps = getDeps(structure);
+
+        console.log(structure, deps)
+
+        deps.forEach((dep) => {
+            this.invalidate(dep, true, visited);
+        });
     }
 }
 
 const ee = new EventEmitter();
 
 export const subscribeStream: typeof ee.subscribeStream = (structure) =>
-    ee.subscribeStream(structure);
+    ee.subscribeStream(getStructure(structure));
 
 export const subscribe: typeof ee.subscribe = (structure) =>
-    ee.subscribe(structure);
+    ee.subscribe(getStructure(structure));
 
-export const invalidate: typeof ee.invalidate = (structure) =>
-    ee.invalidate(structure);
+export const invalidate: typeof ee.invalidate = (structure, force = true) =>
+    ee.invalidate(getStructure(structure), force);

@@ -61,7 +61,7 @@ class StorageCache<K = any, V = any> {
 
 type Data<T> = T | Promise<T>;
 
-const DEFAULT_TTL = 150;
+const DEFAULT_TTL = Infinity;
 
 const CACHE_TRANSPORT_LEVEL = 'transport';
 
@@ -144,7 +144,7 @@ export class LocalCache {
                     throw x.payload;
                 }
 
-                invalidate(structure);
+                invalidate(structure, false);
 
                 return x.payload;
             })

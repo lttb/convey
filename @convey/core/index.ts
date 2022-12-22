@@ -5,7 +5,7 @@ import type {Resolver, ResolverOptions} from './types';
 // TODO: exclude "createResolverFetcher" from the main bundle
 import {createResolverFetcher} from './client';
 import {getResolverHash, resolve, resolveStream} from './utils';
-import {setConfig} from './config';
+import {setConfig, config} from './config';
 
 export * from './config';
 export * from './utils';
@@ -25,6 +25,49 @@ export function buildResolverMap<R extends Resolver<any, any, any>>(
     }, {});
 }
 
+let ref = {current: null};
+let contexts = new WeakMap();
+
+export const getParentContext = () => contexts.get(ref.current);
+export const getCurrentContext = () => ref.current;
+
+const dependencyMap = new Map();
+
+export function getDeps(structure) {
+    const hash = config.getResolverHash(structure);
+    const depMap = dependencyMap.get(structure.resolver)?.get(hash);
+
+    if (!depMap) return [];
+
+    return [...depMap.values()].flatMap((x) => Object.values(x));
+}
+
+export function addDep(structure, dep) {
+    if (!dep || structure.resolver === dep.resolver) return;
+
+    if (!dependencyMap.has(structure.resolver)) {
+        dependencyMap.set(structure.resolver, new Map());
+    }
+
+    const deps = dependencyMap.get(structure.resolver);
+
+    const hash = config.getResolverHash(structure);
+
+    if (!deps.has(hash)) {
+        deps.set(hash, new Map());
+    }
+
+    const depMap = deps.get(hash);
+
+    if (!depMap.has(dep.resolver)) {
+        depMap.set(dep.resolver, {});
+    }
+
+    const depHash = config.getResolverHash(dep);
+
+    depMap.get(dep.resolver)[depHash] = dep;
+}
+
 const createBaseResolver = <
     Params extends any[],
     Options extends ResolverOptions,
@@ -33,50 +76,54 @@ const createBaseResolver = <
     options,
     resolver,
     stream = false,
-}) =>
-    Object.assign(
-        function (this: Context, ...params: Params) {
-            const executor = async (res, rej) => {
-                try {
-                    res(await resolve(structure as any));
-                } catch (error) {
-                    rej(error);
-                }
-            };
-            let _promise;
-            let _iter;
-            const structure = {
-                /** detect if there is any special context */
-                context: this === defaultThis ? null : this,
-                resolver,
-                params,
-                options,
-                stream,
-                then(onRes, onRej) {
-                    _promise = _promise || new Promise(executor);
-                    return _promise.then(onRes, onRej);
-                },
-                catch(onRej) {
-                    _promise = _promise || new Promise(executor);
-                    return _promise.catch(onRej);
-                },
-                finally(onFin) {
-                    _promise = _promise || new Promise(executor);
-                    return _promise.finally(onFin);
-                },
-                async *[Symbol.asyncIterator]() {
-                    _iter = _iter || resolveStream(structure as any);
+}) => {
+    let current_str = null;
 
-                    for await (const value of _iter) {
-                        yield value;
-                    }
-                },
-            };
+    async function fn(this: Context, ...params: Params) {
+        const structure = {
+            /** detect if there is any special context */
+            context: this === defaultThis ? null : this,
+            resolver,
+            params,
+            options,
+            stream,
+        };
 
-            return structure;
+        current_str = structure
+
+        const prev = ref.current;
+        ref.current = structure;
+
+        contexts.set(ref.current, prev)
+        addDep(ref.current, prev)
+
+        const result = resolve(structure as any);
+
+        ref.current = prev;
+
+        const res = await result;
+
+        queueMicrotask(() => {
+            ref.current = prev;
+        });
+
+        return res;
+    }
+
+    return Object.assign(
+        function (...args) {
+            current_str = null;
+            const p = fn.apply(this, args);
+            structures.set(p, current_str);
+
+            return p;
         },
         {options}
     );
+};
+
+const structures = new WeakMap();
+export const getStructure = (p) => p?.resolver ? p : structures.get(p);
 
 /** isomorphic global this alternative */
 const defaultThis = (function () {
