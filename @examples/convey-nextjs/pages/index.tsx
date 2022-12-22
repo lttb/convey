@@ -16,8 +16,8 @@ const getOffer = createResolver(async function getOffer (id: number) {
 const getTotalPrice = createResolver(async function getTotalPrice(id: number) {
     console.log('call', 'getData', id);
     const result = await Promise.all([
-        getOffer(id).then((x) => x),
-        getOffer(id + 1).then((x) => x),
+        getOffer(id),
+        getOffer(id + 1),
     ]);
     return result.join(' ');
 });
@@ -34,7 +34,7 @@ const getCart = createResolver(async function getCart () {
 export default function Simple() {
     console.log('render');
     // const [hello] = useResolver(getHello('world'));
-    // const [serverDate] = useResolver(getServerDate());
+    const [serverDate] = useResolver(getServerDate());
     const [dateTest] = useResolver(getCart());
     // const [userName] = useResolver(getUserName());
 
@@ -44,11 +44,11 @@ export default function Simple() {
     return (
         <div>
             <p>Server date test: {dateTest}</p>
+            <p>Server date test 1: {data1}</p>
 
             <button
                 onClick={() => {
                     invalidate(getOffer(1));
-                    invalidate(getOffer(2));
                 }}
             >
                 update

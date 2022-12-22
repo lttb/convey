@@ -41,9 +41,6 @@ const createBaseResolver = <
                 try {
                     const result = await resolve(structure as any);
                     res(result);
-                    queueMicrotask(() => {
-                        setBack(structure, 'resolve');
-                    });
                 } catch (error) {
                     rej(error);
                 }
@@ -66,6 +63,10 @@ const createBaseResolver = <
                             structure.options.id,
                             structure.prev?.options.id
                         );
+
+                        queueMicrotask(() => {
+                            setBack(structure, 'resolve');
+                        });
 
                         onRes(res);
                     }, onRej);

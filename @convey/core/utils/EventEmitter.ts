@@ -98,7 +98,7 @@ export class EventEmitter {
         visited = new Set()
     ): void {
         // console.log('invalidate', structure);
-        // if (visited.has(structure)) return;
+        if (visited.has(structure)) return;
 
         if (structure.prev && !internal) {
             removeDep(structure, structure.prev);
@@ -113,7 +113,6 @@ export class EventEmitter {
         deps.forEach((dep) => {
             // if (visited.has(dep)) return;
 
-            visited.add(dep);
             this.invalidate(dep, true, visited);
         });
     }

@@ -31,7 +31,7 @@ export function addDep(structure, dep) {
 
     structure.prev = current;
 
-    console.log('addDep', structure.options.id, current?.options.id);
+    console.log('addDep', structure.options.id, structure.params, current?.options.id);
 
 
     if (!dependencyMap.has(structure.resolver)) {
