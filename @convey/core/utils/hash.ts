@@ -8,6 +8,7 @@ export function getParamsHash(params) {
     }
 
     if (!params) return String(params);
+    if (params.toJSON) return JSON.stringify(params.toJSON());
     if (typeof params !== 'object') {
         return String(params);
     }
