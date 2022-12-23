@@ -6,7 +6,6 @@
 
 const classesByKey = {};
 
-const ENTITY_KEY = '__entity__8c9e4dd6-8877-4026-a2b8-b3dea53b75dc';
 const DATA_KEY = Symbol('data');
 
 type Primitive =
@@ -44,7 +43,7 @@ export interface IRegistrar {
 }
 
 export function createEntityNamespace(name: string) {
-    const ns = `__entity_namespace_${name}`;
+    const ns = `_${name}_`;
 
     function entity<T = void>(): IRegistrar & (new (data: T) => WrapData<T>);
 
@@ -131,10 +130,7 @@ export function createEntityNamespace(name: string) {
                     );
                 }
 
-                return {
-                    [ENTITY_KEY]: key,
-                    [key]: JSON.stringify(this[DATA_KEY]),
-                };
+                return ['*', key, JSON.stringify(this[DATA_KEY]), '*'];
             }
         };
     }
@@ -150,12 +146,16 @@ export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
 };
 
 export const entityReviver = (key: string, value: any) => {
-    if (value && value[ENTITY_KEY]) {
-        return value[value[ENTITY_KEY]];
-    }
+    const isEntity =
+        value && value[0] === '*' && value[3] === '*' && value.length === 4;
 
-    const CL = classesByKey[key];
+    if (!isEntity) return value;
+
+    const entityKey = value[1];
+    const entityValue = value[2];
+
+    const CL = classesByKey[entityKey];
     if (!CL) return value;
 
-    return new CL(...JSON.parse(value, entityReviver));
+    return new CL(...JSON.parse(entityValue, entityReviver));
 };

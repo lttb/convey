@@ -1,7 +1,12 @@
 import {createResolver, createResolverStream, invalidate} from '@convey/core';
 import {useResolver} from '@convey/react';
 
-import {getServerDate, getHello} from '../resolvers/server/example';
+import {
+    getServerDate,
+    getHello,
+    getExample,
+    getExampleString,
+} from '../resolvers/server/example';
 import {wait} from '../utils';
 
 const getOffer = createResolver(async function getOffer(id: number) {
@@ -38,6 +43,10 @@ export default function Simple() {
     const [serverDate] = useResolver(getServerDate());
     const [dateTest] = useResolver(getCart());
     // const [userName] = useResolver(getUserName());
+    const [example] = useResolver(getExample());
+    const [exampleString] = useResolver(
+        example ? getExampleString(example) : null
+    );
 
     const [data1] = useResolver(getTotalPrice(5));
     useResolver(getTimestamp());
@@ -48,6 +57,9 @@ export default function Simple() {
             <p>Server date: {serverDate}</p>
             <p>Server date test: {dateTest}</p>
             <p>Server date test 1: {data1}</p>
+
+            <p>Example name: {example?.name}</p>
+            <p>Example: {exampleString}</p>
 
             <button
                 onClick={() => {
