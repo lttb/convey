@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
 
 const config =
@@ -7,16 +7,22 @@ const config =
     // * ref: <https://github.com/microsoft/TypeScript/pull/35148>
     // * ref: <https://github.com/microsoft/TypeScript/issues/37582>
     {
-        preserveModules: true, // or `false` to bundle as a single file
         output: [
-            {dir: 'lib', format: 'esm', entryFileNames: '[name].js'},
-            {dir: 'lib', format: 'cjs', entryFileNames: '[name].cjs'},
+            {
+                dir: 'lib',
+                format: 'esm',
+                entryFileNames: '[name].js',
+                preserveModules: true, // or `false` to bundle as a single file
+            },
+            {
+                dir: 'lib',
+                format: 'cjs',
+                entryFileNames: '[name].cjs',
+                preserveModules: true, // or `false` to bundle as a single file
+            },
         ],
         plugins: [
-            typescript({
-                tsconfig: 'tsconfig.json',
-                useTsconfigDeclarationDir: true,
-            }),
+            typescript({}),
 
             copy({
                 targets: [
