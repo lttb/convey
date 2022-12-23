@@ -114,6 +114,7 @@ const createBaseResolver = <
         function (...args) {
             current_str = null;
             const p = fn.apply(this, args as any);
+            Object.assign(p, current_str);
             structures.set(p, current_str);
 
             return p;

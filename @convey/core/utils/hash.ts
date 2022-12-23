@@ -1,3 +1,4 @@
+import {getStructure} from '..';
 import type {ResolverStructure} from '../types';
 
 const paramsOrder = new Map<string, number>();
@@ -30,6 +31,8 @@ export function getResolverHash(structure: ResolverStructure<any, any>) {
     if (!structure) {
         return '';
     }
+
+    structure = getStructure(structure);
 
     // minor hash access optimization
     if (structure[HASH_KEY]) {
