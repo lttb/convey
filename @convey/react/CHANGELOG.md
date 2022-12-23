@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0-i.1](https://github.com/lttb/convey/compare/@convey/react@0.7.0-i.0...@convey/react@0.7.0-i.1) (2022-12-23)
+
+### Features
+
+-   minor updates ([a497021](https://github.com/lttb/convey/commit/a4970215b26db19950d5f988e2c0f701ac0f098c))
+
 # [0.7.0-i.0](https://github.com/lttb/convey/compare/@convey/react@0.6.1...@convey/react@0.7.0-i.0) (2022-12-22)
 
 ### Features

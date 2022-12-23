@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0-i.1](https://github.com/lttb/convey/compare/@convey/core@0.15.0-i.0...@convey/core@0.15.0-i.1) (2022-12-23)
+
+### Bug Fixes
+
+-   **core:** handle nullable storage ([8b6b5e3](https://github.com/lttb/convey/commit/8b6b5e3f6a206acc710bbca4fa9719c1977579f1))
+
+### Features
+
+-   **core:** change entities hashing ([bc89ad3](https://github.com/lttb/convey/commit/bc89ad37335a278a9b1c0feeb33af57b9fc3441a))
+-   **core:** hash entities differently ([fe4ce08](https://github.com/lttb/convey/commit/fe4ce0879a37159da5feddb507b99279f9b3296b))
+-   minor updates ([a497021](https://github.com/lttb/convey/commit/a4970215b26db19950d5f988e2c0f701ac0f098c))
+
 # [0.15.0-i.0](https://github.com/lttb/convey/compare/@convey/core@0.14.1...@convey/core@0.15.0-i.0) (2022-12-22)
 
 ### Features
