@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0-i.3](https://github.com/lttb/convey/compare/@convey/core@0.15.0-i.2...@convey/core@0.15.0-i.3) (2022-12-23)
+
+### Bug Fixes
+
+-   **core:** fix backward structure compatibility ([004be42](https://github.com/lttb/convey/commit/004be428310c0645b0329b2956c484f8054f8f29))
+
 # [0.15.0-i.2](https://github.com/lttb/convey/compare/@convey/core@0.15.0-i.1...@convey/core@0.15.0-i.2) (2022-12-23)
 
 **Note:** Version bump only for package @convey/core
