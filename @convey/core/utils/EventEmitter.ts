@@ -105,8 +105,6 @@ export class EventEmitter {
         visited.add(structure);
         const deps = getDeps(structure);
 
-        console.log(structure, deps);
-
         deps.forEach((dep) => {
             this.invalidate(dep as any, true, visited);
         });
