@@ -22,9 +22,9 @@ export function getCacheOptions(options, type: ResolverType) {
 }
 
 class StorageCache<K = any, V = any> {
-    storage: Storage;
+    storage?: Storage;
 
-    constructor(storage: Storage) {
+    constructor(storage?: Storage) {
         this.storage = storage;
     }
 
@@ -36,7 +36,7 @@ class StorageCache<K = any, V = any> {
 
         const liveUntil = JSON.parse(item).liveUntil;
         if (Date.now() > liveUntil) {
-            this.storage.removeItem(key);
+            this.delete(structure, hash);
 
             return false;
         }
@@ -55,7 +55,7 @@ class StorageCache<K = any, V = any> {
         );
     }
     delete(structure, hash) {
-        this.storage.removeItem(getCacheKey(structure, hash));
+        this.storage?.removeItem(getCacheKey(structure, hash));
     }
 }
 
