@@ -20,7 +20,6 @@ type Primitive =
     | (number & object);
 
 export interface IEntity<R> {
-    contains(value: unknown): value is this;
     eq(value: this): boolean;
     value: R;
 }
@@ -73,22 +72,29 @@ export function createEntityNamespace(name: string) {
 
         const Parent = isConstructor ? constr : class {};
 
-        const keysByClass = new WeakMap();
+        let key: string;
 
-        return class extends Parent implements IEntity<R> {
+        return class Entity extends Parent implements IEntity<R> {
             [DATA_KEY]: T;
 
             value: R;
 
             static register(name: string) {
-                const key = `${ns}.${name}`;
+                const entityKey = `${ns}.${name}`;
 
-                classesByKey[key] = this;
-                keysByClass.set(this, key);
+                if (key && entityKey !== key) {
+                    throw new Error(
+                        `Entity.register: ${name} is already registered as ${key}`
+                    );
+                }
+
+                key = entityKey;
+
+                classesByKey[key] = Entity;
             }
 
-            contains(value: unknown): value is this {
-                return value instanceof this.constructor;
+            static contains(value: unknown): value is Entity {
+                return value instanceof Entity;
             }
 
             eq(value: this) {
@@ -122,21 +128,21 @@ export function createEntityNamespace(name: string) {
             }
 
             toJSON() {
-                const key = keysByClass.get(this.constructor);
-
                 if (!key) {
                     throw new Error(
-                        `Entity.toJSON: Cannot serialise ${this.constructor.name}`
+                        `Entity.toJSON: ${this.constructor.name} was not registered`
                     );
                 }
 
-                return ['*', key, JSON.stringify(this[DATA_KEY]), '*'];
+                return [this[DATA_KEY], '∈', key];
             }
         };
     }
 
     return entity;
 }
+
+export const entity = createEntityNamespace('_');
 
 // TODO: use Entity class as a type instead of any
 export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
@@ -146,16 +152,15 @@ export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
 };
 
 export const entityReviver = (key: string, value: any) => {
-    const isEntity =
-        value && value[0] === '*' && value[3] === '*' && value.length === 4;
+    const isEntity = value && value[1] === '∈' && value.length === 3;
 
     if (!isEntity) return value;
 
-    const entityKey = value[1];
-    const entityValue = value[2];
+    const entityKey = value[2];
+    const entityValue = value[0];
 
     const CL = classesByKey[entityKey];
     if (!CL) return value;
 
-    return new CL(...JSON.parse(entityValue, entityReviver));
+    return new CL(...entityValue);
 };
