@@ -98,11 +98,12 @@ export class EventEmitter {
         force = false,
         visited = new Set()
     ): void {
-        if (visited.has(structure)) return;
+        const hash = config.getResolverHash(structure);
+        if (visited.has(hash)) return;
 
         this.emit(structure, resolve(structure, force));
 
-        visited.add(structure);
+        visited.add(hash);
         const deps = getDeps(structure);
 
         deps.forEach((dep) => {
