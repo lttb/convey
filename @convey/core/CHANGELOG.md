@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0-i.4](https://github.com/lttb/convey/compare/@convey/core@0.15.0-i.3...@convey/core@0.15.0-i.4) (2023-01-08)
+
+### Bug Fixes
+
+-   **core:** change recursive invalidation check ([6cca3ea](https://github.com/lttb/convey/commit/6cca3ea0a883179aa46abd9ec9b2ce96b11f221e))
+
+### Features
+
+-   **core:** refactor serialiser class and toJSON ([3e5d782](https://github.com/lttb/convey/commit/3e5d782b154b9c095d64b7cd38f015eefbc30b79))
+
 # [0.15.0-i.3](https://github.com/lttb/convey/compare/@convey/core@0.15.0-i.2...@convey/core@0.15.0-i.3) (2022-12-23)
 
 ### Bug Fixes
