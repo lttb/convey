@@ -39,6 +39,7 @@ const toPrimitive = (value: any) => {
 
 export interface IRegistrar {
     register(name: string): void;
+    contains(value: unknown): value is this;
 }
 
 export function createEntityNamespace(name: string) {

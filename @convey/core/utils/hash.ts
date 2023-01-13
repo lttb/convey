@@ -3,12 +3,15 @@ import type {ResolverStructure} from '../types';
 
 const paramsOrder = new Map<string, number>();
 
-export function getParamsHash(params) {
+export function getParamsHash(params, hashed = new Set()) {
+    if (hashed.has(params)) return '$cycle$';
+    hashed.add(params);
     if (Array.isArray(params)) {
-        return params.map((param) => getParamsHash(param)).join('_');
+        return params.map((param) => getParamsHash(param, hashed)).join('_');
     }
 
     if (!params) return String(params);
+    if (typeof params === 'function') return `%${params.name || ''}%`;
     if (params.toJSON) return JSON.stringify(params.toJSON());
     if (typeof params !== 'object') {
         return String(params);
@@ -20,7 +23,10 @@ export function getParamsHash(params) {
             paramsOrder.set(param, paramsOrder.size);
         }
 
-        hash += `$${paramsOrder.get(param)}:${getParamsHash(params[param])}$`;
+        hash += `$${paramsOrder.get(param)}:${getParamsHash(
+            params[param],
+            hashed
+        )}$`;
     }
     return hash;
 }

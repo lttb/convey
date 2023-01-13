@@ -3,7 +3,30 @@ import {callbackToIter, terminateStream} from './callbackToIter';
 import {resolve, resolveStream} from './resolvers';
 
 import type {Resolver, CancellableAsyncGenerator, Unbox} from '../types';
-import {getDeps, getStructure} from '..';
+import {
+    createResolver,
+    getCurrentContext,
+    getDeps,
+    getParentContext,
+    getStructure,
+} from './createResolver';
+
+const UNCACHED_VALUE = Symbol('uncached');
+
+export class Uncacheable<T = any> {
+    x = Date.now() + Math.random();
+    [UNCACHED_VALUE]: T;
+
+    constructor(value: T) {
+        this[UNCACHED_VALUE] = value;
+    }
+
+    valueOf(): T {
+        return this[UNCACHED_VALUE];
+    }
+}
+
+const VISITED = Symbol('visited');
 
 export class EventEmitter {
     list: Map<any, Record<string, any>>;
@@ -93,22 +116,33 @@ export class EventEmitter {
             [hash]?.forEach((listner) => listner(dataPromise));
     }
 
-    invalidate<Params extends any[], Result>(
+    async invalidate<Params extends any[], Result>(
         structure: ReturnType<Resolver<Result, Params>>,
         force = false,
-        visited = new Set()
-    ): void {
+        _visited = new Set()
+    ): Promise<Result> {
+        const ctx = getParentContext();
+        const currentContext = getCurrentContext();
+
+        const visited = (ctx || {})[VISITED] || _visited;
+        if (currentContext) currentContext[VISITED] = visited;
+
         const hash = config.getResolverHash(structure);
+
         if (visited.has(hash)) return;
 
-        this.emit(structure, resolve(structure, force));
-
         visited.add(hash);
+
+        const result = resolve(structure, force);
+        this.emit(structure, result);
+
         const deps = getDeps(structure);
 
         deps.forEach((dep) => {
             this.invalidate(dep as any, true, visited);
         });
+        // // TODO: fix types
+        return result as any;
     }
 }
 

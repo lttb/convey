@@ -14,6 +14,14 @@ const getOffer = createResolver(async function getOffer(id: number) {
     return `${id}: ${Math.random()}`;
 });
 
+const updateOffer2 = createResolver(async function updateOffer(id: number) {
+    invalidate(getOffer(id));
+});
+
+const updateOffer = createResolver(async function updateOffer(id: number) {
+    invalidate(updateOffer2(id));
+});
+
 const getTotalPrice = createResolver(async function getTotalPrice(id: number) {
     console.log('call', 'getData', id);
     const result = await Promise.all([getOffer(id), getOffer(id + 1)]);
@@ -40,7 +48,7 @@ const getCart = createResolver(async function getCart() {
 export default function Simple() {
     console.log('render');
     // const [hello] = useResolver(getHello('world'));
-    const [serverDate] = useResolver(getServerDate());
+    // const [serverDate] = useResolver(getServerDate());
     const [dateTest] = useResolver(getCart());
     // const [userName] = useResolver(getUserName());
     const [example] = useResolver(getExample());
@@ -49,12 +57,12 @@ export default function Simple() {
     );
 
     const [data1] = useResolver(getTotalPrice(5));
-    useResolver(getTimestamp());
+    // useResolver(getTimestamp());
     // const [data2] = useResolver(getData(2));
 
     return (
         <div>
-            <p>Server date: {serverDate}</p>
+            {/* <p>Server date: {serverDate}</p> */}
             <p>Server date test: {dateTest}</p>
             <p>Server date test 1: {data1}</p>
 
@@ -62,15 +70,15 @@ export default function Simple() {
             <p>Example: {exampleString}</p>
 
             <button
-                onClick={() => {
-                    invalidate(getOffer(1));
+                onClick={async () => {
+                    await updateOffer(1);
                 }}
             >
                 update
             </button>
             <button
-                onClick={() => {
-                    invalidate(getOffer(6));
+                onClick={async () => {
+                    await updateOffer(6);
                 }}
             >
                 update 2
