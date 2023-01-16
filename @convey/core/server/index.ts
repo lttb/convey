@@ -3,6 +3,7 @@ import {
     resolveStream,
     terminateStream,
     buildResolverMap,
+    getStructure,
 } from '@convey/core';
 
 import {getCacheOptions} from '@convey/core/utils/resolvers';
@@ -118,6 +119,6 @@ export function createResolverHandler(
         // TODO: handle wrong resolver id
         const structure = resolversMap[id as string].apply(this || {}, params);
 
-        await handleResolver(req, res, structure);
+        await handleResolver(req, res, getStructure(structure));
     };
 }
