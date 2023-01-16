@@ -6,7 +6,6 @@
 
 const classesByKey = {};
 
-const ENTITY_KEY = '__entity__8c9e4dd6-8877-4026-a2b8-b3dea53b75dc';
 const DATA_KEY = Symbol('data');
 
 type Primitive =
@@ -21,7 +20,6 @@ type Primitive =
     | (number & object);
 
 export interface IEntity<R> {
-    contains(value: unknown): value is this;
     eq(value: this): boolean;
     value: R;
 }
@@ -41,10 +39,11 @@ const toPrimitive = (value: any) => {
 
 export interface IRegistrar {
     register(name: string): void;
+    contains(value: unknown): value is this;
 }
 
 export function createEntityNamespace(name: string) {
-    const ns = `__entity_namespace_${name}`;
+    const ns = `_${name}_`;
 
     function entity<T = void>(): IRegistrar & (new (data: T) => WrapData<T>);
 
@@ -74,22 +73,29 @@ export function createEntityNamespace(name: string) {
 
         const Parent = isConstructor ? constr : class {};
 
-        const keysByClass = new WeakMap();
+        let key: string;
 
-        return class extends Parent implements IEntity<R> {
+        return class Entity extends Parent implements IEntity<R> {
             [DATA_KEY]: T;
 
             value: R;
 
             static register(name: string) {
-                const key = `${ns}.${name}`;
+                const entityKey = `${ns}.${name}`;
 
-                classesByKey[key] = this;
-                keysByClass.set(this, key);
+                if (key && entityKey !== key) {
+                    throw new Error(
+                        `Entity.register: ${name} is already registered as ${key}`
+                    );
+                }
+
+                key = entityKey;
+
+                classesByKey[key] = Entity;
             }
 
-            contains(value: unknown): value is this {
-                return value instanceof this.constructor;
+            static contains(value: unknown): value is Entity {
+                return value instanceof Entity;
             }
 
             eq(value: this) {
@@ -123,24 +129,21 @@ export function createEntityNamespace(name: string) {
             }
 
             toJSON() {
-                const key = keysByClass.get(this.constructor);
-
                 if (!key) {
                     throw new Error(
-                        `Entity.toJSON: Cannot serialise ${this.constructor.name}`
+                        `Entity.toJSON: ${this.constructor.name} was not registered`
                     );
                 }
 
-                return {
-                    [ENTITY_KEY]: key,
-                    [key]: JSON.stringify(this[DATA_KEY]),
-                };
+                return [this[DATA_KEY], '∈', key];
             }
         };
     }
 
     return entity;
 }
+
+export const entity = createEntityNamespace('_');
 
 // TODO: use Entity class as a type instead of any
 export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
@@ -150,12 +153,15 @@ export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
 };
 
 export const entityReviver = (key: string, value: any) => {
-    if (value && value[ENTITY_KEY]) {
-        return value[value[ENTITY_KEY]];
-    }
+    const isEntity = value && value[1] === '∈' && value.length === 3;
 
-    const CL = classesByKey[key];
+    if (!isEntity) return value;
+
+    const entityKey = value[2];
+    const entityValue = value[0];
+
+    const CL = classesByKey[entityKey];
     if (!CL) return value;
 
-    return new CL(...JSON.parse(value, entityReviver));
+    return new CL(...entityValue);
 };
