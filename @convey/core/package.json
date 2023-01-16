@@ -6,20 +6,6 @@
     "publishConfig": {
         "access": "public"
     },
-    "exports": {
-        ".": {
-            "import": "./index.js",
-            "require": "./index.cjs"
-        },
-        "./server": {
-            "import": "./server/index.js",
-            "require": "./server/index.cjs"
-        },
-        "./client": {
-            "import": "./client/index.js",
-            "require": "./client/index.cjs"
-        }
-    },
     "repository": {
         "type": "git",
         "url": "https://github.com/lttb/convey.git",
@@ -28,11 +14,11 @@
     "scripts": {
         "test": "",
         "prebuild": "rm -rf lib",
-        "build": "rollup -c"
+        "build": "rollup -c --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@microsoft/fetch-event-source": "2.0.0",
-        "@types/invariant": "2.2.34",
+        "@microsoft/fetch-event-source": "2.0.1",
+        "@types/invariant": "2.2.35",
         "@types/warning": "3.0.0",
         "invariant": "2.2.4",
         "isomorphic-unfetch": "3.1.0",
