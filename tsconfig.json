@@ -4,5 +4,10 @@
         "baseUrl": ".",
         "rootDir": "."
     },
-    "include": ["@convey/**/*.ts", "@convey/**/*.json"]
+    "include": [
+        "@convey/**/*.ts",
+        "@convey/**/*.json",
+        "@examples/**/*.tsx",
+        "@examples/**/*.ts"
+    ]
 }

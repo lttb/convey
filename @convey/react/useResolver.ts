@@ -6,6 +6,7 @@ import {
     resolveStream,
     config,
     _Promise,
+    getStructure,
 } from '@convey/core';
 
 import type {Unbox, ResolverResult} from '@convey/core';
@@ -24,7 +25,9 @@ export function useResolver<Result, Params extends any[] = any[]>(
     resolver: null | ResolverResult<Result, Params>
 ): HookResult<Result>;
 
-export function useResolver(structure) {
+export function useResolver(str) {
+    const structure = getStructure(str);
+
     const {resolver} = structure ?? {};
 
     const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(

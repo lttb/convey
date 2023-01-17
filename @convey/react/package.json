@@ -14,10 +14,10 @@
     "scripts": {
         "test": "",
         "prebuild": "rm -rf lib",
-        "build": "rollup -c"
+        "build": "rollup -c --bundleConfigAsCjs"
     },
     "peerDependencies": {
-        "@convey/core": "latest",
+        "@convey/core": "*",
         "react": ">=16.0.0"
     }
 }
