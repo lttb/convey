@@ -10,11 +10,7 @@ const Demo = () => {
         return <div>Loading...</div>;
     }
 
-    const test = new BaseError({code: 'test'});
-
-    console.log(test instanceof BaseError, data instanceof BaseError);
-
-    if (BaseError.contains(data)) {
+    if (data instanceof BaseError) {
         return <div>Error: {data.code}</div>;
     }
 
