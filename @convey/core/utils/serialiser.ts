@@ -92,7 +92,7 @@ export function createEntityNamespace(name: string) {
 
                 key = entityKey;
 
-                classesByKey[key] = Entity;
+                classesByKey[key] = this;
             }
 
             static contains(value: unknown): value is Entity {
