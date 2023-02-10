@@ -1,7 +1,7 @@
-const path = require('path');
+const path = require('path')
 
 function isWebTarget(caller) {
-    return caller?.target !== 'node';
+    return caller?.target !== 'node'
 }
 
 module.exports = (api) => ({
@@ -24,4 +24,4 @@ module.exports = (api) => ({
             },
         ],
     ],
-});
+})

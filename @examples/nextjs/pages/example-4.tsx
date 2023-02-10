@@ -1,52 +1,52 @@
-import {useResolver} from '@convey/react';
+import {useResolver} from '@convey/react'
 
 import {
     getUserIds,
     createUser,
     updateUserName,
     getUser,
-} from '@examples/nextjs/resolvers/server/example-4';
-import {createResolver, invalidate} from '@convey/core';
-import {User} from '@prisma/client';
+} from '@examples/nextjs/resolvers/server/example-4'
+import {createResolver, invalidate} from '@convey/core'
+import {User} from '@prisma/client'
 
 const createNewUser = createResolver(async function () {
     const user = await createUser({
         name: 'John Doe',
         email: `john-${Date.now()}@doe.com`,
-    });
+    })
 
-    await invalidate(getUserIds());
+    await invalidate(getUserIds())
 
-    return user;
-});
+    return user
+})
 
 const updateUser = createResolver(async function () {
-    const user = await updateUserName(1, `Jane Doe ${Math.random()}`);
+    const user = await updateUserName(1, `Jane Doe ${Math.random()}`)
 
-    await invalidate(getUser(1));
+    await invalidate(getUser(1))
 
-    return user;
-});
+    return user
+})
 
 const UserComponent = ({userId}: {userId: User['id']}) => {
-    const [user] = useResolver(getUser(userId));
+    const [user] = useResolver(getUser(userId))
 
     if (user === undefined) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>
     }
 
     return (
         <div>
             {user.name} / {user.email}
         </div>
-    );
-};
+    )
+}
 
 const UserList = () => {
-    const [users] = useResolver(getUserIds());
+    const [users] = useResolver(getUserIds())
 
     if (users === undefined) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>
     }
 
     return (
@@ -58,9 +58,9 @@ const UserList = () => {
 
             <button
                 onClick={async () => {
-                    await createNewUser();
+                    await createNewUser()
 
-                    alert('Done!');
+                    alert('Done!')
                 }}
             >
                 Create New User
@@ -68,21 +68,21 @@ const UserList = () => {
 
             <button
                 onClick={async () => {
-                    await updateUser();
+                    await updateUser()
 
-                    console.log('updated!');
+                    console.log('updated!')
                 }}
             >
                 Update User Name
             </button>
         </div>
-    );
-};
+    )
+}
 
 export default function Simple() {
     return (
         <>
             <UserList />
         </>
-    );
+    )
 }

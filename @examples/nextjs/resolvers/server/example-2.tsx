@@ -1,6 +1,6 @@
-import {createResolver} from '@convey/core';
-import * as s from 'superstruct';
-import {guard} from '@examples/nextjs/utils/guard';
+import {createResolver} from '@convey/core'
+import * as s from 'superstruct'
+import {guard} from '@examples/nextjs/utils/guard'
 
 export const getServerGreeting = createResolver(
     guard(
@@ -9,7 +9,7 @@ export const getServerGreeting = createResolver(
             age: s.number(),
         }),
         (data) => {
-            return `Hello, ${data.name}`;
-        }
-    )
-);
+            return `Hello, ${data.name}`
+        },
+    ),
+)

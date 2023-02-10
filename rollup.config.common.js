@@ -1,5 +1,5 @@
-import typescript from '@rollup/plugin-typescript';
-import copy from 'rollup-plugin-copy';
+import typescript from '@rollup/plugin-typescript'
+import copy from 'rollup-plugin-copy'
 
 const config =
     // ES module build (replaces broken basic TypeScript compilation)
@@ -32,7 +32,7 @@ const config =
                         src: 'package.json',
                         dest: 'lib',
                         transform: (contents, filename) => {
-                            const packageJson = JSON.parse(contents.toString());
+                            const packageJson = JSON.parse(contents.toString())
 
                             return JSON.stringify({
                                 main: 'index.cjs',
@@ -57,12 +57,12 @@ const config =
                                 },
 
                                 ...packageJson,
-                            });
+                            })
                         },
                     },
                 ],
             }),
         ],
-    };
+    }
 
-export default config;
+export default config

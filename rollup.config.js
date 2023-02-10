@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescript from 'rollup-plugin-typescript2'
 
 const config = [
     // ES module build (replaces broken basic TypeScript compilation)
@@ -24,6 +24,6 @@ const config = [
             }),
         ],
     },
-];
+]
 
-export default config;
+export default config

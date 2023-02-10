@@ -1,41 +1,41 @@
-import unfetch from 'isomorphic-unfetch';
+import unfetch from 'isomorphic-unfetch'
 
-import {fetchEventSource} from '@microsoft/fetch-event-source';
+import {fetchEventSource} from '@microsoft/fetch-event-source'
 
-import {callbackToIter, entityReviver} from '../utils';
-import type {CancellableAsyncGenerator, ResolverOptions} from '../types';
+import {callbackToIter, entityReviver} from '../utils'
+import type {CancellableAsyncGenerator, ResolverOptions} from '../types'
 
-const EventStreamContentType = 'text/event-stream';
-const JSONContentType = 'application/json';
+const EventStreamContentType = 'text/event-stream'
+const JSONContentType = 'application/json'
 
 type MessageData = {
-    options: ResolverOptions;
-    payload: any;
-    error?: boolean;
-};
+    options: ResolverOptions
+    payload: any
+    error?: boolean
+}
 
 type Message = {
-    stream?: boolean;
-    data?: MessageData;
-};
+    stream?: boolean
+    data?: MessageData
+}
 class ExpectedError extends Error {
-    data?: MessageData;
+    data?: MessageData
     constructor(data?) {
-        super('');
+        super('')
 
-        this.data = data;
+        this.data = data
     }
 }
 
 type FetchedResolver = {
-    params: any;
-    options: ResolverOptions;
-    stream: boolean;
-};
+    params: any
+    options: ResolverOptions
+    stream: boolean
+}
 
-type RequestHeaders = Record<string, string>;
+type RequestHeaders = Record<string, string>
 
-const GET_LIMIT = 2048;
+const GET_LIMIT = 2048
 
 export function createResolverFetcher({
     url,
@@ -43,43 +43,43 @@ export function createResolverFetcher({
     reviver = entityReviver,
     headers = {},
 }: {
-    url?: string | ((structure: FetchedResolver) => string);
-    openWhenHidden?: boolean;
-    reviver?: typeof entityReviver;
-    headers?: RequestHeaders | ((structure: FetchedResolver) => RequestHeaders);
+    url?: string | ((structure: FetchedResolver) => string)
+    openWhenHidden?: boolean
+    reviver?: typeof entityReviver
+    headers?: RequestHeaders | ((structure: FetchedResolver) => RequestHeaders)
 } = {}) {
     return async function* fetchResolver(
-        structure: FetchedResolver
+        structure: FetchedResolver,
     ): CancellableAsyncGenerator<Message> {
         yield* callbackToIter<Message>(({done, reject, next}) => {
             const ctrl =
                 typeof AbortController !== 'undefined'
                     ? new AbortController()
-                    : null;
+                    : null
 
             const {
                 params,
                 options: {id},
-            } = structure;
+            } = structure
 
             let link =
                 typeof url === 'function'
                     ? url(structure)
-                    : url || `/api/resolver/${id}`;
+                    : url || `/api/resolver/${id}`
 
-            const body = JSON.stringify({params, id});
+            const body = JSON.stringify({params, id})
 
-            let methodOptions;
+            let methodOptions
 
             if (body.length + link.length + 1 < GET_LIMIT) {
-                methodOptions = {method: 'GET'};
-                const getParams = new URLSearchParams({b: body}).toString();
-                link += (link.includes('?') ? `&` : `?`) + getParams;
+                methodOptions = {method: 'GET'}
+                const getParams = new URLSearchParams({b: body}).toString()
+                link += (link.includes('?') ? `&` : `?`) + getParams
             } else {
                 methodOptions = {
                     method: 'POST',
                     body: JSON.stringify({b: body}),
-                };
+                }
             }
 
             fetchEventSource(link, {
@@ -93,7 +93,7 @@ export function createResolverFetcher({
 
                 headers: {
                     accept: [JSONContentType, EventStreamContentType].join(
-                        ', '
+                        ', ',
                     ),
                     'content-type': JSONContentType,
 
@@ -103,49 +103,49 @@ export function createResolverFetcher({
                 },
 
                 async onopen(response) {
-                    const contentType = response.headers.get('content-type');
+                    const contentType = response.headers.get('content-type')
 
                     if (contentType?.startsWith(JSONContentType)) {
                         throw new ExpectedError(
-                            JSON.parse(await response.text(), reviver)
-                        );
+                            JSON.parse(await response.text(), reviver),
+                        )
                     }
 
                     if (!contentType?.startsWith(EventStreamContentType)) {
                         throw new Error(
-                            `Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`
-                        );
+                            `Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`,
+                        )
                     }
                 },
 
                 onerror(err) {
                     if (err instanceof ExpectedError) {
-                        done({stream: false, data: err.data});
+                        done({stream: false, data: err.data})
 
-                        throw new ExpectedError();
+                        throw new ExpectedError()
                     } else {
-                        reject(err);
+                        reject(err)
                     }
                 },
 
                 onmessage(message) {
-                    next({data: JSON.parse(message.data, reviver)});
+                    next({data: JSON.parse(message.data, reviver)})
                 },
 
                 onclose() {
-                    done({stream: true});
+                    done({stream: true})
                 },
             }).catch((err) => {
                 if (err instanceof ExpectedError) {
-                    return;
+                    return
                 }
 
-                reject(err);
-            });
+                reject(err)
+            })
 
             return () => {
-                if (ctrl) ctrl.abort();
-            };
-        });
-    };
+                if (ctrl) ctrl.abort()
+            }
+        })
+    }
 }

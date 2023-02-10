@@ -62,7 +62,7 @@ module.exports = {
             },
         ],
     ],
-};
+}
 ```
 
 ### Server handler config
@@ -70,14 +70,14 @@ module.exports = {
 > See [nextjs pages/api/resolver/[id].ts](examples/convey-nextjs/pages/api/resolver/[id].ts) for example
 
 ```ts
-import {createResolverHandler} from '@convey/core/server';
+import {createResolverHandler} from '@convey/core/server'
 
-import * as resolvers from '@app/resolvers/server';
+import * as resolvers from '@app/resolvers/server'
 
-const handleResolver = createResolverHandler(resolvers);
+const handleResolver = createResolverHandler(resolvers)
 
 export default async function handle(req, res) {
-    await handleResolver(req, res);
+    await handleResolver(req, res)
 }
 ```
 
@@ -86,12 +86,12 @@ export default async function handle(req, res) {
 > See [nextjs pages/\_app.tsx](examples/convey-nextjs/pages/_app.tsx) for example
 
 ```ts
-import {setConfig} from '@convey/core';
-import {createResolverFetcher} from '@convey/core/client';
+import {setConfig} from '@convey/core'
+import {createResolverFetcher} from '@convey/core/client'
 
 setConfig({
     fetch: createResolverFetcher(),
-});
+})
 ```
 
 ### Declare and use resolvers
@@ -101,45 +101,43 @@ setConfig({
 _resolvers/server/index.tsx_
 
 ```ts
-import {exec} from 'child_process';
-import {promisify} from 'util';
+import {exec} from 'child_process'
+import {promisify} from 'util'
 
-import {createResolver, createResolverStream} from '@convey/core';
+import {createResolver, createResolverStream} from '@convey/core'
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * This code will be executed on the server side
  */
 export const getServerDate = createResolver(async () =>
-    promisify(exec)('date').then((x) => x.stdout.toString())
-);
+    promisify(exec)('date').then((x) => x.stdout.toString()),
+)
 
-export const getServerHello = createResolver(
-    (name: string) => `Hello, ${name}`
-);
+export const getServerHello = createResolver((name: string) => `Hello, ${name}`)
 
 /**
  * It is also possible to declare the stream via generator function.
  * By default, the data will be streamed by SSE (Server Sent Events)
  */
 export const getServerHelloStream = createResolverStream(async function* (
-    name: string
+    name: string,
 ) {
     while (true) {
         /**
          * Resolvers could be called as normal functions on server side too
          */
-        yield await getServerHello(`${name}-${await getServerDate()}`);
-        await wait(1000);
+        yield await getServerHello(`${name}-${await getServerDate()}`)
+        await wait(1000)
     }
-});
+})
 ```
 
 After processing, on the client-side the actual code will be like:
 
 ```js
-import {createResolver, createResolverStream} from '@convey/core';
+import {createResolver, createResolverStream} from '@convey/core'
 
 /**
  * This code will be executed on the server side
@@ -149,15 +147,15 @@ export const getServerDate = createResolver(
     {},
     {
         id: '3296945930:getServerDate',
-    }
-);
+    },
+)
 
 export const getServerHello = createResolver(
     {},
     {
         id: '3296945930:getServerHello',
-    }
-);
+    },
+)
 
 /**
  * It is also possible to declare the stream via generator function.
@@ -167,8 +165,8 @@ export const getServerHelloStream = createResolverStream(
     {},
     {
         id: '3296945930:getServerHelloStream',
-    }
-);
+    },
+)
 ```
 
 #### Client resolver usage
@@ -176,39 +174,39 @@ export const getServerHelloStream = createResolverStream(
 Direct usage:
 
 ```ts
-import {getServerHello, getServerHelloStream} from '@app/resolvers/server';
+import {getServerHello, getServerHelloStream} from '@app/resolvers/server'
 
-console.log(await getServerHello('world')); // `Hello, world`
+console.log(await getServerHello('world')) // `Hello, world`
 
 for await (let hello of getServerHelloStream('world')) {
-    console.log(hello); // `Hello, world-1637759100546` every second
+    console.log(hello) // `Hello, world-1637759100546` every second
 }
 ```
 
 Usage with React:
 
 ```tsx
-import {useResolver} from '@convey/react';
-import {getServerHello, getServerHelloStream} from '@app/resolvers/server';
+import {useResolver} from '@convey/react'
+import {getServerHello, getServerHelloStream} from '@app/resolvers/server'
 
 export const HelloComponent = () => {
     /**
      * Component will be automatically rerendered on data invalidation
      */
-    const [hello] = useResolver(getServerHello('world'));
+    const [hello] = useResolver(getServerHello('world'))
     /**
      * If resolver is a stream, then component will be rerendered
      * on each new chunk of data
      */
-    const [helloStream] = useResolver(getServerHelloStream('world'));
+    const [helloStream] = useResolver(getServerHelloStream('world'))
 
     return (
         <div>
             <p>Single hello: {hello}</p>
             <p>Stream hello: {helloStream}</p>
         </div>
-    );
-};
+    )
+}
 ```
 
 ## Thanks
