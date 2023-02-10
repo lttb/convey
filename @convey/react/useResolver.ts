@@ -1,91 +1,89 @@
-import {useState, useEffect} from 'react'
-
 import {
-    subscribeStream,
-    subscribe,
-    resolveStream,
-    config,
-    _Promise,
-    getStructure,
+  subscribeStream,
+  subscribe,
+  resolveStream,
+  config,
+  _Promise,
+  getStructure,
 } from '@convey/core'
-
 import type {Unbox, ResolverResult} from '@convey/core'
+import {useState, useEffect} from 'react'
 
 type MetaBase<Result> = {refresh: () => Result}
 
 type HookResult<Result> =
-    | [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
-    | [
-          undefined,
-          MetaBase<Result> &
-              ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error}),
-      ]
+  | [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
+  | [
+      undefined,
+      MetaBase<Result> &
+        ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error}),
+    ]
 
 export function useResolver<Result, Params extends any[] = any[]>(
-    resolver: null | ResolverResult<Result, Params>,
+  resolver: null | ResolverResult<Result, Params>,
 ): HookResult<Result>
 
 export function useResolver(str) {
-    const structure = getStructure(str)
+  const structure = getStructure(str)
 
-    const {resolver} = structure ?? {}
+  const {resolver} = structure ?? {}
 
-    const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(
-        null,
-    )
-    const [meta, setMeta] = useState<HookResult<any>[1]>({
-        status: 'UNSET',
-        refresh: async () => {
-            const newResultPromise = new _Promise()
-            setResultPromise(newResultPromise)
+  const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(null)
 
-            return newResultPromise
-        },
-    })
-    const [data, setData] = useState(undefined)
+  const [meta, setMeta] = useState<HookResult<any>[1]>({
+    status: 'UNSET',
+    refresh: async () => {
+      const newResultPromise = new _Promise()
+      setResultPromise(newResultPromise)
 
-    useEffect(() => {
-        if (!resolver) return
+      return newResultPromise
+    },
+  })
 
-        let iter
-        let finished = false
+  const [data, setData] = useState(undefined)
 
-        async function main() {
-            setMeta((meta) => ({...meta, status: 'PENDING'}))
+  useEffect(() => {
+    if (!resolver) return
 
-            if (structure.stream) {
-                if (typeof resolver === 'function') {
-                    iter = resolveStream(structure)
-                } else {
-                    iter = subscribeStream(structure)
-                }
-            } else {
-                iter = subscribe(structure)
-            }
+    let iter
+    let finished = false
 
-            try {
-                for await (let value of iter) {
-                    if (finished) return
+    async function main() {
+      setMeta((meta) => ({...meta, status: 'PENDING'}))
 
-                    setData(() => value)
-                    setMeta((meta) => ({...meta, status: 'DONE'}))
-                    resultPromise?.resolve(value)
-                }
-            } catch (error) {
-                setMeta((meta) => ({...meta, status: 'ERROR', error}))
-                resultPromise?.reject(error)
-            }
+      if (structure.stream) {
+        if (typeof resolver === 'function') {
+          iter = resolveStream(structure)
+        } else {
+          iter = subscribeStream(structure)
         }
+      } else {
+        iter = subscribe(structure)
+      }
 
-        main()
+      try {
+        for await (const value of iter) {
+          if (finished) return
 
-        return () => {
-            finished = true
-
-            iter.return()
+          setData(() => value)
+          setMeta((meta) => ({...meta, status: 'DONE'}))
+          resultPromise?.resolve(value)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resolver, config.getResolverHash(structure), resultPromise])
+      } catch (error) {
+        setMeta((meta) => ({...meta, status: 'ERROR', error}))
+        resultPromise?.reject(error)
+      }
+    }
 
-    return [data, meta] as any
+    main()
+
+    return () => {
+      finished = true
+
+      iter.return()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolver, config.getResolverHash(structure), resultPromise])
+
+  return [data, meta] as any
 }

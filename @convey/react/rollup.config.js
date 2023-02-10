@@ -1,10 +1,10 @@
 import commonConfig from '../../rollup.config.common'
 
 const config = {
-    ...commonConfig,
+  ...commonConfig,
 
-    input: ['index.ts', 'ServerComponent.ts'],
-    external: ['react', '@convey/core'],
+  input: ['index.ts', 'ServerComponent.ts'],
+  external: ['react', '@convey/core'],
 }
 
 export default config

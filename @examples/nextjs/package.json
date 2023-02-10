@@ -1,23 +1,23 @@
 {
-    "name": "@examples/nextjs",
-    "private": true,
-    "version": "0.0.0",
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start"
-    },
-    "dependencies": {
-        "@prisma/client": "^4.10.1",
-        "devcert": "1.2.2",
-        "next": "13.0.7",
-        "next-transpile-modules": "10.0.0",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
-        "superstruct": "^1.0.3"
-    },
-    "devDependencies": {
-        "@types/react": "^18.0.0",
-        "prisma": "^4.10.1"
-    }
+  "name": "@examples/nextjs",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.10.1",
+    "devcert": "1.2.2",
+    "next": "13.0.7",
+    "next-transpile-modules": "10.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "superstruct": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "prisma": "^4.10.1"
+  }
 }

@@ -1,81 +1,84 @@
 {
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": ["@typescript-eslint", "import"],
-    "extends": [
-        "eslint:recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "import"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "multiline-block-like",
+        "next": "*"
+      },
+      {"blankLine": "always", "prev": "multiline-const", "next": "*"},
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-block-like"
+      },
+      {"blankLine": "never", "prev": "case", "next": "case"}
     ],
 
-    "rules": {
-        "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "no-constant-condition": ["error", {"checkLoops": false}],
 
-        "padding-line-between-statements": [
-            "error",
-            {
-                "blankLine": "always",
-                "prev": "multiline-block-like",
-                "next": "*"
-            },
-            {"blankLine": "always", "prev": "multiline-const", "next": "*"},
-            {
-                "blankLine": "always",
-                "prev": "*",
-                "next": "multiline-block-like"
-            },
-            {"blankLine": "never", "prev": "case", "next": "case"}
+    "quotes": ["error", "single", {"avoidEscape": true}],
+
+    "semi": ["error", "never"],
+
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
         ],
+        "newlines-between": "always",
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {"order": "asc", "caseInsensitive": true}
+      }
+    ],
 
-        "no-constant-condition": ["error", {"checkLoops": false}],
+    "react/react-in-jsx-scope": "off"
+  },
 
-        "quotes": ["error", "single", {"avoidEscape": true}],
-
-        "semi": ["error", "never"],
-
-        "import/order": [
-            "error",
-            {
-                "groups": [
-                    "builtin",
-                    "external",
-                    "internal",
-                    "parent",
-                    "sibling",
-                    "index"
-                ],
-                "newlines-between": "always",
-                "pathGroups": [
-                    {
-                        "pattern": "@l/**",
-                        "group": "internal",
-                        "position": "before"
-                    },
-                    {
-                        "pattern": "@s/**",
-                        "group": "internal",
-                        "position": "before"
-                    },
-                    {
-                        "pattern": "@p/**",
-                        "group": "internal",
-                        "position": "before"
-                    }
-                ],
-                "pathGroupsExcludedImportTypes": ["builtin"],
-                "alphabetize": {"order": "asc", "caseInsensitive": true}
-            }
-        ]
-    },
-
-    "env": {
-        "browser": true,
-        "es2022": true
+  "overrides": [
+    {
+      "files": ["**/*.js", "**/*.config.js", "@convey/babel-plugin/**"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
     }
+  ],
+
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+
+  "settings": {
+    "react": {
+      "version": "18.1.0"
+    }
+  }
 }

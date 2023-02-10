@@ -1,8 +1,8 @@
 {
-    "extends": "./tsconfig.build.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "rootDir": "."
-    },
-    "include": ["@convey/**/*", "@examples/**/*"]
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "."
+  },
+  "include": ["@convey/**/*", "@examples/**/*"]
 }
