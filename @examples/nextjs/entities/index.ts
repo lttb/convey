@@ -1,10 +1,16 @@
-import {createEntityNamespace, registerEntities} from '@convey/core';
+import {entity, registerEntities} from '@convey/core';
 
-const entity = createEntityNamespace('example');
+export class Tags extends entity(Set<string>) {}
 
-export class ExampleEntity extends entity<{
-    id: number;
-    name: string;
+export class MyComplicatedStructure extends entity<{
+    createdAt: Date;
+    tags: Tags;
 }>() {}
 
-registerEntities({ExampleEntity});
+export class BaseError extends entity<{
+    code: string;
+}>() {}
+
+export class EntityDate extends entity(Date) {}
+
+registerEntities({Tags, MyComplicatedStructure, EntityDate, BaseError});
