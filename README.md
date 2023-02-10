@@ -8,16 +8,16 @@
 
 ## Key Features
 
-- Seameless code usage between client and server – call server functions just as normal functions (and vice-versa).
-- Out of the box streaming support (with Server Sent Events by default)
-- Framework agnostic
-- Strong Typescript support
-- Advanced resolver caching options: from HTTP-level to session storage
-- Performant React component subscriptions, and automatic cache invalidation rerendering
+-   Seameless code usage between client and server – call server functions just as normal functions (and vice-versa).
+-   Out of the box streaming support (with Server Sent Events by default)
+-   Framework agnostic
+-   Strong Typescript support
+-   Advanced resolver caching options: from HTTP-level to session storage
+-   Performant React component subscriptions, and automatic cache invalidation rerendering
 
 ## Examples
 
--   [nextjs](examples/convey-nextjs)
+-   [nextjs](@examples/nextjs)
 
 [![codesandbox example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/upbeat-tess-zxk1e?file=/pages/index.tsx)
 
@@ -101,8 +101,8 @@ setConfig({
 _resolvers/server/index.tsx_
 
 ```ts
-import { exec } from "child_process";
-import { promisify } from "util";
+import {exec} from 'child_process';
+import {promisify} from 'util';
 
 import {createResolver, createResolverStream} from '@convey/core';
 
@@ -112,7 +112,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * This code will be executed on the server side
  */
 export const getServerDate = createResolver(async () =>
-    promisify(exec)("date").then((x) => x.stdout.toString())
+    promisify(exec)('date').then((x) => x.stdout.toString())
 );
 
 export const getServerHello = createResolver(
@@ -139,29 +139,37 @@ export const getServerHelloStream = createResolverStream(async function* (
 After processing, on the client-side the actual code will be like:
 
 ```js
-import { createResolver, createResolverStream } from '@convey/core';
+import {createResolver, createResolverStream} from '@convey/core';
 
 /**
  * This code will be executed on the server side
  */
- 
-export const getServerDate = createResolver({}, {
-  id: "3296945930:getServerDate"
-}); 
- 
-export const getServerHello = createResolver({}, {
-  id: "3296945930:getServerHello"
-});
+
+export const getServerDate = createResolver(
+    {},
+    {
+        id: '3296945930:getServerDate',
+    }
+);
+
+export const getServerHello = createResolver(
+    {},
+    {
+        id: '3296945930:getServerHello',
+    }
+);
 
 /**
  * It is also possible to declare the stream via generator function.
  * By default, the data will be streamed by SSE (Server Sent Events)
  */
-export const getServerHelloStream = createResolverStream({}, {
-  id: "3296945930:getServerHelloStream"
-});
+export const getServerHelloStream = createResolverStream(
+    {},
+    {
+        id: '3296945930:getServerHelloStream',
+    }
+);
 ```
-
 
 #### Client resolver usage
 
