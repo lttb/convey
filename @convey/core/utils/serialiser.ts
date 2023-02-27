@@ -37,31 +37,32 @@ const toPrimitive = (value: any) => {
     return value;
 };
 
-export interface IRegistrar {
+export interface IRegistrar<T> {
     register(name: string): void;
-    contains(value: unknown): value is this;
+    contains(value: unknown): value is T;
 }
 
 export function createEntityNamespace(name: string) {
     const ns = `_${name}_`;
 
-    function entity<T = void>(): IRegistrar & (new (data: T) => WrapData<T>);
+    function entity<T = void>(): IRegistrar<T> & (new (data: T) => WrapData<T>);
 
     function entity<C extends new (...args: void[]) => any>(
         constr: C
-    ): IRegistrar &
+    ): IRegistrar<C> &
         (new (...args: ConstructorParameters<C> | []) => WrapData<
             InstanceType<C>
         >);
 
     function entity<C extends new (...args: any[]) => any>(
         constr: C
-    ): IRegistrar &
+    ): IRegistrar<C> &
         (new (...args: ConstructorParameters<C>) => WrapData<InstanceType<C>>);
 
     function entity<C extends (...args: any[]) => any>(
         constr: C
-    ): IRegistrar & (new (...args: Parameters<C>) => WrapData<ReturnType<C>>);
+    ): IRegistrar<C> &
+        (new (...args: Parameters<C>) => WrapData<ReturnType<C>>);
 
     function entity<T extends any[], R>(
         constr?: new (...args: [...T]) => R
@@ -91,7 +92,7 @@ export function createEntityNamespace(name: string) {
 
                 key = entityKey;
 
-                classesByKey[key] = Entity;
+                classesByKey[key] = this;
             }
 
             static contains(value: unknown): value is Entity {
@@ -126,6 +127,8 @@ export function createEntityNamespace(name: string) {
                 this.toString = () => String(value);
 
                 this.value = value;
+
+                // console.log('name', this.constructor.name);
             }
 
             toJSON() {
@@ -146,7 +149,9 @@ export function createEntityNamespace(name: string) {
 export const entity = createEntityNamespace('_');
 
 // TODO: use Entity class as a type instead of any
-export const registerEntities = (entityMap: Record<string, IRegistrar>) => {
+export const registerEntities = (
+    entityMap: Record<string, IRegistrar<any>>
+) => {
     Object.entries(entityMap).forEach(
         ([name, cls]) => cls.register && cls.register(name)
     );
