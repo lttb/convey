@@ -38,7 +38,7 @@ npm install --save @convey/react
 
 ### Babel config
 
-> See [nextjs babel.config.js](examples/convey-nextjs/babel.config.js) for example
+> See [nextjs babel.config.js](@examples/nextjs/babel.config.js) for example
 
 Add `@convey/babel-plugin` to your babel config:
 
@@ -67,7 +67,7 @@ module.exports = {
 
 ### Server handler config
 
-> See [nextjs pages/api/resolver/[id].ts](examples/convey-nextjs/pages/api/resolver/[id].ts) for example
+> See [nextjs pages/api/resolver/[id].ts](@examples/nextjs/pages/api/resolver/[id].ts) for example
 
 ```ts
 import {createResolverHandler} from '@convey/core/server';
@@ -83,7 +83,7 @@ export default async function handle(req, res) {
 
 ### Client config
 
-> See [nextjs pages/\_app.tsx](examples/convey-nextjs/pages/_app.tsx) for example
+> See [nextjs pages/\_app.tsx](@examples/nextjs/pages/_app.tsx) for example
 
 ```ts
 import {setConfig} from '@convey/core';
