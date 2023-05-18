@@ -10,10 +10,9 @@
     "dependencies": {
         "@prisma/client": "^4.10.1",
         "devcert": "1.2.2",
-        "next": "13.0.7",
-        "next-transpile-modules": "10.0.0",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
+        "next": "^13.4.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "superstruct": "^1.0.3"
     },
     "devDependencies": {
