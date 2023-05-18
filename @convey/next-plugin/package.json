@@ -1,6 +1,6 @@
 {
     "name": "@convey/next-plugin",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "main": "index.js",
@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "@babel/core": "^7.20.5",
-        "@convey/babel-plugin": "^0.3.1"
+        "@convey/babel-plugin": "^0.3.2"
     },
     "devDependencies": {
         "next": "^13.2.4",
