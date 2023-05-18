@@ -1,0 +1,23 @@
+{
+    "name": "@convey/next-plugin",
+    "version": "0.0.1",
+    "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+    "license": "MIT",
+    "main": "index.js",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lttb/convey.git",
+        "directory": "@convey/next-plugin"
+    },
+    "dependencies": {
+        "@babel/core": "^7.20.5",
+        "@convey/babel-plugin": "^0.3.1"
+    },
+    "devDependencies": {
+        "next": "^13.2.4",
+        "webpack": "^5.77.0"
+    }
+}
