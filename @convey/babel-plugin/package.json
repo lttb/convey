@@ -1,6 +1,6 @@
 {
     "name": "@convey/babel-plugin",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
     "license": "MIT",
     "main": "index.js",
