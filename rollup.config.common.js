@@ -34,6 +34,10 @@ const config =
                         transform: (contents, filename) => {
                             const packageJson = JSON.parse(contents.toString());
 
+                            if (packageJson.name === '@convey/babel-plugin') {
+                                return JSON.stringify(packageJson)
+                            }
+
                             return JSON.stringify({
                                 main: 'index.cjs',
                                 module: 'index.js',
