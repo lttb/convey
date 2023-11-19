@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0-a.0](https://github.com/lttb/convey/compare/@convey/core@0.17.0-i.0...@convey/core@0.18.0-a.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/core
+
 # [0.17.0-i.0](https://github.com/lttb/convey/compare/@convey/core@0.16.0...@convey/core@0.17.0-i.0) (2023-11-19)
 
 **Note:** Version bump only for package @convey/core
