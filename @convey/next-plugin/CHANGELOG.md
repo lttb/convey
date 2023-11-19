@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-i.0](https://github.com/lttb/convey/compare/@convey/next-plugin@0.1.1...@convey/next-plugin@0.2.0-i.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/next-plugin
+
 ## [0.1.1](https://github.com/lttb/convey/compare/@convey/next-plugin@0.1.0...@convey/next-plugin@0.1.1) (2023-06-09)
 
 **Note:** Version bump only for package @convey/next-plugin
