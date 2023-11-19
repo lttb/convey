@@ -10,14 +10,8 @@ const config =
         output: [
             {
                 dir: 'lib',
-                format: 'esm',
-                entryFileNames: '[name].js',
-                preserveModules: true, // or `false` to bundle as a single file
-            },
-            {
-                dir: 'lib',
                 format: 'cjs',
-                entryFileNames: '[name].cjs',
+                entryFileNames: '[name].js',
                 preserveModules: true, // or `false` to bundle as a single file
             },
         ],
@@ -35,31 +29,12 @@ const config =
                             const packageJson = JSON.parse(contents.toString());
 
                             if (packageJson.name === '@convey/babel-plugin') {
-                                return JSON.stringify(packageJson)
+                                return JSON.stringify(packageJson);
                             }
 
                             return JSON.stringify({
-                                main: 'index.cjs',
-                                module: 'index.js',
+                                main: 'index.js',
                                 types: 'index.d.ts',
-                                exports: {
-                                    '.': {
-                                        import: './index.js',
-                                        require: './index.cjs',
-                                    },
-
-                                    ...(packageJson.name === '@convey/core' && {
-                                        './server': {
-                                            import: './server/index.js',
-                                            require: './server/index.cjs',
-                                        },
-                                        './client': {
-                                            import: './client/index.js',
-                                            require: './client/index.cjs',
-                                        },
-                                    }),
-                                },
-
                                 ...packageJson,
                             });
                         },
