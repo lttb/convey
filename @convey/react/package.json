@@ -19,6 +19,5 @@
     "peerDependencies": {
         "@convey/core": "*",
         "react": ">=16.0.0"
-    },
-    "gitHead": "31858ccddb2264ae5285ceb37eb509df30174fba"
+    }
 }

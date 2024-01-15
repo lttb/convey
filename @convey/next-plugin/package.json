@@ -19,6 +19,5 @@
     "devDependencies": {
         "next": "^13.2.4",
         "webpack": "^5.77.0"
-    },
-    "gitHead": "31858ccddb2264ae5285ceb37eb509df30174fba"
+    }
 }

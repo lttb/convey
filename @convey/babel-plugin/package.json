@@ -22,6 +22,5 @@
         "@babel/types": "^7.20.5",
         "minimatch": "^5.1.1",
         "string-hash": "^1.1.3"
-    },
-    "gitHead": "31858ccddb2264ae5285ceb37eb509df30174fba"
+    }
 }
