@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-a.0](https://github.com/lttb/convey/compare/@convey/babel-plugin@0.3.4...@convey/babel-plugin@0.5.0-a.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/babel-plugin
+
+# [0.4.0-i.0](https://github.com/lttb/convey/compare/@convey/babel-plugin@0.3.4...@convey/babel-plugin@0.4.0-i.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/babel-plugin
+
 ## [0.3.4](https://github.com/lttb/convey/compare/@convey/babel-plugin@0.3.2...@convey/babel-plugin@0.3.4) (2023-06-09)
 
 **Note:** Version bump only for package @convey/babel-plugin

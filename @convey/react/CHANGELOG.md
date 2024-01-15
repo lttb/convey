@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0-a.0](https://github.com/lttb/convey/compare/@convey/react@0.8.0-i.0...@convey/react@0.9.0-a.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/react
+
+# [0.8.0-i.0](https://github.com/lttb/convey/compare/@convey/react@0.7.0...@convey/react@0.8.0-i.0) (2023-11-19)
+
+**Note:** Version bump only for package @convey/react
+
 # [0.7.0](https://github.com/lttb/convey/compare/@convey/react@0.6.1...@convey/react@0.7.0) (2023-01-17)
 
 ### Features
