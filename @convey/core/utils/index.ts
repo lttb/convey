@@ -1,9 +1,9 @@
-export {callbackToIter, terminateStream} from './callbackToIter';
+export { callbackToIter, terminateStream } from './callbackToIter'
 
-export {getParamsHash, getResolverHash} from './hash';
+export { getParamsHash, getResolverHash } from './hash'
 
-export {resolve, resolveStream} from './resolvers';
+export { resolve, resolveStream } from './resolvers'
 
-export {_Promise} from './_Promise';
+export { _Promise } from './_Promise'
 
-export * from './serialiser';
+export * from './serialiser'

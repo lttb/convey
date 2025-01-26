@@ -1,88 +1,88 @@
-import {useResolver} from '@convey/react';
+import { useResolver } from '@convey/react'
 
 import {
-    getUserIds,
-    createUser,
-    updateUserName,
-    getUser,
-} from '@examples/nextjs/resolvers/server/example-4';
-import {createResolver, invalidate} from '@convey/core';
-import {User} from '@prisma/client';
+	getUserIds,
+	createUser,
+	updateUserName,
+	getUser,
+} from '@examples/nextjs/resolvers/server/example-4'
+import { createResolver, invalidate } from '@convey/core'
+import type { User } from '@prisma/client'
 
-const createNewUser = createResolver(async function () {
-    const user = await createUser({
-        name: 'John Doe',
-        email: `john-${Date.now()}@doe.com`,
-    });
+const createNewUser = createResolver(async () => {
+	const user = await createUser({
+		name: 'John Doe',
+		email: `john-${Date.now()}@doe.com`,
+	})
 
-    await invalidate(getUserIds());
+	await invalidate(getUserIds())
 
-    return user;
-});
+	return user
+})
 
-const updateUser = createResolver(async function () {
-    const user = await updateUserName(1, `Jane Doe ${Math.random()}`);
+const updateUser = createResolver(async () => {
+	const user = await updateUserName(1, `Jane Doe ${Math.random()}`)
 
-    await invalidate(getUser(1));
+	await invalidate(getUser(1))
 
-    return user;
-});
+	return user
+})
 
-const UserComponent = ({userId}: {userId: User['id']}) => {
-    const [user] = useResolver(getUser(userId));
+const UserComponent = ({ userId }: { userId: User['id'] }) => {
+	const [user] = useResolver(getUser(userId))
 
-    if (user === undefined) {
-        return <div>Loading...</div>;
-    }
+	if (user === undefined) {
+		return <div>Loading...</div>
+	}
 
-    return (
-        <div>
-            {user.name} / {user.email}
-        </div>
-    );
-};
+	return (
+		<div>
+			{user.name} / {user.email}
+		</div>
+	)
+}
 
 const UserList = () => {
-    const [users] = useResolver(getUserIds());
+	const [users] = useResolver(getUserIds())
 
-    if (users === undefined) {
-        return <div>Loading...</div>;
-    }
+	if (users === undefined) {
+		return <div>Loading...</div>
+	}
 
-    return (
-        <div>
-            <p>Users:</p>
-            {users.map((x) => (
-                <UserComponent key={x.id} userId={x.id} />
-            ))}
+	return (
+		<div>
+			<p>Users:</p>
+			{users.map((x) => (
+				<UserComponent key={x.id} userId={x.id} />
+			))}
 
-            <button
-                onClick={async () => {
-                    await createNewUser();
+			<button
+				onClick={async () => {
+					await createNewUser()
 
-                    alert('Done!');
-                }}
-            >
-                Create New User
-            </button>
+					alert('Done!')
+				}}
+			>
+				Create New User
+			</button>
 
-            <button
-                onClick={async () => {
-                    await updateUser();
+			<button
+				onClick={async () => {
+					await updateUser()
 
-                    console.log('updated!');
-                }}
-            >
-                Update User Name
-            </button>
-        </div>
-    );
-};
+					console.log('updated!')
+				}}
+			>
+				Update User Name
+			</button>
+		</div>
+	)
+}
 
 export default function Simple() {
-    return (
-        <>
-            <UserList />
-        </>
-    );
+	return (
+		<>
+			<UserList />
+		</>
+	)
 }

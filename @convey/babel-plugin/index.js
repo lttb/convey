@@ -1,7 +1,7 @@
-const t = require('@babel/types');
-const minimatch = require('minimatch');
-const stringHash = require('string-hash');
-const nodePath = require('path');
+const t = require('@babel/types')
+const minimatch = require('minimatch')
+const stringHash = require('string-hash')
+const nodePath = require('node:path')
 
 /**
  * @typedef {Object} PluginOptions
@@ -9,9 +9,9 @@ const nodePath = require('path');
  * @prop {string} root - path to root directory
  */
 
-const NAMESPACE = '@convey';
+const NAMESPACE = '@convey'
 
-const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream']);
+const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream'])
 
 /**
  * @param {import("@babel/core").ConfigAPI} api - Babel Api
@@ -20,136 +20,125 @@ const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream']);
  * @return {import("@babel/core").PluginObj}
  */
 module.exports = (api, pluginOptions = {}) => {
-    api.cache(true);
+	api.cache(true)
 
-    const options = {root: process.cwd(), ...pluginOptions};
+	const options = { root: process.cwd(), ...pluginOptions }
 
-    function getToplevelPath(path) {
-        let currPath = path;
+	function getToplevelPath(path) {
+		let currPath = path
 
-        while (!t.isProgram(currPath.parentPath)) {
-            currPath = currPath.parentPath;
-        }
+		while (!t.isProgram(currPath.parentPath)) {
+			currPath = currPath.parentPath
+		}
 
-        return currPath;
-    }
+		return currPath
+	}
 
-    function isRemotePattern(filename, pattern) {
-        if (pattern instanceof RegExp) {
-            return pattern.test(filename);
-        }
+	function isRemotePattern(filename, pattern) {
+		if (pattern instanceof RegExp) {
+			return pattern.test(filename)
+		}
 
-        return (
-            filename.startsWith(pattern) ||
-            minimatch(filename, pattern, {matchBase: true})
-        );
-    }
+		return (
+			filename.startsWith(pattern) ||
+			minimatch(filename, pattern, { matchBase: true })
+		)
+	}
 
-    return {
-        name: '@convey/babel-plugin',
+	return {
+		name: '@convey/babel-plugin',
 
-        visitor: {
-            Program(programPath, state) {
-                const {filename} = state.file.opts;
-                const resolverPaths = new Set();
+		visitor: {
+			Program(programPath, state) {
+				const { filename } = state.file.opts
+				const resolverPaths = new Set()
 
-                /** @type {import("@babel/core").NodePath[]} */
-                let referencePaths = [];
+				/** @type {import("@babel/core").NodePath[]} */
+				const referencePaths = []
 
-                programPath.traverse({
-                    ImportDeclaration(importPath) {
-                        const {source, specifiers} = importPath.node;
+				programPath.traverse({
+					ImportDeclaration(importPath) {
+						const { source, specifiers } = importPath.node
 
-                        if (!source.value.startsWith(NAMESPACE)) {
-                            return;
-                        }
+						if (!source.value.startsWith(NAMESPACE)) {
+							return
+						}
 
-                        resolverPaths.add(getToplevelPath(importPath));
+						resolverPaths.add(getToplevelPath(importPath))
 
-                        for (const spec of specifiers) {
-                            if (!t.isImportSpecifier(spec)) continue;
+						for (const spec of specifiers) {
+							if (!t.isImportSpecifier(spec)) continue
 
-                            const name =
-                                spec.imported.name || spec.imported.value;
-                            const binding = importPath.scope.getBinding(name);
+							const name = spec.imported.name || spec.imported.value
+							const binding = importPath.scope.getBinding(name)
 
-                            if (!RESOLVER_CREATORS.has(name)) continue;
+							if (!RESOLVER_CREATORS.has(name)) continue
 
-                            referencePaths.push(...binding.referencePaths);
-                        }
+							referencePaths.push(...binding.referencePaths)
+						}
 
-                        importPath.stop();
-                    },
-                });
+						importPath.stop()
+					},
+				})
 
-                if (!referencePaths.length) return;
+				if (!referencePaths.length) return
 
-                const isRemoteResolver = options.remote.find((pattern) => {
-                    if (
-                        typeof pattern === 'string' ||
-                        pattern instanceof RegExp
-                    ) {
-                        return isRemotePattern(filename, pattern);
-                    }
+				const isRemoteResolver = options.remote.find((pattern) => {
+					if (typeof pattern === 'string' || pattern instanceof RegExp) {
+						return isRemotePattern(filename, pattern)
+					}
 
-                    return isRemotePattern(filename, pattern.test);
-                });
+					return isRemotePattern(filename, pattern.test)
+				})
 
-                // TODO: hash function could be configurable
-                const fileHash = stringHash(
-                    nodePath.relative(options.root, filename)
-                );
+				// TODO: hash function could be configurable
+				const fileHash = stringHash(nodePath.relative(options.root, filename))
 
-                for (const refPath of referencePaths) {
-                    const functionPath = refPath.parentPath;
+				for (const refPath of referencePaths) {
+					const functionPath = refPath.parentPath
 
-                    // TODO: add variable declaration assertion + maybe hashing
-                    const resolverName = functionPath.parentPath.node.id.name;
+					// TODO: add variable declaration assertion + maybe hashing
+					const resolverName = functionPath.parentPath.node.id.name
 
-                    const resolverOptions = t.objectExpression([
-                        t.objectProperty(
-                            t.identifier('id'),
-                            t.stringLiteral(`${fileHash}:${resolverName}`)
-                        ),
-                    ]);
+					const resolverOptions = t.objectExpression([
+						t.objectProperty(
+							t.identifier('id'),
+							t.stringLiteral(`${fileHash}:${resolverName}`),
+						),
+					])
 
-                    const [, optionsPath] = functionPath.get('arguments');
+					const [, optionsPath] = functionPath.get('arguments')
 
-                    if (isRemoteResolver) {
-                        resolverPaths.add(getToplevelPath(functionPath));
+					if (isRemoteResolver) {
+						resolverPaths.add(getToplevelPath(functionPath))
 
-                        // replace to createResolver(null, {id: 'hash'})
-                        functionPath.node.arguments = [
-                            // TODO: consider null
-                            t.objectExpression([]),
-                            resolverOptions,
-                        ];
+						// replace to createResolver(null, {id: 'hash'})
+						functionPath.node.arguments = [
+							// TODO: consider null
+							t.objectExpression([]),
+							resolverOptions,
+						]
 
-                        continue;
-                    }
+						continue
+					}
 
-                    if (!optionsPath) {
-                        functionPath.pushContainer(
-                            'arguments',
-                            resolverOptions
-                        );
-                    } else {
-                        resolverOptions.properties.push(
-                            ...optionsPath.node.properties
-                        );
+					if (!optionsPath) {
+						functionPath.pushContainer('arguments', resolverOptions)
+					} else {
+						resolverOptions.properties.push(...optionsPath.node.properties)
 
-                        optionsPath.replaceWith(resolverOptions);
-                    }
-                }
+						optionsPath.replaceWith(resolverOptions)
+					}
+				}
 
-                if (!isRemoteResolver) return;
+				if (!isRemoteResolver) return
 
-                programPath.get('body').forEach((x) => {
-                    if (resolverPaths.has(x)) return;
+				for (const x of programPath.get('body')) {
+					if (resolverPaths.has(x)) return
 
-                    x.remove();
-                });
-            },
-        },
-    };
-};
+					x.remove()
+				}
+			},
+		},
+	}
+}

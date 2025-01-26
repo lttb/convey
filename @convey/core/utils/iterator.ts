@@ -1,20 +1,20 @@
 class _Promise<T> extends Promise<T> {
-    resolve: (value?: T) => void;
-    reject: <E extends Error>(error: E) => void;
-    constructor(cb = () => {}) {
-        super(cb);
+	resolve: (value?: T) => void
+	reject: <E extends Error>(error: E) => void
+	constructor(cb = () => {}) {
+		super(cb)
 
-        const promise: any = new Promise((resolve, reject) => {
-            promise.resolve = resolve;
-            promise.reject = reject;
-        });
+		const promise: any = new Promise((resolve, reject) => {
+			promise.resolve = resolve
+			promise.reject = reject
+		})
 
-        return promise;
-    }
+		return promise
+	}
 }
 
-const FINISHED = Symbol('finished');
-const TERMINATE = Symbol('terminate');
+const FINISHED = Symbol('finished')
+const TERMINATE = Symbol('terminate')
 
 // TODO: think about queue as in callbackToIter
 // provide some examples white it might replace generators
@@ -27,67 +27,67 @@ const TERMINATE = Symbol('terminate');
  * let x = inc(); x.next(); x.return() // after 2 sec
  */
 export async function* createIterator(iter) {
-    let result = new _Promise();
-    let ticker = new _Promise();
-    // let queue = []
-    let done = false;
-    let clear;
+	let result = new _Promise()
+	let ticker = new _Promise()
+	// let queue = []
+	let done = false
+	let clear
 
-    function terminate() {
-        if (clear) clear();
+	function terminate() {
+		if (clear) clear()
 
-        done = true;
-    }
+		done = true
+	}
 
-    function next(value) {
-        if (done) {
-            throw TERMINATE;
-        }
+	function next(value) {
+		if (done) {
+			throw TERMINATE
+		}
 
-        result.resolve(value);
+		result.resolve(value)
 
-        return ticker;
-    }
+		return ticker
+	}
 
-    Object.defineProperty(next, 'drop', {
-        get() {
-            return () => {
-                terminate();
-            };
-        },
-        set(value) {
-            clear = value;
-        },
-    });
+	Object.defineProperty(next, 'drop', {
+		get() {
+			return () => {
+				terminate()
+			}
+		},
+		set(value) {
+			clear = value
+		},
+	})
 
-    Promise.resolve(iter(next))
-        .then(() => {
-            result.resolve(FINISHED);
-        })
-        .catch((e) => {
-            if (e === TERMINATE) {
-                result.resolve(FINISHED);
-                return;
-            }
+	Promise.resolve(iter(next))
+		.then(() => {
+			result.resolve(FINISHED)
+		})
+		.catch((e) => {
+			if (e === TERMINATE) {
+				result.resolve(FINISHED)
+				return
+			}
 
-            result.reject(e);
-        });
+			result.reject(e)
+		})
 
-    try {
-        while (true) {
-            let value = await result;
+	try {
+		while (true) {
+			const value = await result
 
-            if (value === FINISHED) {
-                return;
-            }
+			if (value === FINISHED) {
+				return
+			}
 
-            yield value;
-            ticker.resolve();
+			yield value
+			ticker.resolve()
 
-            ticker = new _Promise();
-            result = new _Promise();
-        }
-    } finally {
-        terminate();
-    }
+			ticker = new _Promise()
+			result = new _Promise()
+		}
+	} finally {
+		terminate()
+	}
 }
