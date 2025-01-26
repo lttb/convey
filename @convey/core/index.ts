@@ -1,29 +1,55 @@
-import {invalidate, subscribe, subscribeStream} from './utils/EventEmitter';
+export function createResolver(resolver: any) {}
+export function createModel(resolver: any) {}
+export function createCollection(resolver: any, indexed: any) {}
+export function createIdentifier(_: any) {}
 
-import type {Resolver} from './types';
+import { entity } from './serialiser'
 
-// TODO: exclude "createResolverFetcher" from the main bundle
-import {createResolverFetcher} from './client';
-import {getResolverHash} from './utils';
-import {setConfig} from './config';
+class LoadId extends entity<string>() {}
 
-export * from './config';
-export * from './utils';
-export * from './utils/createResolver';
-export * from './types';
-
-setConfig({
-    fetch: createResolverFetcher(),
-    getResolverHash,
-});
-
-export function buildResolverMap<R extends Resolver<any, any, any>>(
-    resolvers: Record<string, R>
-) {
-    return Object.values(resolvers).reduce((acc, resolver) => {
-        acc[resolver.options.id] = resolver;
-        return acc;
-    }, {});
+type LoadStep = {
+	location: string
+	// TODO: keep info about timezones, maybe other formats
+	time: number
+	type: 'ASAP' | 'APPT'
 }
 
-export {invalidate, subscribe, subscribeStream};
+const Load = createCollection({
+	prebook(_: {
+		loadNumber: string
+		truckId: string
+		productOrderNumber: string
+		// TODO: support multiple pick ups
+		pu: LoadStep
+		del: LoadStep
+		// what about miles - loaded and DH?
+	}) {},
+})
+
+const prebookLoad = createResolver(
+	async (params: {
+		loadNumber: string
+		truckId: string
+		productOrderNumber: string
+		// TODO: support multiple pick ups
+		pu: LoadStep
+		del: LoadStep
+		// what about miles - loaded and DH?
+	}) => {
+		// should be automatically checked that user has dispatcher role
+		const user = await getUser()
+	},
+)
+
+const confirmLoadWithBroker = createResolver(
+	async (params: {
+		loadId: string
+		messageId: string
+	}) => {},
+)
+
+const confirmLoadWithDriver = createResolver(
+	async (params: {
+		loadId: string
+	}) => {},
+)

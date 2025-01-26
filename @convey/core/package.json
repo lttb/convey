@@ -1,27 +1,19 @@
 {
-    "name": "@convey/core",
-    "version": "0.18.0-a.0",
-    "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
-    "license": "MIT",
-    "publishConfig": {
-        "access": "public"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/lttb/convey.git",
-        "directory": "@convey/core"
-    },
-    "scripts": {
-        "test": "",
-        "prebuild": "rm -rf lib",
-        "build": "rollup -c --bundleConfigAsCjs"
-    },
-    "dependencies": {
-        "@microsoft/fetch-event-source": "2.0.1",
-        "@types/invariant": "2.2.35",
-        "@types/warning": "3.0.0",
-        "invariant": "2.2.4",
-        "isomorphic-unfetch": "3.1.0",
-        "warning": "4.0.3"
-    }
+	"name": "@convey/core",
+	"version": "0.18.0-a.0",
+	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lttb/convey.git",
+		"directory": "@convey/core"
+	},
+	"scripts": {
+		"test": "",
+		"prebuild": "rm -rf lib",
+		"build": "rollup -c --bundleConfigAsCjs"
+	}
 }
