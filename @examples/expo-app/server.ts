@@ -13,9 +13,7 @@ const handleResolver = createResolverHandler(resolvers)
 app.use(cors())
 app.use(express.json())
 
-app.all('/api/resolvers/:id', async (req, res, next) => {
-	console.log('body', req.body)
-
+app.all('/api/resolvers/:id', async (req, res) => {
 	await handleResolver(req, res)
 })
 

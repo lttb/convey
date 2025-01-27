@@ -89,8 +89,6 @@ app.use('*all', async (req, res) => {
 			abort()
 		}, ABORT_DELAY)
 	} catch (e) {
-		console.log(e)
-
 		vite?.ssrFixStacktrace(e)
 		console.log(e.stack)
 		res.status(500).end(e.stack)

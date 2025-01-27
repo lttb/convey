@@ -1,6 +1,6 @@
 const babel = require('@babel/core')
 const conveyBabelPlugin = require('@convey/babel-plugin')
-const path = require('path')
+const path = require('node:path')
 
 /** @type {import('webpack').LoaderDefinition} */
 const loader = function (code) {
