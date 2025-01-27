@@ -2,6 +2,9 @@ import fs from 'node:fs/promises'
 import express from 'express'
 import { Transform } from 'node:stream'
 
+import * as resolvers from './resolvers/server/index'
+import { createResolverHandler } from '@convey/core/server'
+
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 5173
@@ -33,6 +36,13 @@ if (!isProduction) {
 	app.use(compression())
 	app.use(base, sirv('./dist/client', { extensions: [] }))
 }
+
+const handleResolver = createResolverHandler(resolvers)
+
+app.use(express.json())
+app.all('/api/resolvers/:id', async (req, res, next) => {
+	await handleResolver(req, res)
+})
 
 // Serve HTML
 app.use('*all', async (req, res) => {

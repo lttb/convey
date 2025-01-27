@@ -1,5 +1,3 @@
-import warning from 'warning'
-
 import type { CancellableAsyncGenerator, CancellableGenerator } from '../types'
 
 export const DONE: unique symbol = Symbol('done')
@@ -59,7 +57,7 @@ export async function* callbackToIter<V, E extends Error = Error>(
 				iter.done = (data) => {
 					// stop accepting data
 					iter.next = () => {
-						warning('[callbackToIter] The data has been sent after stream end')
+						// warning('[callbackToIter] The data has been sent after stream end')
 					}
 
 					queue.push(data)

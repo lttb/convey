@@ -1,5 +1,3 @@
-import invariant from 'invariant'
-
 export class LRUCache<K = any, V = any> {
 	capacity: number
 	map: Map<K, V>
@@ -30,7 +28,9 @@ export class LRUCache<K = any, V = any> {
 	get(key) {
 		const value = this.map.get(key)
 
-		invariant(value, `there is no key "${key}"`)
+		if (!value) {
+			return
+		}
 
 		this._move(key, value)
 		return value

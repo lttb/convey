@@ -2,7 +2,6 @@ import {
 	resolve,
 	resolveStream,
 	terminateStream,
-	buildResolverMap,
 	getStructure,
 } from '@convey/core'
 
@@ -66,9 +65,9 @@ export async function handleResolver(req, res, structure) {
 		terminateStream(iter)
 	}
 
-	req.on('finish', terminate)
-	req.on('close', terminate)
-	res.on('finish', terminate)
+	// req.on('finish', terminate)
+	// req.on('close', terminate)
+	// res.on('finish', terminate)
 	res.on('close', terminate)
 
 	let id = 0
@@ -103,18 +102,21 @@ export async function handleResolver(req, res, structure) {
 }
 
 export function createResolverHandler(
-	resolvers: Parameters<typeof buildResolverMap>[0],
+	resolversMap: any,
 ): (req: any, res: any) => Promise<void> {
-	const resolversMap = buildResolverMap(resolvers)
-
 	return async function handler(req, res) {
 		const { query } = req
 
-		const id = query.id
-		const { params } = JSON.parse(query.b ? query.b : req.body.b, entityReviver)
+		const { params, id } = query.b ? JSON.parse(query.b) : req.body
+
+		const resolverId = id in resolversMap ? id : id.split(':')[1]
 
 		// TODO: handle wrong resolver id
-		const structure = resolversMap[id as string].apply(this || {}, params)
+		const structure = resolversMap[resolverId]?.apply(this || {}, params)
+
+		if (!structure) {
+			return
+		}
 
 		await handleResolver(req, res, getStructure(structure))
 	}

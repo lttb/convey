@@ -1,4 +1,4 @@
-import { stream } from 'fetch-event-stream'
+import { events } from 'fetch-event-stream'
 
 import { entityReviver } from '../utils'
 import type { CancellableAsyncGenerator, ResolverOptions } from '../types'
@@ -48,11 +48,11 @@ export function createResolverFetcher({
 		} = structure
 
 		const link =
-			typeof url === 'function' ? url(structure) : url || `/api/resolver/${id}`
+			typeof url === 'function' ? url(structure) : url || `/api/resolvers/${id}`
 
 		const body = JSON.stringify({ params, id })
 
-		const events = await stream(link, {
+		const result = await fetch(link, {
 			method: 'POST',
 			headers: {
 				accept: [JSONContentType, EventStreamContentType].join(', '),
@@ -64,7 +64,15 @@ export function createResolverFetcher({
 			signal: abort?.signal,
 		})
 
-		for await (const event of events) {
+		if (!result.headers.get('content-type')?.includes('text/event-stream')) {
+			const data = JSON.parse(await result.text(), reviver)
+
+			yield { data }
+
+			return
+		}
+
+		for await (const event of events(result, abort?.signal)) {
 			if (!event.data) continue
 
 			yield { data: JSON.parse(event.data, reviver) }

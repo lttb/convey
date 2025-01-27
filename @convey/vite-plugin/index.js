@@ -1,19 +1,27 @@
 import path from 'node:path'
 import babel from '@babel/core'
 import conveyBabelPlugin from '@convey/babel-plugin'
-import type { Plugin } from 'vite'
 
 const SUPPORTED_EXTENSIONS = new Set(['.tsx', '.ts', '.jsx', '.js', '.astro'])
 
 /**
- * @param {object} options
+ * @typedef {Object} RemoteOptions
+ * @prop {(string | RegExp | {test: string})[]} server
+ * @prop {(string | RegExp | {test: string})[]} client
+ */
+
+/**
+ * @typedef {Object} PluginOptions
+ * @prop {RemoteOptions} remote - array of remote resolver path patterns
+ * @prop {string} root - path to root directory
+ */
+
+/**
+ * @param {PluginOptions} options
  **/
-function conveyPlugin({
-	root,
-	remote,
-}: { root?: string; remote?: { server?: string; client?: string } }) {
+function conveyPlugin({root: conveyRoot, remote}) {
 	/** @type {import('vite').Plugin} */
-	const plugin: Plugin = {
+	const plugin = {
 		name: '@convey/vite-plugin',
 
 		async transform(code, id, options) {
@@ -53,7 +61,10 @@ function conveyPlugin({
 				plugins: [
 					[
 						conveyBabelPlugin,
-						{ root, remote: options?.ssr ? remote?.server : remote?.client },
+						{
+							root: conveyRoot || root,
+							remote: options?.ssr ? remote?.server : remote?.client,
+						},
 					],
 				],
 				sourceMaps: true,
