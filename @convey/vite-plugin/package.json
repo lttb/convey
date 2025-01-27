@@ -1,0 +1,27 @@
+{
+	"name": "@convey/vite-plugin",
+	"version": "0.9.0-a.0",
+	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lttb/convey.git",
+		"directory": "@convey/vite-plugin"
+	},
+	"scripts": {
+		"test": "",
+		"prebuild": "rm -rf lib",
+		"build": "rollup -c --bundleConfigAsCjs"
+	},
+	"devDependencies": {
+		"vite": "^6.0.11",
+		"@types/babel__core": "^7.20.5"
+	},
+	"dependencies": {
+		"@babel/core": "^7.26.7",
+		"@convey/babel-plugin": "workspace:*"
+	}
+}
