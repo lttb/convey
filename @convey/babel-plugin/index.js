@@ -9,6 +9,10 @@ const nodePath = require('node:path')
  * @prop {string} root - path to root directory
  */
 
+/**
+ * @typedef {import("@babel/core").NodePath<t.CallExpression>} CallNode
+ */
+
 const NAMESPACE = '@convey'
 
 const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream'])
@@ -23,16 +27,6 @@ module.exports = (api, pluginOptions = {}) => {
 	api.cache(true)
 
 	const options = { root: process.cwd(), ...pluginOptions }
-
-	function getToplevelPath(path) {
-		let currPath = path
-
-		while (!t.isProgram(currPath.parentPath)) {
-			currPath = currPath.parentPath
-		}
-
-		return currPath
-	}
 
 	function isRemotePattern(filename, pattern) {
 		if (pattern instanceof RegExp) {
@@ -51,10 +45,11 @@ module.exports = (api, pluginOptions = {}) => {
 		visitor: {
 			Program(programPath, state) {
 				const { filename } = state.file.opts
-				const resolverPaths = new Set()
 
-				/** @type {import("@babel/core").NodePath[]} */
-				const referencePaths = []
+				/** @type {Map<t.Node, {callee: CallNode, name: string}>} */
+				const references = new Map()
+				/** @type {Set<string>} */
+				const referenceVars = new Set()
 
 				programPath.traverse({
 					ImportDeclaration(importPath) {
@@ -64,8 +59,6 @@ module.exports = (api, pluginOptions = {}) => {
 							return
 						}
 
-						resolverPaths.add(getToplevelPath(importPath))
-
 						for (const spec of specifiers) {
 							if (!t.isImportSpecifier(spec)) continue
 
@@ -74,14 +67,33 @@ module.exports = (api, pluginOptions = {}) => {
 
 							if (!RESOLVER_CREATORS.has(name)) continue
 
-							referencePaths.push(...binding.referencePaths)
+							for (const ref of binding.referencePaths) {
+								const { parentPath } = ref
+								if (!t.isCallExpression(parentPath)) continue
+
+								const parentVariable = parentPath.parentPath
+
+								if (
+									t.isVariableDeclarator(parentVariable) &&
+									(t.isProgram(parentVariable.parentPath.parentPath) ||
+										t.ExportNamedDeclaration(
+											parentVariable.parentPath.parentPath,
+										))
+								) {
+									const name = parentVariable.node.id.name
+
+									referenceVars.add(name)
+									references.set(parentPath.node, {
+										callee: parentPath,
+										name,
+									})
+								}
+							}
 						}
 
 						importPath.stop()
 					},
 				})
-
-				if (!referencePaths.length) return
 
 				const isRemoteResolver = options.remote.find((pattern) => {
 					if (typeof pattern === 'string' || pattern instanceof RegExp) {
@@ -91,14 +103,10 @@ module.exports = (api, pluginOptions = {}) => {
 					return isRemotePattern(filename, pattern.test)
 				})
 
-				// TODO: hash function could be configurable
 				const fileHash = stringHash(nodePath.relative(options.root, filename))
 
-				for (const refPath of referencePaths) {
-					const functionPath = refPath.parentPath
-
-					// TODO: add variable declaration assertion + maybe hashing
-					const resolverName = functionPath.parentPath.node.id.name
+				for (const ref of references.values()) {
+					const resolverName = ref.name
 
 					const resolverOptions = t.objectExpression([
 						t.objectProperty(
@@ -107,13 +115,11 @@ module.exports = (api, pluginOptions = {}) => {
 						),
 					])
 
-					const [, optionsPath] = functionPath.get('arguments')
+					const [, optionsPath] = ref.callee.get('arguments')
 
 					if (isRemoteResolver) {
-						resolverPaths.add(getToplevelPath(functionPath))
-
 						// replace to createResolver(null, {id: 'hash'})
-						functionPath.node.arguments = [
+						ref.callee.node.arguments = [
 							// TODO: consider null
 							t.objectExpression([]),
 							resolverOptions,
@@ -123,7 +129,7 @@ module.exports = (api, pluginOptions = {}) => {
 					}
 
 					if (!optionsPath) {
-						functionPath.pushContainer('arguments', resolverOptions)
+						ref.callee.pushContainer('arguments', resolverOptions)
 					} else {
 						resolverOptions.properties.push(...optionsPath.node.properties)
 
@@ -133,11 +139,31 @@ module.exports = (api, pluginOptions = {}) => {
 
 				if (!isRemoteResolver) return
 
-				for (const x of programPath.get('body')) {
-					if (resolverPaths.has(x)) return
+				programPath.node.body = programPath.node.body.filter((node) => {
+					if (t.isImportDeclaration(node)) {
+						return node.source.value.startsWith(NAMESPACE)
+					}
 
-					x.remove()
-				}
+					if (t.isVariableDeclaration(node)) {
+						return node.declarations.every((decl) => references.has(decl.init))
+					}
+
+					if (t.isExportNamedDeclaration(node)) {
+						if (t.isVariableDeclaration(node.declaration)) {
+							return node.declaration.declarations.every((decl) =>
+								references.has(decl.init),
+							)
+						}
+
+						return node.specifiers.every((spec) =>
+							referenceVars.has(spec.local?.name),
+						)
+					}
+
+					// default exports are not allowed
+
+					return false
+				})
 			},
 		},
 	}
