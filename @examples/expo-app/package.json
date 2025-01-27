@@ -10,16 +10,24 @@
 		"ios": "expo start --ios",
 		"web": "expo start --web"
 	},
+	"workspaces": ["../../@convey/*"],
 	"dependencies": {
+		"@convey/babel-plugin": "workspace:*",
+		"@convey/core": "workspace:*",
+		"@convey/react": "workspace:*",
 		"@expo/metro-runtime": "~4.0.1",
+		"@types/cors": "^2.8.17",
+		"cors": "^2.8.5",
 		"expo": "~52.0.27",
 		"expo-status-bar": "~2.0.1",
+		"express": "^4.21.2",
 		"react": "18.3.1",
 		"react-native": "0.76.6",
 		"react-native-web": "~0.19.13"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.25.2",
+		"@types/express": "^5.0.0",
 		"@types/react": "~18.3.12",
 		"typescript": "^5.3.3"
 	},
