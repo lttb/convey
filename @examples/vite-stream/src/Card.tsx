@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getDate, getDateStream } from '../resolvers/server'
-import { useResolver } from '@convey/react'
+import { useResolver } from '@convey/react/stream'
 
 const DateComponent = () => {
 	const [date] = useResolver(getDate())

@@ -63,45 +63,34 @@ app.use('*all', async (req, res) => {
 			render = (await import('./dist/server/entry-server.js')).render
 		}
 
-		let didError = false
+		const { pipe, abort } = await render(url)
 
-		const { pipe, abort } = render(url, {
-			onShellError() {
-				res.status(500)
-				res.set({ 'Content-Type': 'text/html' })
-				res.send('<h1>Something went wrong</h1>')
-			},
-			onShellReady() {
-				res.status(didError ? 500 : 200)
-				res.set({ 'Content-Type': 'text/html' })
+		res.status(200)
+		res.set({ 'Content-Type': 'text/html' })
 
-				const transformStream = new Transform({
-					transform(chunk, encoding, callback) {
-						res.write(chunk, encoding)
-						callback()
-					},
-				})
-
-				const [htmlStart, htmlEnd] = template.split('<!--app-html-->')
-
-				res.write(htmlStart)
-
-				transformStream.on('finish', () => {
-					res.end(htmlEnd)
-				})
-
-				pipe(transformStream)
-			},
-			onError(error) {
-				didError = true
-				console.error(error)
+		const transformStream = new Transform({
+			transform(chunk, encoding, callback) {
+				res.write(chunk, encoding)
+				callback()
 			},
 		})
+
+		const [htmlStart, htmlEnd] = template.split('<!--app-html-->')
+
+		res.write(htmlStart)
+
+		transformStream.on('finish', () => {
+			res.end(htmlEnd)
+		})
+
+		pipe(transformStream)
 
 		setTimeout(() => {
 			abort()
 		}, ABORT_DELAY)
 	} catch (e) {
+		console.log(e)
+
 		vite?.ssrFixStacktrace(e)
 		console.log(e.stack)
 		res.status(500).end(e.stack)
