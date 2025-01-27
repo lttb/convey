@@ -1,5 +1,3 @@
-import { events } from 'fetch-event-stream'
-
 import { entityReviver } from '../utils'
 import type { CancellableAsyncGenerator, ResolverOptions } from '../types'
 
@@ -8,7 +6,6 @@ const JSONContentType = 'application/json'
 
 type MessageData = {
 	options: ResolverOptions
-	// biome-ignore lint/suspicious/noExplicitAny:
 	payload: any
 	error?: boolean
 }
@@ -17,8 +14,8 @@ type Message = {
 	stream?: boolean
 	data?: MessageData
 }
+
 type FetchedResolver = {
-	// biome-ignore lint/suspicious/noExplicitAny:
 	params: any
 	options: ResolverOptions
 	stream: boolean
@@ -26,15 +23,30 @@ type FetchedResolver = {
 
 type RequestHeaders = Record<string, string>
 
+const originalFetch = fetch
+
+type UniversalFetch = (
+	link: string,
+	options?: {
+		body?: BodyInit
+		credentials?: RequestCredentials // same-origin is not supported
+		headers?: HeadersInit
+		method?: string
+		signal?: AbortSignal
+	},
+) => Promise<any> // should be Promise<Response> but it's not fully compatible with react-native types
+
 export function createResolverFetcher({
 	url,
 	reviver = entityReviver,
 	headers = {},
+	fetch: customFetch = originalFetch,
 }: {
 	url?: string | ((structure: FetchedResolver) => string)
 	openWhenHidden?: boolean
 	reviver?: typeof entityReviver
 	headers?: RequestHeaders | ((structure: FetchedResolver) => RequestHeaders)
+	fetch?: UniversalFetch
 } = {}) {
 	return async function* fetchResolver(
 		structure: FetchedResolver,
@@ -52,30 +64,81 @@ export function createResolverFetcher({
 
 		const body = JSON.stringify({ params, id })
 
-		const result = await fetch(link, {
+		const result = (await customFetch(link, {
 			method: 'POST',
 			headers: {
 				accept: [JSONContentType, EventStreamContentType].join(', '),
 				'content-type': JSONContentType,
-
 				...(typeof headers === 'function' ? headers(structure) : headers),
 			},
 			body,
 			signal: abort?.signal,
-		})
+		})) as Response
 
-		if (!result.headers.get('content-type')?.includes('text/event-stream')) {
+		const isEventStream = result.headers
+			.get('content-type')
+			?.includes('text/event-stream')
+
+		if (!isEventStream) {
 			const data = JSON.parse(await result.text(), reviver)
-
 			yield { data }
-
 			return
 		}
 
-		for await (const event of events(result, abort?.signal)) {
-			if (!event.data) continue
+		const reader = result.body?.getReader?.()
 
-			yield { data: JSON.parse(event.data, reviver) }
+		if (!reader) return
+
+		const decoder = new TextDecoder()
+		let buffer = ''
+
+		try {
+			while (true) {
+				const { done, value } = await reader.read()
+
+				if (done) {
+					if (buffer.trim()) {
+						const data = parseEventData(buffer, reviver)
+						if (data) yield { data }
+					}
+					break
+				}
+
+				buffer += decoder.decode(value, { stream: true })
+				const events = buffer.split('\n\n')
+				buffer = events.pop() || ''
+
+				for (const event of events) {
+					if (!event.trim()) continue
+					const data = parseEventData(event, reviver)
+					if (data) yield { data }
+				}
+			}
+		} finally {
+			reader.releaseLock()
 		}
+	}
+}
+
+function parseEventData(
+	eventText: string,
+	reviver: typeof entityReviver,
+): MessageData | null {
+	const lines = eventText.split('\n')
+	let data = ''
+
+	for (const line of lines) {
+		if (line.startsWith('data: ')) {
+			data += line.slice(6)
+		}
+	}
+
+	if (!data) return null
+
+	try {
+		return JSON.parse(data, reviver)
+	} catch (error) {
+		console.error('Failed to parse event data:', error)
+		return null
 	}
 }

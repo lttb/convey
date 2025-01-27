@@ -15,8 +15,5 @@
 		"test": "",
 		"prebuild": "rm -rf lib",
 		"build": "rollup -c --bundleConfigAsCjs"
-	},
-	"dependencies": {
-		"fetch-event-stream": "^0.1.5"
 	}
 }
