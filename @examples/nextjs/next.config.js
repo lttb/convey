@@ -1,11 +1,11 @@
-const path = require('path')
+const path = require('node:path')
 
 const withConvey = require('@convey/next-plugin')({
 	config(options) {
 		return {
 			remote: options.isServer
-				? [path.join(__dirname, '/resolvers/web/**')]
-				: [path.join(__dirname, '/resolvers/server/**')],
+				? ['**/resolvers/web/**']
+				: ['**/resolvers/server/**'],
 		}
 	},
 })
@@ -17,6 +17,11 @@ module.exports = withConvey({
 
 	webpack: (config) => {
 		config.resolve.symlinks = true
+
+		config.resolve.alias = {
+			...config.resolve.alias,
+			react: path.resolve(__dirname, './node_modules/react'),
+		}
 
 		return config
 	},

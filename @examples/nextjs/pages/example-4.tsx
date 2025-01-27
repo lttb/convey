@@ -35,6 +35,10 @@ const UserComponent = ({ userId }: { userId: User['id'] }) => {
 		return <div>Loading...</div>
 	}
 
+	if (!user) {
+		return <div>User "{userId}" not found</div>
+	}
+
 	return (
 		<div>
 			{user.name} / {user.email}
@@ -57,6 +61,7 @@ const UserList = () => {
 			))}
 
 			<button
+				type="button"
 				onClick={async () => {
 					await createNewUser()
 
@@ -67,6 +72,7 @@ const UserList = () => {
 			</button>
 
 			<button
+				type="button"
 				onClick={async () => {
 					await updateUser()
 

@@ -4,7 +4,7 @@ import { getData } from '@examples/nextjs/resolvers/server/example-3'
 import { BaseError, Tags } from '@examples/nextjs/entities'
 
 const Demo = () => {
-	const [data] = useResolver(getData(new Tags(['client'])))
+	const [data] = useResolver(getData(new Tags(['client', 'required'])))
 
 	if (data === undefined) {
 		return <div>Loading...</div>

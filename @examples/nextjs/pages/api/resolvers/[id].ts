@@ -1,6 +1,6 @@
 import { createResolverHandler } from '@convey/core/server'
 
-import * as resolvers from '../../../resolvers/server'
+import * as resolvers from '@examples/nextjs/resolvers/server'
 
 const handleResolver = createResolverHandler(resolvers)
 

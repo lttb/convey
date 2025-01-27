@@ -1,7 +1,7 @@
 const next = require('next')
 const devcert = require('devcert')
-const http2 = require('http2')
-const { parse } = require('url')
+const http2 = require('node:http2')
+const { parse } = require('node:url')
 
 const port = Number.parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'

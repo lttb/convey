@@ -1,7 +1,21 @@
-import { createResolver } from '@convey/core'
-import { exec } from 'child_process'
-import { promisify } from 'util'
+import { exec } from 'node:child_process'
+import { promisify } from 'node:util'
 
-const getDate = () => promisify(exec)('date').then((x) => x.stdout.toString())
+import { createResolver, createResolverStream } from '@convey/core'
 
-export const getServerDate = createResolver(async () => getDate())
+export const getDate = createResolver(
+	async () => {
+		const x = await promisify(exec)('date')
+		return x.stdout.toString()
+	},
+	{
+		cacheable: true,
+	},
+)
+
+export const getDateStream = createResolverStream(async function* () {
+	while (true) {
+		yield await getDate()
+		await new Promise((resolve) => setTimeout(resolve, 1000))
+	}
+})
