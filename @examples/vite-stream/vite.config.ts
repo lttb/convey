@@ -4,6 +4,9 @@ import convey from '@convey/vite-plugin'
 import type { Plugin } from 'vite'
 
 export default defineConfig({
+	resolve: {
+		dedupe: ['react', 'react-dom', 'react-streaming'],
+	},
 	plugins: [
 		react(),
 		convey({

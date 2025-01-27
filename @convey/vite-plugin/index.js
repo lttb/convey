@@ -13,7 +13,7 @@ const SUPPORTED_EXTENSIONS = new Set(['.tsx', '.ts', '.jsx', '.js', '.astro'])
 /**
  * @typedef {Object} PluginOptions
  * @prop {RemoteOptions} remote - array of remote resolver path patterns
- * @prop {string} root - path to root directory
+ * @prop {string} [root] - path to root directory
  */
 
 /**
