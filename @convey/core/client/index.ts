@@ -62,7 +62,7 @@ export function createResolverFetcher({
 		const link =
 			typeof url === 'function' ? url(structure) : url || `/api/resolvers/${id}`
 
-		const body = JSON.stringify({ params, id })
+		const body = JSON.stringify({ b: JSON.stringify({ params, id }) })
 
 		const result = (await customFetch(link, {
 			method: 'POST',

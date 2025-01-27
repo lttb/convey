@@ -104,10 +104,10 @@ export async function handleResolver(req, res, structure) {
 export function createResolverHandler(
 	resolversMap: any,
 ): (req: any, res: any) => Promise<void> {
-	return async function handler(req, res) {
+	return async function handler(this: any, req, res) {
 		const { query } = req
 
-		const { params, id } = query.b ? JSON.parse(query.b) : req.body
+		const { params, id } = JSON.parse(query.b || req.body.b, entityReviver)
 
 		const resolverId = id in resolversMap ? id : id.split(':')[1]
 
