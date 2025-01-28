@@ -21,6 +21,8 @@ export type ResolverStructure<
 	context: Context
 	params: Params
 	options: Options
+
+	stream?: boolean
 }
 
 type CacheOptions<CL> = {

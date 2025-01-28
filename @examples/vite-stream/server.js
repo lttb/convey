@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import express from 'express'
 import { Transform } from 'node:stream'
 
-import * as resolvers from './resolvers/server/index'
+import * as resolvers from './resolvers/server'
 import { createResolverHandler } from '@convey/core/server'
 
 // Constants
