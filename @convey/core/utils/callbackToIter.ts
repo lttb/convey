@@ -5,7 +5,7 @@ const UNSET = Symbol('unset')
 const PENDING = Symbol('pending')
 const ERROR = Symbol('error')
 
-type UnsubType = (() => void) | undefined
+type UnsubType = () => void
 
 export function terminateStream<V>(
 	iter: CancellableGenerator<V> | CancellableAsyncGenerator<V>,
@@ -22,6 +22,12 @@ export async function* callbackToIter<V, E extends Error = Error>(
 		reject: (error: E) => void
 	}) => UnsubType,
 ): CancellableAsyncGenerator<V> {
+	const iter: {
+		next: null | ((data: V) => void)
+		reject: null | ((error: E) => void)
+		done: null | ((data: V) => void)
+	} = { next: null, reject: null, done: null }
+
 	let unsub: typeof UNSET | UnsubType = UNSET
 
 	let queue: V[]
@@ -40,36 +46,34 @@ export async function* callbackToIter<V, E extends Error = Error>(
 			>((promiseResolve) => {
 				let id: Timer
 
-				const iter = {
-					next: (data: V) => {
-						queue.push(data)
+				iter.next = (data) => {
+					queue.push(data)
 
-						if (id) clearTimeout(id)
+					if (id) clearTimeout(id)
 
-						id = setTimeout(() => {
-							promiseResolve({ status: PENDING })
-						}, 0)
-					},
+					id = setTimeout(() => {
+						promiseResolve({ status: PENDING })
+					}, 0)
+				}
 
-					reject: (error: E) => promiseResolve({ status: ERROR, error }),
+				iter.reject = (error) => promiseResolve({ status: ERROR, error })
 
-					done: (data: V) => {
-						// stop accepting data
-						iter.next = () => {
-							// warning('[callbackToIter] The data has been sent after stream end')
-						}
+				iter.done = (data) => {
+					// stop accepting data
+					iter.next = () => {
+						// warning('[callbackToIter] The data has been sent after stream end')
+					}
 
-						queue.push(data)
+					queue.push(data)
 
-						promiseResolve({ status: DONE })
-					},
+					promiseResolve({ status: DONE })
 				}
 
 				if (unsub === UNSET) {
 					unsub = handlerCreator({
-						next: (data) => iter.next(data),
-						done: (data) => iter.done(data),
-						reject: (error) => iter.reject(error),
+						next: (data) => iter.next?.(data),
+						done: (data) => iter.done?.(data),
+						reject: (error) => iter.reject?.(error),
 					})
 				}
 			})
