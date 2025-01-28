@@ -3,7 +3,9 @@
 	"version": "0.20.0-a.0",
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
+	"type": "commonjs",
 	"main": "index.js",
+	"types": "index.js",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -17,7 +19,7 @@
 		"@convey/babel-plugin": "workspace:*"
 	},
 	"devDependencies": {
-		"next": "^15.1.6",
-		"webpack": "^5.97.1"
+		"@types/next": "npm:next@^15.1.6",
+		"@types/webpack": "^5.28.5"
 	}
 }

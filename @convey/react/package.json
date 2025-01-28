@@ -4,16 +4,24 @@
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"directory": "dist"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lttb/convey.git",
+		"url": "git+https://github.com/lttb/convey.git",
 		"directory": "@convey/react"
+	},
+	"scripts": {
+		"build": "bun -e 'import(`@convey/build`)'"
 	},
 	"peerDependencies": {
 		"@convey/core": "workspace:*",
 		"react": ">=16.0.0",
+		"react-streaming": "^0.3.47"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.12",
 		"react-streaming": "^0.3.47"
 	},
 	"peerDependenciesMeta": {

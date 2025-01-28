@@ -30,17 +30,19 @@ const loader = function (code) {
 					'classPrivateProperties',
 					'classPrivateMethods',
 					'jsx',
-				].concat(isTypescript ? ['typescript'] : []),
+					'typescript',
+				],
 			},
 			generatorOpts: {
 				decoratorsBeforeExport: true,
 			},
 			plugins: [[conveyBabelPlugin, options]],
 			sourceMaps: true,
+			// @ts-expect-error .inputSourceMap must be a boolean, object, or undefined
 			inputSourceMap: false,
 		})
 		.then((result) => {
-			callback(null, result.code, result.map)
+			callback(null, result?.code ?? undefined, result?.map ?? undefined)
 		})
 		.catch((err) => {
 			callback(err)

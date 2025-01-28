@@ -3,8 +3,8 @@
 	"version": "0.20.0-a.0",
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
-	"main": "index.js",
 	"type": "module",
+	"main": "index.js",
 	"types": "index.js",
 	"publishConfig": {
 		"access": "public"

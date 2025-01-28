@@ -1,8 +1,8 @@
-import * as t from '@babel/types'
-import template from '@babel/template'
-import { minimatch } from 'minimatch'
-import stringHash from 'string-hash'
-import nodePath from 'node:path'
+const t = require('@babel/types')
+const template = require('@babel/template')
+const { minimatch } = require('minimatch')
+const stringHash = require('string-hash')
+const nodePath = require('node:path')
 
 /**
  * @typedef {Object} PluginOptions
@@ -30,12 +30,12 @@ const NAMESPACE = '@convey'
 const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream'])
 
 /**
- * @param {import("@babel/core").ConfigAPI} api - Babel Api
+ * @param {import("@babel/core").ConfigAPI} _api - Babel Api
  * @param {PluginOptions} [pluginOptions] - Plugin Options
  *
  * @return {import("@babel/core").PluginObj}
  */
-export default (api, pluginOptions = {}) => {
+module.exports = (_api, pluginOptions = {}) => {
 	const options = { root: process.cwd(), ...pluginOptions }
 
 	/**
