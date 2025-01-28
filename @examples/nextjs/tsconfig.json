@@ -1,17 +1,11 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "jsx": "preserve"
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"incremental": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"jsx": "preserve"
+	},
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

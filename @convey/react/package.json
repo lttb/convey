@@ -22,6 +22,8 @@
 		"react-streaming": "^0.3.47"
 	},
 	"peerDependenciesMeta": {
-		"react-streaming": { "optional": true }
+		"react-streaming": {
+			"optional": true
+		}
 	}
 }

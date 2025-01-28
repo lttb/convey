@@ -23,10 +23,7 @@ export function getParamsHash(params, hashed = new Set()) {
 			paramsOrder.set(param, paramsOrder.size)
 		}
 
-		hash += `$${paramsOrder.get(param)}:${getParamsHash(
-			params[param],
-			hashed,
-		)}$`
+		hash += `$${paramsOrder.get(param)}:${getParamsHash(params[param], hashed)}$`
 	}
 	return hash
 }

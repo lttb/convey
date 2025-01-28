@@ -19,7 +19,7 @@ const SUPPORTED_EXTENSIONS = new Set(['.tsx', '.ts', '.jsx', '.js', '.astro'])
 /**
  * @param {PluginOptions} options
  **/
-function conveyPlugin({root: conveyRoot, remote}) {
+function conveyPlugin({ root: conveyRoot, remote }) {
 	/** @type {import('vite').Plugin} */
 	const plugin = {
 		name: '@convey/vite-plugin',
