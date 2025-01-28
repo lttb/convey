@@ -1,6 +1,6 @@
 {
 	"name": "@convey/babel-plugin",
-	"version": "0.5.0-a.0",
+	"version": "0.20.0-a.0",
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
 	"main": "index.js",
@@ -12,15 +12,10 @@
 		"url": "https://github.com/lttb/convey.git",
 		"directory": "@convey/babel-plugin"
 	},
-	"scripts": {
-		"test": "",
-		"prebuild": "rm -rf lib",
-		"build": "rollup -c --bundleConfigAsCjs"
-	},
 	"dependencies": {
-		"@babel/core": "^7.20.5",
-		"@babel/types": "^7.20.5",
-		"minimatch": "^5.1.1",
+		"@babel/core": "^7.26.7",
+		"@babel/types": "^7.26.7",
+		"minimatch": "^10.0.1",
 		"string-hash": "^1.1.3"
 	}
 }

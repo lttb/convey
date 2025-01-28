@@ -2,7 +2,7 @@
 	"name": "convey",
 	"private": true,
 	"type": "module",
-	"workspaces": ["@convey/*"],
+	"workspaces": ["./@convey/*"],
 	"scripts": {
 		"prepub": "lerna run build --no-private",
 		"pub": "lerna publish from-package --contents lib --exact --no-private",
@@ -11,9 +11,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/bun": "latest"
+		"@types/bun": "^1.2.0"
 	},
 	"peerDependencies": {
-		"typescript": "^5.0.0"
+		"typescript": "^5.7.3"
 	}
 }

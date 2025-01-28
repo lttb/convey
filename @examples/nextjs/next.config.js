@@ -10,6 +10,7 @@ const withConvey = require('@convey/next-plugin')({
 	},
 })
 
+/** @param {import('next').NextConfig} nextConfig */
 module.exports = withConvey({
 	compress: false,
 

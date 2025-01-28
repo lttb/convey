@@ -1,5 +1,5 @@
 const t = require('@babel/types')
-const minimatch = require('minimatch')
+const { minimatch } = require('minimatch')
 const stringHash = require('string-hash')
 const nodePath = require('node:path')
 

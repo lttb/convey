@@ -1,5 +1,6 @@
 {
-	"name": "expo-app",
+	"name": "@examples/expo-app",
+	"private": true,
 	"version": "1.0.0",
 	"main": "index.ts",
 	"scripts": {
@@ -30,6 +31,5 @@
 		"@types/express": "^5.0.0",
 		"@types/react": "~18.3.12",
 		"typescript": "^5.3.3"
-	},
-	"private": true
+	}
 }
