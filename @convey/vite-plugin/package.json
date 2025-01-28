@@ -4,8 +4,6 @@
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
 	"type": "module",
-	"main": "index.js",
-	"types": "index.js",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -18,8 +16,12 @@
 		"@babel/core": "^7.26.7",
 		"@convey/babel-plugin": "workspace:*"
 	},
-	"devDependencies": {
-		"vite": "^6.0.1",
-		"@types/babel__core": "^7.20.5"
+	"peerDependencies": {
+		"vite": ">=6",
+		"@types/babel__core": ">=7"
+	},
+	"peerDependenciesMeta": {
+		"vite": { "optional": true },
+		"@types/babel__core": { "optional": true }
 	}
 }

@@ -5,7 +5,6 @@
 	"license": "MIT",
 	"type": "commonjs",
 	"main": "index.js",
-	"types": "index.js",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -18,8 +17,12 @@
 		"@babel/core": "^7.20.5",
 		"@convey/babel-plugin": "workspace:*"
 	},
-	"devDependencies": {
-		"@types/next": "npm:next@^15.1.6",
-		"@types/webpack": "^5.28.5"
+	"peerDependencies": {
+		"next": ">=15",
+		"@types/webpack": ">=5"
+	},
+	"peerDependenciesMeta": {
+		"next": { "optional": true },
+		"@types/webpack": { "optional": true }
 	}
 }
