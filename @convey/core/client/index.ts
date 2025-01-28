@@ -1,5 +1,8 @@
-import { entityReviver } from '../utils'
-import type { CancellableAsyncGenerator, ResolverOptions } from '../types'
+import { entityReviver } from '@convey/core/utils'
+import type {
+	CancellableAsyncGenerator,
+	ResolverOptions,
+} from '@convey/core/types'
 
 const EventStreamContentType = 'text/event-stream'
 const JSONContentType = 'application/json'

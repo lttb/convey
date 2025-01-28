@@ -3,6 +3,8 @@
 	"version": "0.20.0-a.0",
 	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
 	"license": "MIT",
+	"sideEffects": false,
+	"type": "module",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -12,8 +14,6 @@
 		"directory": "@convey/core"
 	},
 	"scripts": {
-		"test": "",
-		"prebuild": "rm -rf lib",
-		"build": "rollup -c --bundleConfigAsCjs"
+		"build": "bun .build.ts"
 	}
 }

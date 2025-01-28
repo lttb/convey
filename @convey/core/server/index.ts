@@ -1,12 +1,7 @@
-import {
-	resolve,
-	resolveStream,
-	terminateStream,
-	getStructure,
-} from '@convey/core'
+import { resolve, resolveStream, terminateStream, getStructure } from '..'
 
-import { getCacheOptions } from '@convey/core/utils/resolvers'
-import { entityReviver } from '@convey/core/utils/serialiser'
+import { getCacheOptions } from '../utils/resolvers'
+import { entityReviver } from '../utils/serialiser'
 
 const CACHE_TRANSPORT_LEVEL = 'transport'
 
