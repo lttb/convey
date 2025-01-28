@@ -1,17 +1,29 @@
-const t = require('@babel/types')
-const { minimatch } = require('minimatch')
-const stringHash = require('string-hash')
-const nodePath = require('node:path')
+import * as t from '@babel/types'
+import template from '@babel/template'
+import { minimatch } from 'minimatch'
+import stringHash from 'string-hash'
+import nodePath from 'node:path'
 
 /**
  * @typedef {Object} PluginOptions
- * @property {(string | RegExp | {test: string})[]} remote - array of remote resolver path patterns
- * @prop {string} root - path to root directory
+ * @property {(string | RegExp | {test: string})[]} [remote] - array of remote resolver path patterns
+ * @prop {string} [root] - path to root directory
  */
 
 /**
  * @typedef {import("@babel/core").NodePath<t.CallExpression>} CallNode
  */
+
+const objectAssignTemplate = template.expression('Object.assign(NEW, OLD)')
+const spreadTemplate = template.expression('Object.assign(NEW, [SPREAD][0])')
+
+/**
+ * @param {Set<any> | Map<any, any>} o
+ * @param {unknown} value
+ *
+ * @returns {boolean}
+ */
+const has = (o, value) => o.has(value)
 
 const NAMESPACE = '@convey'
 
@@ -19,15 +31,19 @@ const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream'])
 
 /**
  * @param {import("@babel/core").ConfigAPI} api - Babel Api
- * @param {PluginOptions} pluginOptions - Plugin Options
+ * @param {PluginOptions} [pluginOptions] - Plugin Options
  *
  * @return {import("@babel/core").PluginObj}
  */
-module.exports = (api, pluginOptions = {}) => {
-	api.cache(true)
-
+export default (api, pluginOptions = {}) => {
 	const options = { root: process.cwd(), ...pluginOptions }
 
+	/**
+	 * @param {string} filename
+	 * @param {string | RegExp} pattern
+	 *
+	 * @return {boolean}
+	 */
 	function isRemotePattern(filename, pattern) {
 		if (pattern instanceof RegExp) {
 			return pattern.test(filename)
@@ -46,6 +62,10 @@ module.exports = (api, pluginOptions = {}) => {
 			Program(programPath, state) {
 				const { filename } = state.file.opts
 
+				if (!filename) {
+					return
+				}
+
 				/** @type {Map<t.Node, {callee: CallNode, name: string}>} */
 				const references = new Map()
 				/** @type {Set<string>} */
@@ -62,32 +82,41 @@ module.exports = (api, pluginOptions = {}) => {
 						for (const spec of specifiers) {
 							if (!t.isImportSpecifier(spec)) continue
 
-							const name = spec.imported.name || spec.imported.value
+							const name = t.isStringLiteral(spec.imported)
+								? spec.imported.value
+								: spec.imported.name
 							const binding = importPath.scope.getBinding(name)
 
-							if (!RESOLVER_CREATORS.has(name)) continue
+							if (!RESOLVER_CREATORS.has(name) || !binding) continue
 
 							for (const ref of binding.referencePaths) {
 								const { parentPath } = ref
-								if (!t.isCallExpression(parentPath)) continue
+
+								if (!parentPath?.isCallExpression()) {
+									continue
+								}
 
 								const parentVariable = parentPath.parentPath
+								const topParent = parentVariable?.parentPath?.parentPath
 
 								if (
-									t.isVariableDeclarator(parentVariable) &&
-									(t.isProgram(parentVariable.parentPath.parentPath) ||
-										t.ExportNamedDeclaration(
-											parentVariable.parentPath.parentPath,
-										))
+									!(
+										parentVariable?.isVariableDeclarator() &&
+										t.isIdentifier(parentVariable.node.id) &&
+										(topParent?.isProgram() ||
+											topParent?.isExportNamedDeclaration())
+									)
 								) {
-									const name = parentVariable.node.id.name
-
-									referenceVars.add(name)
-									references.set(parentPath.node, {
-										callee: parentPath,
-										name,
-									})
+									continue
 								}
+
+								const name = parentVariable.node.id.name
+
+								referenceVars.add(name)
+								references.set(parentPath.node, {
+									callee: parentPath,
+									name,
+								})
 							}
 						}
 
@@ -95,7 +124,7 @@ module.exports = (api, pluginOptions = {}) => {
 					},
 				})
 
-				const isRemoteResolver = options.remote.find((pattern) => {
+				const isRemoteResolver = options.remote?.find((pattern) => {
 					if (typeof pattern === 'string' || pattern instanceof RegExp) {
 						return isRemotePattern(filename, pattern)
 					}
@@ -130,11 +159,27 @@ module.exports = (api, pluginOptions = {}) => {
 
 					if (!optionsPath) {
 						ref.callee.pushContainer('arguments', resolverOptions)
-					} else {
-						resolverOptions.properties.push(...optionsPath.node.properties)
 
-						optionsPath.replaceWith(resolverOptions)
+						continue
 					}
+
+					if (optionsPath.isSpreadElement()) {
+						optionsPath.replaceWith(
+							spreadTemplate({
+								NEW: resolverOptions,
+								SPREAD: optionsPath.node,
+							}),
+						)
+
+						continue
+					}
+
+					optionsPath.replaceWith(
+						objectAssignTemplate({
+							NEW: resolverOptions,
+							OLD: optionsPath.node,
+						}),
+					)
 				}
 
 				if (!isRemoteResolver) return
@@ -145,18 +190,18 @@ module.exports = (api, pluginOptions = {}) => {
 					}
 
 					if (t.isVariableDeclaration(node)) {
-						return node.declarations.every((decl) => references.has(decl.init))
+						return node.declarations.every((decl) => has(references, decl.init))
 					}
 
 					if (t.isExportNamedDeclaration(node)) {
 						if (t.isVariableDeclaration(node.declaration)) {
 							return node.declaration.declarations.every((decl) =>
-								references.has(decl.init),
+								has(references, decl.init),
 							)
 						}
 
 						return node.specifiers.every((spec) =>
-							referenceVars.has(spec.local?.name),
+							has(referenceVars, 'local' in spec && spec.local?.name),
 						)
 					}
 
