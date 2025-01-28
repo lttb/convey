@@ -2,15 +2,15 @@ import { config } from '../config'
 
 import { LocalCache } from './LocalCache'
 
-import type { ResolverResult, Unbox } from '../types'
+import type { AnyStructure, ResolverResult, Unbox } from '../types'
 
 export { getCacheOptions } from './LocalCache'
 
-export function execResolver({ resolver, context, params }) {
+export function execResolver({ resolver, context, params }: any) {
 	return context ? resolver.apply(context, params) : resolver(...params)
 }
 
-export async function fetchResolver(structure) {
+export async function fetchResolver(structure: any) {
 	const { resolver, options } = structure
 
 	if (typeof resolver === 'function') {
@@ -31,14 +31,14 @@ export async function fetchResolver(structure) {
 		}
 	}
 
-	for await (const value of config.fetch!(structure)) {
-		const { payload, options, error } = value.data
+	for await (const value of config.fetch(structure)) {
+		const { payload, options, error } = value.data || {}
 
 		return { type: 'remote', options, payload, error }
 	}
 }
 
-export async function* fetchResolverStream(structure) {
+export async function* fetchResolverStream(structure: any) {
 	const { resolver, options } = structure
 
 	if (typeof resolver === 'function') {
@@ -55,7 +55,7 @@ export async function* fetchResolverStream(structure) {
 			yield { type: 'local', options, payload: value }
 		}
 	} else {
-		for await (const value of config.fetch!(structure)) {
+		for await (const value of config.fetch(structure)) {
 			if (!value?.data) continue
 
 			const { payload, options } = value.data
@@ -71,7 +71,7 @@ export async function resolve<Result, Params extends any[]>(
 	structure: ResolverResult<Result, Params>,
 ): Promise<Unbox<Result>>
 
-export async function resolve(structure) {
+export async function resolve(structure: AnyStructure) {
 	localCache = localCache || new LocalCache()
 
 	if (!localCache.has(structure)) {
@@ -81,8 +81,8 @@ export async function resolve(structure) {
 	const result = localCache.get(structure)
 
 	return result?.then
-		? result.then((data) => {
-				if (data && data.error) {
+		? result.then((data: any) => {
+				if (data?.error) {
 					throw data.payload
 				}
 

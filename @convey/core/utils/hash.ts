@@ -1,9 +1,8 @@
-import { getStructure } from '..'
-import type { ResolverStructure } from '../types'
+import { getStructure, type AnyStructure } from '..'
 
 const paramsOrder = new Map<string, number>()
 
-export function getParamsHash(params, hashed = new Set()) {
+export function getParamsHash(params: any, hashed = new Set()): string {
 	if (hashed.has(params)) return '$cycle$'
 	hashed.add(params)
 	if (Array.isArray(params)) {
@@ -30,25 +29,24 @@ export function getParamsHash(params, hashed = new Set()) {
 
 const HASH_KEY = '__hash__'
 
-export function getResolverHash(structure: ResolverStructure<any, any>) {
-	if (!structure) {
+export function getResolverHash(_structure: AnyStructure) {
+	if (!_structure) {
 		return ''
 	}
 
-	structure = getStructure(structure)
+	const structure = getStructure(_structure)
 
 	// minor hash access optimization
 	if (structure[HASH_KEY]) {
 		return structure[HASH_KEY]
 	}
 
-	let hash
+	let hash: string
 
 	if (structure.options.getHash) {
 		hash = structure.options?.getHash(structure)
 	} else {
-		hash =
-			getParamsHash(structure.params) + '/' + getParamsHash(structure.context)
+		hash = `${getParamsHash(structure.params)}/${getParamsHash(structure.context)}`
 	}
 
 	structure[HASH_KEY] = hash

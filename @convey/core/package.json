@@ -15,6 +15,7 @@
 		"directory": "@convey/core"
 	},
 	"scripts": {
+		"prepublishOnly": "bun run build",
 		"build": "bun -e 'import(`@convey/build`)'"
 	}
 }

@@ -71,7 +71,7 @@ export async function createResolverResponse(
 				'Content-Type': 'application/json',
 			}
 
-			if (cacheOptions.level === CACHE_TRANSPORT_LEVEL) {
+			if (cacheOptions?.level === CACHE_TRANSPORT_LEVEL) {
 				headers['Cache-Control'] =
 					`max-age=${Math.round(cacheOptions.ttl / 1000)}, public`
 			}

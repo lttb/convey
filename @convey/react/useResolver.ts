@@ -1,25 +1,14 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 
-import {
-	subscribeStream,
-	subscribe,
-	resolveStream,
-	config,
-	_Promise,
-	getStructure,
-} from '@convey/core'
+import {subscribeStream, subscribe, resolveStream, config, getStructure} from '@convey/core'
 
-import type { Unbox, ResolverResult } from '@convey/core'
+import type {Unbox, ResolverResult} from '@convey/core'
 
-type MetaBase<Result> = { refresh: () => Result }
+type MetaBase<Result> = {refresh: () => Result}
 
 type HookResult<Result> =
-	| [Unbox<Result>, MetaBase<Result> & { status: 'DONE' }]
-	| [
-			undefined,
-			MetaBase<Result> &
-				({ status: 'PENDING' | 'UNSET' } | { status: 'ERROR'; error: Error }),
-	  ]
+	| [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
+	| [undefined, MetaBase<Result> & ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error})]
 
 export function useResolver<Result, Params extends any[] = any[]>(
 	resolver: null | ResolverResult<Result, Params>,
@@ -28,7 +17,7 @@ export function useResolver<Result, Params extends any[] = any[]>(
 export function useResolver(str) {
 	const structure = getStructure(str)
 
-	const { resolver } = structure ?? {}
+	const {resolver} = structure ?? {}
 
 	const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(null)
 	const [meta, setMeta] = useState<HookResult<any>[1]>({
@@ -49,7 +38,7 @@ export function useResolver(str) {
 		let finished = false
 
 		async function main() {
-			setMeta((meta) => ({ ...meta, status: 'PENDING' }))
+			setMeta((meta) => ({...meta, status: 'PENDING'}))
 
 			if (structure.stream) {
 				if (typeof resolver === 'function') {
@@ -66,11 +55,11 @@ export function useResolver(str) {
 					if (finished) return
 
 					setData(() => value)
-					setMeta((meta) => ({ ...meta, status: 'DONE' }))
+					setMeta((meta) => ({...meta, status: 'DONE'}))
 					resultPromise?.resolve(value)
 				}
 			} catch (error) {
-				setMeta((meta) => ({ ...meta, status: 'ERROR', error }))
+				setMeta((meta) => ({...meta, status: 'ERROR', error}))
 				resultPromise?.reject(error)
 			}
 		}

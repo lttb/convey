@@ -2,7 +2,12 @@ import { config } from '../config'
 import { callbackToIter, terminateStream } from './callbackToIter'
 import { resolve, resolveStream } from './resolvers'
 
-import type { Resolver, CancellableAsyncGenerator, Unbox } from '../types'
+import type {
+	Resolver,
+	CancellableAsyncGenerator,
+	Unbox,
+	AnyStructure,
+} from '../types'
 import { getStructure } from './createResolver'
 
 export class EventEmitter {
@@ -14,7 +19,7 @@ export class EventEmitter {
 		this.streams = new Map()
 	}
 
-	private async runGenerator(structure) {
+	private async runGenerator(structure: AnyStructure) {
 		for await (const value of resolveStream(structure)) {
 			// @ts-expect-error TODO: fix
 			this.emit(structure, value)
@@ -31,13 +36,17 @@ export class EventEmitter {
 		if (!this.list.has(resolver)) {
 			this.list.set(resolver, {})
 		}
-		const listeners = this.list.get(resolver)
+		// biome-ignore lint/style/noNonNullAssertion: set already
+		const listeners = this.list.get(resolver)!
+
+		listeners[hash] ??= new Set()
+
 		if (!listeners[hash]) {
 			listeners[hash] = new Set()
 		}
 
 		yield* callbackToIter<Unbox<Result>>(({ next }) => {
-			const listener = (data) => {
+			const listener = (data: Unbox<Result>) => {
 				next(data)
 			}
 
@@ -59,7 +68,9 @@ export class EventEmitter {
 		if (!this.streams.has(resolver)) {
 			this.streams.set(resolver, {})
 		}
-		const streams = this.streams.get(resolver)
+		// biome-ignore lint/style/noNonNullAssertion: set already
+		const streams = this.streams.get(resolver)!
+
 		if (!streams[hash]) {
 			streams[hash] = this.runGenerator(structure)
 		}
@@ -88,7 +99,9 @@ export class EventEmitter {
 
 		const hash = config.getResolverHash(structure)
 
-		this.list.get(resolver)[hash]?.forEach((listner) => listner(dataPromise))
+		this.list
+			.get(resolver)!
+			[hash]?.forEach((listner: any) => listner(dataPromise))
 	}
 
 	async invalidate<Params extends any[], Result>(

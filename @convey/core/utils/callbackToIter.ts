@@ -5,7 +5,7 @@ const UNSET = Symbol('unset')
 const PENDING = Symbol('pending')
 const ERROR = Symbol('error')
 
-type UnsubType = (() => void) | void
+type UnsubType = (() => void) | undefined
 
 export function terminateStream<V>(
 	iter: CancellableGenerator<V> | CancellableAsyncGenerator<V>,
@@ -22,11 +22,9 @@ export async function* callbackToIter<V, E extends Error = Error>(
 		reject: (error: E) => void
 	}) => UnsubType,
 ): CancellableAsyncGenerator<V> {
-	const iter = { next: null, reject: null, done: null }
-
 	let unsub: typeof UNSET | UnsubType = UNSET
 
-	let queue
+	let queue: V[]
 
 	function terminate() {
 		if (typeof unsub === 'function') unsub()
@@ -40,29 +38,31 @@ export async function* callbackToIter<V, E extends Error = Error>(
 				| { status: typeof DONE | typeof PENDING }
 				| { status: typeof ERROR; error: Error }
 			>((promiseResolve) => {
-				let id
+				let id: Timer
 
-				iter.next = (data) => {
-					queue.push(data)
+				const iter = {
+					next: (data: V) => {
+						queue.push(data)
 
-					if (id) clearTimeout(id)
+						if (id) clearTimeout(id)
 
-					id = setTimeout(() => {
-						promiseResolve({ status: PENDING })
-					}, 0)
-				}
+						id = setTimeout(() => {
+							promiseResolve({ status: PENDING })
+						}, 0)
+					},
 
-				iter.reject = (error) => promiseResolve({ status: ERROR, error })
+					reject: (error: E) => promiseResolve({ status: ERROR, error }),
 
-				iter.done = (data) => {
-					// stop accepting data
-					iter.next = () => {
-						// warning('[callbackToIter] The data has been sent after stream end')
-					}
+					done: (data: V) => {
+						// stop accepting data
+						iter.next = () => {
+							// warning('[callbackToIter] The data has been sent after stream end')
+						}
 
-					queue.push(data)
+						queue.push(data)
 
-					promiseResolve({ status: DONE })
+						promiseResolve({ status: DONE })
+					},
 				}
 
 				if (unsub === UNSET) {
@@ -74,6 +74,7 @@ export async function* callbackToIter<V, E extends Error = Error>(
 				}
 			})
 
+			// @ts-ignore
 			yield* queue
 
 			if (handlerSignal.status === ERROR) {

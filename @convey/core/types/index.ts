@@ -1,3 +1,5 @@
+export type AnyStructure = any
+
 export type UnboxPromise<T> = T extends Promise<infer U> ? U : T
 
 export type UnboxGenerator<T> = T extends AsyncGenerator<infer G>
@@ -25,7 +27,7 @@ export type ResolverStructure<
 	stream?: boolean
 }
 
-type CacheOptions<CL> = {
+export type CacheOptions<CL> = {
 	/**
 	 * Cache Time to Live, ms
 	 */
@@ -96,6 +98,8 @@ export type Resolver<
 /**
  * If true, then terminate the stream and call others termination
  */
+
+// biome-ignore lint/suspicious/noConfusingVoidType:
 type Signal = void | true
 
 export type CancellableGenerator<T> = Generator<T, any, Signal>

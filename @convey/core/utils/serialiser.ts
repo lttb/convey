@@ -4,7 +4,7 @@
  * A candidate for a separate package @convey/serializer
  */
 
-const classesByKey = {}
+const classesByKey: Record<string, any> = {}
 
 const DATA_KEY = Symbol('data')
 
@@ -14,7 +14,6 @@ type Primitive =
 	| boolean
 	| null
 	| undefined
-	| void
 	| symbol
 	| (string & object)
 	| (number & object)
@@ -47,7 +46,7 @@ export function createEntityNamespace(name: string) {
 
 	function entity<T = void>(): IRegistrar<T> & (new (data: T) => WrapData<T>)
 
-	function entity<C extends new (...args: void[]) => any>(
+	function entity<C extends new (...args: []) => any>(
 		constr: C,
 	): IRegistrar<C> &
 		(new (
@@ -80,6 +79,7 @@ export function createEntityNamespace(name: string) {
 		return class Entity extends Parent implements IEntity<R> {
 			[DATA_KEY]: T
 
+			// @ts-expect-error
 			value: R
 
 			static register(name: string) {
@@ -93,7 +93,7 @@ export function createEntityNamespace(name: string) {
 
 				key = entityKey
 
-				classesByKey[key] = this
+				classesByKey[key] = Entity
 			}
 
 			static contains(value: unknown): value is Entity {
@@ -153,9 +153,9 @@ export const entity = createEntityNamespace('_')
 export const registerEntities = (
 	entityMap: Record<string, IRegistrar<any>>,
 ) => {
-	Object.entries(entityMap).forEach(
-		([name, cls]) => cls.register && cls.register(name),
-	)
+	for (const [name, cls] of Object.entries(entityMap)) {
+		cls?.register(name)
+	}
 }
 
 export const entityReviver = (key: string, value: any) => {

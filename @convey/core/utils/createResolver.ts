@@ -1,7 +1,13 @@
-import type { Resolver, ResolverOptions } from '../types'
+import type { Resolver, ResolverOptions, ResolverResult } from '../types'
 import { resolve, resolveStream } from '.'
 
+type PromiseOrGeneratorResolver<Result, Params extends any[], Context> = (
+	this: Context,
+	...params: Params
+) => Result | AsyncGenerator<Result> | Generator<Result>
+
 const createBaseResolver = <
+	Result,
 	Params extends any[],
 	Options extends ResolverOptions,
 	Context,
@@ -9,18 +15,23 @@ const createBaseResolver = <
 	options,
 	resolver,
 	stream = false,
-}) =>
+}: {
+	options: Options
+	resolver: PromiseOrGeneratorResolver<Result, Params, Context>
+	stream?: boolean
+}): Resolver<Result, Params, Options, Context> =>
+	// @ts-expect-error
 	Object.assign(
 		function (this: Context, ...params: Params) {
-			const executor = async (res, rej) => {
+			const executor = async (res: any, rej: any) => {
 				try {
 					res(await resolve(structure as any))
 				} catch (error) {
 					rej(error)
 				}
 			}
-			let _promise
-			let _iter
+			let _promise: Promise<any>
+			let _iter: ReturnType<typeof resolveStream>
 			const structure = {
 				/** detect if there is any special context */
 				context: this === defaultThis ? null : this,
@@ -28,15 +39,16 @@ const createBaseResolver = <
 				params,
 				options,
 				stream,
-				then(onRes, onRej) {
+				// biome-ignore lint/suspicious/noThenProperty:
+				then(onRes: any, onRej: any) {
 					_promise = _promise || new Promise(executor)
 					return _promise.then(onRes, onRej)
 				},
-				catch(onRej) {
+				catch(onRej: any) {
 					_promise = _promise || new Promise(executor)
 					return _promise.catch(onRej)
 				},
-				finally(onFin) {
+				finally(onFin: any) {
 					_promise = _promise || new Promise(executor)
 					return _promise.finally(onFin)
 				},
@@ -54,11 +66,11 @@ const createBaseResolver = <
 		{ options },
 	)
 
-const structures = new WeakMap()
-export const getStructure = (p) => (p?.resolver ? p : structures.get(p))
+const structures = new WeakMap<ResolverResult<any, any>>()
+export const getStructure = (p: any) => (p?.resolver ? p : structures.get(p))
 
 /** isomorphic global this alternative */
-const defaultThis = (function () {
+const defaultThis = (function (this: any) {
 	return this
 })()
 
@@ -74,7 +86,7 @@ export const createResolver = <
 	createBaseResolver({
 		resolver,
 		options: Object.assign({ cacheable: true }, options),
-	}) as any
+	})
 
 export const createResolverStream = <
 	Params extends any[],
@@ -93,4 +105,4 @@ export const createResolverStream = <
 		options: Object.assign({ cacheable: true }, options),
 
 		stream: true,
-	}) as any
+	})

@@ -2,33 +2,47 @@ import { config } from '../config'
 import { LRUCache } from './LRUCache'
 
 import { invalidate } from './EventEmitter'
+import type { ResolverOptions, CacheOptions, AnyStructure } from '../types'
 
 const CACHE_KEY_PREFIX = '__CONVEY__'
-const getCacheKey = (structure, hash) =>
+const getCacheKey = (structure: AnyStructure, hash: string) =>
 	`${CACHE_KEY_PREFIX}:${structure.options.id}:${hash}`
 
 type ResolverType = 'local' | 'remote'
 
-export function getCacheOptions(options, type: ResolverType) {
+export function getCacheOptions(
+	options: ResolverOptions,
+	type: ResolverType,
+): null | CacheOptions<string> {
 	const { cacheable } = options
 
-	if (!cacheable) return false
+	if (!cacheable) return null
 
-	if (type === 'remote') {
-		return cacheable.remote || (!cacheable.local && cacheable)
+	if (typeof cacheable === 'boolean') {
+		return {} as CacheOptions<'default'>
 	}
 
-	return cacheable.local || (!cacheable.remote && cacheable)
+	const local = 'local' in cacheable ? cacheable.local : null
+	const remote = 'remote' in cacheable ? cacheable.remote : null
+	const base = local || remote ? null : (cacheable as CacheOptions<'default'>)
+
+	if (type === 'remote') {
+		return remote || base
+	}
+
+	return local || base
 }
 
 class StorageCache<K = any, V = any> {
 	storage?: Storage
 
-	constructor(storage?: Storage) {
-		this.storage = storage
+	constructor(storage?: Storage | null) {
+		if (storage) {
+			this.storage = storage
+		}
 	}
 
-	has(structure, hash) {
+	has(structure: AnyStructure, hash: string) {
 		const key = getCacheKey(structure, hash)
 		const item = this.storage?.getItem(key)
 
@@ -43,18 +57,18 @@ class StorageCache<K = any, V = any> {
 
 		return true
 	}
-	get(structure, hash) {
+	get(structure: AnyStructure, hash: string) {
 		return JSON.parse(
 			this.storage?.getItem(getCacheKey(structure, hash)) || '{}',
 		).value
 	}
-	set(structure, hash, value, ttl) {
+	set(structure: AnyStructure, hash: string, value: any, ttl: number) {
 		return this.storage?.setItem(
 			getCacheKey(structure, hash),
 			JSON.stringify({ value, ttl, liveUntil: Date.now() + ttl }),
 		)
 	}
-	delete(structure, hash) {
+	delete(structure: any, hash: string) {
 		this.storage?.removeItem(getCacheKey(structure, hash))
 	}
 }
@@ -92,7 +106,7 @@ export class LocalCache {
 	//     });
 	// }
 
-	has(structure) {
+	has(structure: AnyStructure) {
 		const hash = config.getResolverHash(structure)
 
 		return (
@@ -102,7 +116,7 @@ export class LocalCache {
 		)
 	}
 
-	get(structure) {
+	get(structure: AnyStructure) {
 		const hash = config.getResolverHash(structure)
 
 		return (
@@ -112,7 +126,7 @@ export class LocalCache {
 		)
 	}
 
-	delete(structure) {
+	delete(structure: AnyStructure) {
 		const hash = config.getResolverHash(structure)
 
 		this.sessionStorageCache.delete(structure, hash)
@@ -121,8 +135,8 @@ export class LocalCache {
 	}
 
 	set(
-		structure,
-		data: Data<{
+		structure: AnyStructure,
+		_data: Data<{
 			payload: any
 			options: any
 			type: ResolverType
@@ -135,9 +149,9 @@ export class LocalCache {
 		const cache = this.resolverCache.get(structure.resolver)
 		const hash = config.getResolverHash(structure)
 
-		data = Promise.resolve(data)
+		const data = Promise.resolve(_data)
 
-		cache.set(
+		cache?.set(
 			hash,
 			data.then((x) => {
 				if (x.error) {
@@ -154,7 +168,7 @@ export class LocalCache {
 			const cacheable = getCacheOptions(options, type)
 
 			if (!cacheable) {
-				cache.delete(hash)
+				cache?.delete(hash)
 
 				return
 			}
@@ -178,7 +192,7 @@ export class LocalCache {
 
 			// TODO: cancel prev timeout
 			setTimeout(() => {
-				cache.delete(hash)
+				cache?.delete(hash)
 			}, ttl)
 		})
 	}

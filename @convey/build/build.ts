@@ -7,7 +7,7 @@ const dist = path.resolve(cwd, 'dist/')
 
 await $`rm -rf ${dist}`
 
-await $`bun --bun rollup -c`
+await $`bun --bun rollup -c .config.rollup.ts`
 
 await $`cp README.md ${dist}`
 await $`cp package.json ${dist}`
