@@ -2,7 +2,6 @@
 	"name": "convey",
 	"private": true,
 	"type": "module",
-	"workspaces": ["./@convey/*"],
 	"scripts": {
 		"prepub": "lerna run build --no-private",
 		"pub": "lerna publish from-package --contents lib --exact --no-private",
