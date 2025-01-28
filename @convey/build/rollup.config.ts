@@ -15,9 +15,8 @@ export default (options: RollupOptions) =>
 
 		plugins: [
 			typescript({
-				exclude: ['**/tests/**', '**/dist/**', '*.config.*'],
+				exclude: ['**/tests/**', '**/dist/**', '*.config.*', '*.test.*'],
 				allowImportingTsExtensions: false,
-				noCheck: true,
 				declaration: true,
 				outDir: 'dist',
 				declarationDir: 'dist',

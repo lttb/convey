@@ -11,7 +11,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lttb/convey.git",
+		"url": "git+https://github.com/lttb/convey.git",
 		"directory": "@convey/next-plugin"
 	},
 	"dependencies": {

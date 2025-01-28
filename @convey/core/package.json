@@ -6,11 +6,12 @@
 	"sideEffects": false,
 	"type": "module",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"directory": "dist"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lttb/convey.git",
+		"url": "git+https://github.com/lttb/convey.git",
 		"directory": "@convey/core"
 	},
 	"scripts": {

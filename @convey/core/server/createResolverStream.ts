@@ -1,11 +1,12 @@
-import { getCacheOptions } from '../utils/resolvers'
 import {
 	resolve,
 	resolveStream,
 	terminateStream,
 	type ResolverOptions,
 	type ResolverResult,
-} from '..'
+} from '@convey/core'
+
+import { getCacheOptions } from '../utils/resolvers'
 
 const CACHE_TRANSPORT_LEVEL = 'transport'
 

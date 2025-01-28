@@ -1,4 +1,4 @@
-import type { Resolver } from '..'
+import type { Resolver } from '@convey/core'
 
 export type ResolverMap = Record<string, Resolver<any, any>>
 

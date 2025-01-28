@@ -1,1 +1,1 @@
-export * from './useResolver'
+export * from './index'

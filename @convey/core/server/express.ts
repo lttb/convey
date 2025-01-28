@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
-import { getStructure, entityReviver } from '..'
+import { getStructure, entityReviver } from '@convey/core'
+
 import type { ResolverMap, ResolverRequestBody } from './types'
 import { createResolverResponse } from './createResolverStream'
 

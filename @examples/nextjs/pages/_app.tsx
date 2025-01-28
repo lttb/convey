@@ -1,6 +1,6 @@
 import '@examples/nextjs/styles/globals.css'
 
-import { setConfig } from '@convey/core/index'
+import { setConfig } from '@convey/core'
 import { createResolverFetcher } from '@convey/core/client'
 
 import '@examples/nextjs/entities'
