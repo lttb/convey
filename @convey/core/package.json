@@ -14,6 +14,6 @@
 		"directory": "@convey/core"
 	},
 	"scripts": {
-		"build": "bun .build.ts"
+		"build": "bun -e 'import(`@convey/build`)'"
 	}
 }

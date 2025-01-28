@@ -62,7 +62,7 @@ export async function handleResolver(req, res, structure) {
 
 	// req.on('finish', terminate)
 	// req.on('close', terminate)
-	// res.on('finish', terminate)
+	res.on('finish', terminate)
 	res.on('close', terminate)
 
 	let id = 0

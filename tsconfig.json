@@ -7,10 +7,12 @@
 		"moduleDetection": "force",
 		"jsx": "react-jsx",
 		"allowJs": true,
+		"checkJs": true,
+		"resolveJsonModule": true,
 
 		// Bundler mode
 		"moduleResolution": "bundler",
-		"allowImportingTsExtensions": false,
+		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 
 		// Best practices
@@ -21,6 +23,10 @@
 		// Some stricter flags (disabled by default)
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
-		"noPropertyAccessFromIndexSignature": false
+		"noPropertyAccessFromIndexSignature": false,
+
+		"declaration": true,
+		"outDir": "${configDir}/dist",
+		"declarationDir": "${configDir}/dist"
 	}
 }
