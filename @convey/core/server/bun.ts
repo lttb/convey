@@ -4,15 +4,10 @@ import { createResolverResponse } from './createResolverStream'
 
 export function createResolverHandler(resolversMap: ResolverMap) {
 	return async (req: Request): Promise<Response> => {
-		let body: ResolverRequestBody
+		const url = new URL(req.url)
 
-		try {
-			const json = await req.json()
-			body = { b: json.b }
-		} catch {
-			const url = new URL(req.url)
-			body = { b: url.searchParams.get('b') || '{}' }
-		}
+		const bQuery = url.searchParams.get('b')
+		const body: ResolverRequestBody = bQuery ? { b: bQuery } : await req.json()
 
 		const { params, id } = JSON.parse(body.b, entityReviver)
 		const resolverId = id in resolversMap ? id : id.split(':')[1]

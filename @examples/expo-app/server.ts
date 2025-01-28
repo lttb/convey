@@ -1,23 +1,37 @@
-import express from 'express'
-import cors from 'cors'
+import { createResolverHandler } from '@convey/core/server/bun'
 
 import * as resolvers from './resolvers/server'
-import { createResolverHandler } from '@convey/core/server'
-
-const port = 3000
-
-const app = express()
 
 const handleResolver = createResolverHandler(resolvers)
 
-app.use(cors())
-app.use(express.json())
+const getResponse = (req: Request) => {
+	if (req.method === 'OPTIONS') {
+		return new Response()
+	}
 
-app.all('/api/resolvers/:id', async (req, res) => {
-	await handleResolver(req, res)
-})
+	const url = new URL(req.url)
 
-// Start http server
-app.listen(port, () => {
-	console.log(`Server started at http://localhost:${port}`)
+	if (url.pathname.startsWith('/api/resolvers')) {
+		return handleResolver(req)
+	}
+
+	return new Response('404')
+}
+
+Bun.serve({
+	async fetch(req) {
+		const res = await getResponse(req)
+
+		res.headers.set('Access-Control-Allow-Origin', '*')
+		res.headers.set(
+			'Access-Control-Allow-Methods',
+			'GET, POST, PUT, DELETE, OPTIONS',
+		)
+		res.headers.set(
+			'Access-Control-Allow-Headers',
+			'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+		)
+
+		return res
+	},
 })
