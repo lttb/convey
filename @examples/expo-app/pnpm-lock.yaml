@@ -5,13 +5,13 @@ importers:
   .:
     dependencies:
       '@convey/babel-plugin':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/babel-plugin
       '@convey/core':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/core
       '@convey/react':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/react
       '@expo/metro-runtime':
         specifier: ~4.0.1

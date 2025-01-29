@@ -5,13 +5,13 @@ importers:
   .:
     dependencies:
       '@convey/core':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/core
       '@convey/next-plugin':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/next-plugin
       '@convey/react':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/react
       '@examples/nextjs':
         specifier: 1.0.0

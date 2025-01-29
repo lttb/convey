@@ -55,7 +55,7 @@ importers:
         specifier: ^7.26.7
         version: 7.26.7
       '@convey/babel-plugin':
-        specifier: 0.20.0-a.0
+        specifier: workspace:*
         version: link:../babel-plugin
       '@types/webpack':
         specifier: '>=5'
@@ -67,7 +67,7 @@ importers:
   '@convey/react':
     dependencies:
       '@convey/core':
-        specifier: 0.20.0-a.0
+        specifier: workspace:*
         version: link:../core
       react:
         specifier: ^18.3.1
@@ -87,7 +87,7 @@ importers:
         specifier: ^7.26.7
         version: 7.26.7
       '@convey/babel-plugin':
-        specifier: 0.20.0-a.0
+        specifier: workspace:*
         version: link:../babel-plugin
       '@types/babel__core':
         specifier: '>=7'

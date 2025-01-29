@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@babel/core": "^7.26.7",
-		"@convey/babel-plugin": "0.20.0-a.0"
+		"@convey/babel-plugin": "workspace:*"
 	},
 	"peerDependencies": {
 		"next": "*",

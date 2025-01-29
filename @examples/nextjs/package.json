@@ -8,9 +8,9 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"@convey/core": "0.20.0-a.0",
-		"@convey/react": "0.20.0-a.0",
-		"@convey/next-plugin": "0.20.0-a.0",
+		"@convey/core": "*",
+		"@convey/react": "*",
+		"@convey/next-plugin": "*",
 		"@examples/nextjs": "1.0.0",
 		"@prisma/client": "^6.2.1",
 		"devcert": "1.2.2",

@@ -5,13 +5,13 @@ importers:
   .:
     dependencies:
       '@convey/core':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/core
       '@convey/react':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/react
       '@convey/vite-plugin':
-        specifier: 0.20.0-a.0
+        specifier: '*'
         version: link:../../@convey/vite-plugin
       compression:
         specifier: ^1.7.5

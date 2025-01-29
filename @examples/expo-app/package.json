@@ -12,9 +12,9 @@
 		"web": "expo start --web"
 	},
 	"dependencies": {
-		"@convey/babel-plugin": "0.20.0-a.0",
-		"@convey/core": "0.20.0-a.0",
-		"@convey/react": "0.20.0-a.0",
+		"@convey/babel-plugin": "*",
+		"@convey/core": "*",
+		"@convey/react": "*",
 		"@expo/metro-runtime": "~4.0.1",
 		"@types/cors": "^2.8.17",
 		"cors": "^2.8.5",
