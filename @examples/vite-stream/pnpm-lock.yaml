@@ -32,6 +32,9 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
     devDependencies:
+      '@types/compression':
+        specifier: ^1.7.5
+        version: 1.7.5
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -1037,6 +1040,12 @@ packages:
     dependencies:
       '@types/connect': 3.4.38
       '@types/node': 22.10.10
+    dev: true
+
+  /@types/compression@1.7.5:
+    resolution: {integrity: sha512-AAQvK5pxMpaT+nDvhHrsBhLSYG5yQdtkaJE1WYieSNY2mVFKAgmU4ks65rkZD5oqnGCFLyQpUr1CqI4DmUMyDg==}
+    dependencies:
+      '@types/express': 5.0.0
     dev: true
 
   /@types/connect@3.4.38:

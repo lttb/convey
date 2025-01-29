@@ -1,15 +1,10 @@
 import '@examples/nextjs/styles/globals.css'
 
-import { setConfig } from '@convey/core'
-import { createResolverFetcher } from '@convey/core/client'
+import type { AppProps } from 'next/app'
 
 import '@examples/nextjs/entities'
 
-setConfig({
-	fetch: createResolverFetcher({ openWhenHidden: true }),
-})
-
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
 	return <Component {...pageProps} />
 }
 

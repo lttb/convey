@@ -53,13 +53,14 @@ app.use('*all', async (req, res) => {
 		let template
 		/** @type {import('./src/entry-server.ts').render} */
 		let render
-		if (!isProduction) {
+		if (!isProduction && vite) {
 			// Always read fresh template in development
 			template = await fs.readFile('./index.html', 'utf-8')
 			template = await vite.transformIndexHtml(url, template)
 			render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
 		} else {
 			template = templateHtml
+			// @ts-expect-error module exists only after build
 			render = (await import('./dist/server/entry-server.js')).render
 		}
 
@@ -83,12 +84,17 @@ app.use('*all', async (req, res) => {
 			res.end(htmlEnd)
 		})
 
-		pipe(transformStream)
+		pipe?.(transformStream)
 
 		setTimeout(() => {
 			abort()
 		}, ABORT_DELAY)
-	} catch (e) {
+	} catch (
+		/**
+		 * @type {any}
+		 */
+		e
+	) {
 		vite?.ssrFixStacktrace(e)
 		console.log(e.stack)
 		res.status(500).end(e.stack)

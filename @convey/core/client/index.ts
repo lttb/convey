@@ -46,10 +46,13 @@ export function createResolverFetcher({
 	fetch: customFetch = originalFetch,
 }: {
 	url?: string | ((structure: FetchedResolver) => string)
-	openWhenHidden?: boolean
 	reviver?: typeof entityReviver
 	headers?: RequestHeaders | ((structure: FetchedResolver) => RequestHeaders)
 	fetch?: UniversalFetch
+	/**
+	 * @deprecated
+	 */
+	openWhenHidden?: boolean
 } = {}) {
 	return async function* fetchResolver(
 		structure: FetchedResolver,
