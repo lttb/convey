@@ -11,9 +11,9 @@
 		"preview": "cross-env NODE_ENV=production node server"
 	},
 	"dependencies": {
-		"@convey/core": "workspace:*",
-		"@convey/react": "workspace:*",
-		"@convey/vite-plugin": "workspace:*",
+		"@convey/core": "0.20.0-a.0",
+		"@convey/react": "0.20.0-a.0",
+		"@convey/vite-plugin": "0.20.0-a.0",
 		"compression": "^1.7.5",
 		"express": "^5.0.1",
 		"react": "^18.3.1",
@@ -23,12 +23,12 @@
 	},
 	"devDependencies": {
 		"@types/express": "^5.0.0",
-		"@types/node": "^22.10.0",
-		"@types/react": "^18.3.12",
+		"@types/node": "^22.10.10",
+		"@types/react": "^18.3.18",
 		"@types/react-dom": "^18.3.1",
 		"@vitejs/plugin-react": "^4.3.4",
 		"cross-env": "^7.0.3",
-		"typescript": "~5.7.2",
+		"typescript": "^5.7.3",
 		"vite": "^6.0.1"
 	}
 }

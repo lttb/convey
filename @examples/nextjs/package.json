@@ -8,10 +8,10 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"@convey/core": "workspace:*",
-		"@convey/react": "workspace:*",
-		"@convey/next-plugin": "workspace:*",
-		"@examples/nextjs": "../nextjs",
+		"@convey/core": "0.20.0-a.0",
+		"@convey/react": "0.20.0-a.0",
+		"@convey/next-plugin": "0.20.0-a.0",
+		"@examples/nextjs": "1.0.0",
 		"@prisma/client": "^6.2.1",
 		"devcert": "1.2.2",
 		"next": "*",

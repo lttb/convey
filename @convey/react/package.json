@@ -6,7 +6,8 @@
 	"sideEffects": false,
 	"publishConfig": {
 		"access": "public",
-		"directory": "dist"
+		"directory": "dist",
+		"linkDirectory": false
 	},
 	"repository": {
 		"type": "git",
@@ -18,12 +19,12 @@
 		"build": "bun -e 'import(`@convey/build`)'"
 	},
 	"peerDependencies": {
-		"@convey/core": "workspace:*",
-		"react": ">=18.0.0",
+		"@convey/core": "0.20.0-a.0",
+		"react": "^18.3.1",
 		"react-streaming": "^0.3.47"
 	},
 	"devDependencies": {
-		"@types/react": "^18.3.12",
+		"@types/react": "^18.3.18",
 		"react-streaming": "^0.3.47"
 	},
 	"peerDependenciesMeta": {

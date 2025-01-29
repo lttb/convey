@@ -10,7 +10,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/bun": "^1.2.0"
+		"@types/bun": "*",
+		"syncpack": "^13.0.0"
 	},
 	"peerDependencies": {
 		"typescript": "^5.7.3"
