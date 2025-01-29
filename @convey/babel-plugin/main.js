@@ -193,7 +193,15 @@ module.exports = (_api, pluginOptions = {}) => {
 						return node.declarations.every((decl) => has(references, decl.init))
 					}
 
+					if (t.isExportAllDeclaration(node)) {
+						return true
+					}
+
 					if (t.isExportNamedDeclaration(node)) {
+						if (node.source) {
+							return true
+						}
+
 						if (t.isVariableDeclaration(node.declaration)) {
 							return node.declaration.declarations.every((decl) =>
 								has(references, decl.init),
@@ -205,7 +213,10 @@ module.exports = (_api, pluginOptions = {}) => {
 						)
 					}
 
-					// default exports are not allowed
+					if (t.isExportDefaultDeclaration(node)) {
+						// allow only identifier export
+						return t.isIdentifier(node.declaration)
+					}
 
 					return false
 				})
