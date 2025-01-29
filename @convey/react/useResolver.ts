@@ -1,23 +1,40 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 
-import {subscribeStream, subscribe, resolveStream, config, getStructure} from '@convey/core'
+import {
+	subscribeStream,
+	subscribe,
+	resolveStream,
+	config,
+	getStructure,
+	_Promise,
+} from '@convey/core'
 
-import type {Unbox, ResolverResult} from '@convey/core'
+import type {
+	Unbox,
+	ResolverResult,
+	CancellableAsyncGenerator,
+} from '@convey/core'
 
-type MetaBase<Result> = {refresh: () => Result}
+type MetaBase<Result> = { refresh: () => Result }
 
 type HookResult<Result> =
-	| [Unbox<Result>, MetaBase<Result> & {status: 'DONE'}]
-	| [undefined, MetaBase<Result> & ({status: 'PENDING' | 'UNSET'} | {status: 'ERROR'; error: Error})]
+	| [Unbox<Result>, MetaBase<Result> & { status: 'DONE' }]
+	| [
+			undefined,
+			MetaBase<Result> &
+				({ status: 'PENDING' | 'UNSET' } | { status: 'ERROR'; error: Error }),
+	  ]
 
 export function useResolver<Result, Params extends any[] = any[]>(
 	resolver: null | ResolverResult<Result, Params>,
 ): HookResult<Result>
 
-export function useResolver(str) {
+export function useResolver<Result, Params extends any[] = any[]>(
+	str: null | ResolverResult<Result, Params>,
+) {
 	const structure = getStructure(str)
 
-	const {resolver} = structure ?? {}
+	const { resolver } = structure ?? {}
 
 	const [resultPromise, setResultPromise] = useState<_Promise<any> | null>(null)
 	const [meta, setMeta] = useState<HookResult<any>[1]>({
@@ -31,14 +48,15 @@ export function useResolver(str) {
 	})
 	const [data, setData] = useState(undefined)
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: recalculate on hash change too
 	useEffect(() => {
 		if (!resolver) return
 
-		let iter
+		let iter: CancellableAsyncGenerator<any>
 		let finished = false
 
 		async function main() {
-			setMeta((meta) => ({...meta, status: 'PENDING'}))
+			setMeta((meta) => ({ ...meta, status: 'PENDING' }))
 
 			if (structure.stream) {
 				if (typeof resolver === 'function') {
@@ -55,11 +73,11 @@ export function useResolver(str) {
 					if (finished) return
 
 					setData(() => value)
-					setMeta((meta) => ({...meta, status: 'DONE'}))
+					setMeta((meta) => ({ ...meta, status: 'DONE' }))
 					resultPromise?.resolve(value)
 				}
-			} catch (error) {
-				setMeta((meta) => ({...meta, status: 'ERROR', error}))
+			} catch (error: any) {
+				setMeta((meta) => ({ ...meta, status: 'ERROR', error }))
 				resultPromise?.reject(error)
 			}
 		}
@@ -69,9 +87,8 @@ export function useResolver(str) {
 		return () => {
 			finished = true
 
-			iter.return()
+			iter.return(null)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [resolver, config.getResolverHash(structure), resultPromise])
 
 	return [data, meta] as any
