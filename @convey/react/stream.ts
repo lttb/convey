@@ -5,7 +5,7 @@ import {
 	invalidate as invalidateResolver,
 } from '@convey/core'
 import { LocalCache } from '@convey/core/utils/LocalCache'
-import { useResolver as useResolverCore } from './index'
+import { useResolver as useResolverCore } from '@convey/react'
 import { useAsync } from 'react-streaming'
 
 const resolverCache = new Map<any, Map<string, any>>()

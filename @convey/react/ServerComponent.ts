@@ -2,7 +2,13 @@ import { useState, useEffect, createElement } from 'react'
 
 import { useResolver } from './useResolver'
 
-export async function serialize(element) {
+type SerializableElement = {
+	type: any
+	props: any
+	key: string | ((props: any) => Promise<SerializableElement>)
+}
+
+export async function serialize(element: SerializableElement) {
 	if (!element?.type) return element
 
 	const result = { type: element.type, props: { ...element.props } }
@@ -20,7 +26,7 @@ export async function serialize(element) {
 	return result
 }
 
-export function deserialize(element) {
+export function deserialize(element: { type: any; props: any }) {
 	if (!element?.type) return element
 
 	const result = { type: element.type, props: { ...element.props } }
@@ -34,21 +40,22 @@ export function deserialize(element) {
 	return createElement(result.type, result.props)
 }
 
-function useValue(v) {
+function useValue(v: any) {
 	const [state, setState] = useState(null)
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies:
 	useEffect(() => {
 		if (typeof v === 'function') {
 			v().then(setState)
 		} else {
 			setState(v)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	return state
 }
-export function ServerComponent({ value }) {
+export function ServerComponent({ value }: { value: any }) {
 	const result = useValue(value)
 	const [element] = useResolver(result)
 
-	return deserialize(element) || null
+	return deserialize(element as any) || null
 }
