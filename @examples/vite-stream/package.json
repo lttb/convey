@@ -1,0 +1,35 @@
+{
+	"name": "@examples/vite-stream",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "bun server.js",
+		"build": "npm run build:client && npm run build:server",
+		"build:client": "vite build --outDir dist/client",
+		"build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
+		"preview": "cross-env NODE_ENV=production node server"
+	},
+	"dependencies": {
+		"@convey/core": "0.20.0-a.0",
+		"@convey/react": "0.20.0-a.0",
+		"@convey/vite-plugin": "0.20.0-a.0",
+		"compression": "^1.7.5",
+		"express": "^5.0.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-streaming": "^0.3.47",
+		"sirv": "^3.0.0"
+	},
+	"devDependencies": {
+		"@types/compression": "^1.7.5",
+		"@types/express": "^5.0.0",
+		"@types/node": "^22.10.10",
+		"@types/react": "^18.3.18",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.4",
+		"cross-env": "^7.0.3",
+		"typescript": "^5.7.3",
+		"vite": "^6.0.1"
+	}
+}

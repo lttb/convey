@@ -1,21 +1,35 @@
-import {useResolver} from '@convey/react';
+import { useResolver } from '@convey/react'
 
-import {getServerDate} from '@examples/nextjs/resolvers/server/example-1';
+import {
+	getDate,
+	getDateStream,
+} from '@examples/nextjs/resolvers/server/example-1'
 
-const Demo = () => {
-    const [serverDate] = useResolver(getServerDate());
+const DateComponent = () => {
+	const [serverDate] = useResolver(getDate())
 
-    return (
-        <div>
-            <p>Result: {serverDate}</p>
-        </div>
-    );
-};
+	return (
+		<div>
+			<p>Date: {serverDate}</p>
+		</div>
+	)
+}
+
+const DateStreamComponent = () => {
+	const [serverDate] = useResolver(getDateStream())
+
+	return (
+		<div>
+			<p>Date: {serverDate}</p>
+		</div>
+	)
+}
 
 export default function Simple() {
-    return (
-        <>
-            <Demo />
-        </>
-    );
+	return (
+		<>
+			<DateComponent />
+			<DateStreamComponent />
+		</>
+	)
 }

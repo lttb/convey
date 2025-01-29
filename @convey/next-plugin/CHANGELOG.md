@@ -19,4 +19,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
--   **next-plugin:** initial implementation ([3c5b142](https://github.com/lttb/convey/commit/3c5b1424c55c357929062382f97f367fb74042c1))
+- **next-plugin:** initial implementation ([3c5b142](https://github.com/lttb/convey/commit/3c5b1424c55c357929062382f97f367fb74042c1))

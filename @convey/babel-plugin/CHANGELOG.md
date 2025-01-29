@@ -19,7 +19,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
--   **babel-plugin:** package.json fix ([0371640](https://github.com/lttb/convey/commit/0371640d139d6c569bceff6f2e879188b22cdf71))
+- **babel-plugin:** package.json fix ([0371640](https://github.com/lttb/convey/commit/0371640d139d6c569bceff6f2e879188b22cdf71))
 
 ## [0.3.1](https://github.com/lttb/convey/compare/@convey/babel-plugin@0.3.0...@convey/babel-plugin@0.3.1) (2023-01-17)
 
@@ -37,10 +37,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
--   **babel-plugin:** package.json main ([4fa195d](https://github.com/lttb/convey/commit/4fa195db418a1d18d59aac1a5d7daab9540617cd))
+- **babel-plugin:** package.json main ([4fa195d](https://github.com/lttb/convey/commit/4fa195db418a1d18d59aac1a5d7daab9540617cd))
 
 # 0.1.0 (2021-11-04)
 
 ### Features
 
--   base implementation ([b3102e4](https://github.com/lttb/convey/commit/b3102e4143026fe0c00cfd22e0cb129d386427eb))
+- base implementation ([b3102e4](https://github.com/lttb/convey/commit/b3102e4143026fe0c00cfd22e0cb129d386427eb))

@@ -1,56 +1,61 @@
-import {useState, useEffect, createElement} from 'react';
+import { useState, useEffect, createElement } from 'react'
 
-import {useResolver} from './useResolver';
+import { useResolver } from './useResolver'
 
-export async function serialize(element) {
-    if (!element?.type) return element;
-
-    let result = {type: element.type, props: {...element.props}};
-
-    if (typeof element.key === 'function') {
-        return serialize(await element.key(element.props));
-    }
-
-    if (result.props.children) {
-        result.props.children = await Promise.all(
-            []
-                .concat(element.props?.children ?? [])
-                .map((child) => serialize(child))
-        );
-    }
-
-    return result;
+type SerializableElement = {
+	type: any
+	props: any
+	key: string | ((props: any) => Promise<SerializableElement>)
 }
 
-export function deserialize(element) {
-    if (!element?.type) return element;
+export async function serialize(element: SerializableElement) {
+	if (!element?.type) return element
 
-    let result = {type: element.type, props: {...element.props}};
+	const result = { type: element.type, props: { ...element.props } }
 
-    if (result.props.children) {
-        result.props.children = []
-            .concat(element.props?.children ?? [])
-            .map((child) => deserialize(child));
-    }
+	if (typeof element.key === 'function') {
+		return serialize(await element.key(element.props))
+	}
 
-    return createElement(result.type, result.props);
+	if (result.props.children) {
+		result.props.children = await Promise.all(
+			[].concat(element.props?.children ?? []).map((child) => serialize(child)),
+		)
+	}
+
+	return result
 }
 
-function useValue(v) {
-    const [state, setState] = useState(null);
-    useEffect(() => {
-        if (typeof v === 'function') {
-            v().then(setState);
-        } else {
-            setState(v);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    return state;
-}
-export function ServerComponent({value}) {
-    const result = useValue(value);
-    const [element] = useResolver(result);
+export function deserialize(element: { type: any; props: any }) {
+	if (!element?.type) return element
 
-    return deserialize(element) || null;
+	const result = { type: element.type, props: { ...element.props } }
+
+	if (result.props.children) {
+		result.props.children = []
+			.concat(element.props?.children ?? [])
+			.map((child) => deserialize(child))
+	}
+
+	return createElement(result.type, result.props)
+}
+
+function useValue(v: any) {
+	const [state, setState] = useState(null)
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies:
+	useEffect(() => {
+		if (typeof v === 'function') {
+			v().then(setState)
+		} else {
+			setState(v)
+		}
+	}, [])
+	return state
+}
+export function ServerComponent({ value }: { value: any }) {
+	const result = useValue(value)
+	const [element] = useResolver(result)
+
+	return deserialize(element as any) || null
 }
