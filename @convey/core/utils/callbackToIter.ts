@@ -8,92 +8,92 @@ const ERROR = Symbol('error')
 type UnsubType = () => void
 
 export function terminateStream<V>(
-	iter: CancellableGenerator<V> | CancellableAsyncGenerator<V>,
+  iter: CancellableGenerator<V> | CancellableAsyncGenerator<V>,
 ) {
-	// iter.next(true);
+  // iter.next(true);
 
-	iter.return(undefined)
+  iter.return(undefined)
 }
 
 export async function* callbackToIter<V, E extends Error = Error>(
-	handlerCreator: (commands: {
-		next: (data: V) => void
-		done: (data: V) => void
-		reject: (error: E) => void
-	}) => UnsubType,
+  handlerCreator: (commands: {
+    next: (data: V) => void
+    done: (data: V) => void
+    reject: (error: E) => void
+  }) => UnsubType,
 ): CancellableAsyncGenerator<V> {
-	const iter: {
-		next: null | ((data: V) => void)
-		reject: null | ((error: E) => void)
-		done: null | ((data: V) => void)
-	} = { next: null, reject: null, done: null }
+  const iter: {
+    next: null | ((data: V) => void)
+    reject: null | ((error: E) => void)
+    done: null | ((data: V) => void)
+  } = { next: null, reject: null, done: null }
 
-	let unsub: typeof UNSET | UnsubType = UNSET
+  let unsub: typeof UNSET | UnsubType = UNSET
 
-	let queue: V[]
+  let queue: V[]
 
-	function terminate() {
-		if (typeof unsub === 'function') unsub()
-	}
+  function terminate() {
+    if (typeof unsub === 'function') unsub()
+  }
 
-	try {
-		while (true) {
-			queue = []
+  try {
+    while (true) {
+      queue = []
 
-			const handlerSignal = await new Promise<
-				| { status: typeof DONE | typeof PENDING }
-				| { status: typeof ERROR; error: Error }
-			>((promiseResolve) => {
-				let id: Timer
+      const handlerSignal = await new Promise<
+        | { status: typeof DONE | typeof PENDING }
+        | { status: typeof ERROR; error: Error }
+      >((promiseResolve) => {
+        let id: Timer
 
-				iter.next = (data) => {
-					queue.push(data)
+        iter.next = (data) => {
+          queue.push(data)
 
-					if (id) clearTimeout(id)
+          if (id) clearTimeout(id)
 
-					id = setTimeout(() => {
-						promiseResolve({ status: PENDING })
-					}, 0)
-				}
+          id = setTimeout(() => {
+            promiseResolve({ status: PENDING })
+          }, 0)
+        }
 
-				iter.reject = (error) => promiseResolve({ status: ERROR, error })
+        iter.reject = (error) => promiseResolve({ status: ERROR, error })
 
-				iter.done = (data) => {
-					// stop accepting data
-					iter.next = () => {
-						// warning('[callbackToIter] The data has been sent after stream end')
-					}
+        iter.done = (data) => {
+          // stop accepting data
+          iter.next = () => {
+            // warning('[callbackToIter] The data has been sent after stream end')
+          }
 
-					queue.push(data)
+          queue.push(data)
 
-					promiseResolve({ status: DONE })
-				}
+          promiseResolve({ status: DONE })
+        }
 
-				if (unsub === UNSET) {
-					unsub = handlerCreator({
-						next: (data) => iter.next?.(data),
-						done: (data) => iter.done?.(data),
-						reject: (error) => iter.reject?.(error),
-					})
-				}
-			})
+        if (unsub === UNSET) {
+          unsub = handlerCreator({
+            next: (data) => iter.next?.(data),
+            done: (data) => iter.done?.(data),
+            reject: (error) => iter.reject?.(error),
+          })
+        }
+      })
 
-			// @ts-ignore
-			yield* queue
+      // @ts-ignore
+      yield* queue
 
-			if (handlerSignal.status === ERROR) {
-				terminate()
+      if (handlerSignal.status === ERROR) {
+        terminate()
 
-				throw handlerSignal.error
-			}
+        throw handlerSignal.error
+      }
 
-			if (handlerSignal.status === DONE) {
-				terminate()
+      if (handlerSignal.status === DONE) {
+        terminate()
 
-				return
-			}
-		}
-	} finally {
-		terminate()
-	}
+        return
+      }
+    }
+  } finally {
+    terminate()
+  }
 }

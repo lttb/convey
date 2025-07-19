@@ -1,35 +1,35 @@
 {
-	"name": "@convey/react",
-	"version": "0.20.0-a.0",
-	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
-	"license": "MIT",
-	"sideEffects": false,
-	"publishConfig": {
-		"access": "public",
-		"directory": "dist",
-		"linkDirectory": false
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lttb/convey.git",
-		"directory": "@convey/react"
-	},
-	"scripts": {
-		"prepublishOnly": "bun run build",
-		"build": "bun -e 'import(`@convey/build`)'"
-	},
-	"peerDependencies": {
-		"@convey/core": "workspace:*",
-		"react": "^18.3.1",
-		"react-streaming": "^0.3.47"
-	},
-	"devDependencies": {
-		"@types/react": "^18.3.18",
-		"react-streaming": "^0.3.47"
-	},
-	"peerDependenciesMeta": {
-		"react-streaming": {
-			"optional": true
-		}
-	}
+  "name": "@convey/react",
+  "version": "0.20.0-a.0",
+  "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+  "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lttb/convey.git",
+    "directory": "@convey/react"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun -e 'import(`@convey/build`)'"
+  },
+  "peerDependencies": {
+    "@convey/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-streaming": "^0.3.47"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "react-streaming": "^0.3.47"
+  },
+  "peerDependenciesMeta": {
+    "react-streaming": {
+      "optional": true
+    }
+  }
 }

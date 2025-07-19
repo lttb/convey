@@ -1,27 +1,26 @@
-import { getStructure, entityReviver } from '@convey/core'
-
-import type { ResolverMap, ResolverRequestBody } from './types'
+import { entityReviver, getStructure } from '@convey/core'
 import { createResolverResponse } from './createResolverStream'
+import type { ResolverMap, ResolverRequestBody } from './types'
 
 export function createResolverHandler(resolversMap: ResolverMap) {
-	return async (req: Request): Promise<Response> => {
-		const url = new URL(req.url)
+  return async (req: Request): Promise<Response> => {
+    const url = new URL(req.url)
 
-		const bQuery = url.searchParams.get('b')
-		const body: ResolverRequestBody = bQuery ? { b: bQuery } : await req.json()
+    const bQuery = url.searchParams.get('b')
+    const body: ResolverRequestBody = bQuery ? { b: bQuery } : await req.json()
 
-		const { params, id } = JSON.parse(body.b, entityReviver)
-		const resolverId = id in resolversMap ? id : id.split(':')[1]
+    const { params, id } = JSON.parse(body.b, entityReviver)
+    const resolverId = id in resolversMap ? id : id.split(':')[1]
 
-		if (!resolversMap[resolverId]) {
-			return new Response(JSON.stringify({ error: 'Resolver not found' }), {
-				status: 404,
-				headers: { 'Content-Type': 'application/json' },
-			})
-		}
+    if (!resolversMap[resolverId]) {
+      return new Response(JSON.stringify({ error: 'Resolver not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
 
-		const structure = resolversMap[resolverId].apply({}, params)
+    const structure = resolversMap[resolverId].apply({}, params)
 
-		return createResolverResponse(getStructure(structure))
-	}
+    return createResolverResponse(getStructure(structure))
+  }
 }

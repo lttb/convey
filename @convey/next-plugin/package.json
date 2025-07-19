@@ -1,28 +1,32 @@
 {
-	"name": "@convey/next-plugin",
-	"version": "0.20.1-a.0",
-	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
-	"license": "MIT",
-	"type": "commonjs",
-	"main": "index.js",
-	"publishConfig": {
-		"access": "public"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lttb/convey.git",
-		"directory": "@convey/next-plugin"
-	},
-	"dependencies": {
-		"@babel/core": "^7.26.7",
-		"@convey/babel-plugin": "workspace:^"
-	},
-	"peerDependencies": {
-		"next": "*",
-		"@types/webpack": ">=5"
-	},
-	"peerDependenciesMeta": {
-		"next": { "optional": true },
-		"@types/webpack": { "optional": true }
-	}
+  "name": "@convey/next-plugin",
+  "version": "0.20.1-a.0",
+  "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lttb/convey.git",
+    "directory": "@convey/next-plugin"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.7",
+    "@convey/babel-plugin": "workspace:^"
+  },
+  "peerDependencies": {
+    "next": "*",
+    "@types/webpack": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "@types/webpack": {
+      "optional": true
+    }
+  }
 }

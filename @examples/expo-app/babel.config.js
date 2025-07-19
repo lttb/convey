@@ -1,13 +1,13 @@
 const path = require('node:path')
 
 module.exports = (api) => {
-	api.cache(true)
+  api.cache(true)
 
-	return {
-		presets: ['babel-preset-expo'],
+  return {
+    presets: ['babel-preset-expo'],
 
-		plugins: [
-			['@convey', { remote: [path.join(__dirname, '**/resolvers/server/**')] }],
-		],
-	}
+    plugins: [
+      ['@convey', { remote: [path.join(__dirname, '**/resolvers/server/**')] }],
+    ],
+  }
 }

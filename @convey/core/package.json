@@ -1,21 +1,21 @@
 {
-	"name": "@convey/core",
-	"version": "0.20.0-a.0",
-	"author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
-	"license": "MIT",
-	"type": "module",
-	"publishConfig": {
-		"access": "public",
-		"directory": "dist",
-		"linkDirectory": false
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lttb/convey.git",
-		"directory": "@convey/core"
-	},
-	"scripts": {
-		"prepublishOnly": "bun run build",
-		"build": "bun -e 'import(`@convey/build`)'"
-	}
+  "name": "@convey/core",
+  "version": "0.20.0-a.0",
+  "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lttb/convey.git",
+    "directory": "@convey/core"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun -e 'import(`@convey/build`)'"
+  }
 }
