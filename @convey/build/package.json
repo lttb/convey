@@ -1,5 +1,6 @@
 {
   "name": "@convey/build",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "main": "build.ts",
