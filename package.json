@@ -1,19 +1,19 @@
 {
-	"name": "convey",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"prepub": "lerna run build --no-private",
-		"pub": "lerna publish from-package --contents lib --exact --no-private",
-		"prepub:version": "lerna version --no-private",
-		"pub:version": "yarn pub"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/bun": "*",
-		"syncpack": "^13.0.0"
-	},
-	"peerDependencies": {
-		"typescript": "^5.7.3"
-	}
+  "name": "convey",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepub": "lerna run build --no-private",
+    "pub": "lerna publish from-package --contents lib --exact --no-private",
+    "prepub:version": "lerna version --no-private",
+    "pub:version": "yarn pub"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "@types/bun": "*",
+    "syncpack": "^13.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.3"
+  }
 }

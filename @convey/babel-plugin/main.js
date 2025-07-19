@@ -36,191 +36,191 @@ const RESOLVER_CREATORS = new Set(['createResolver', 'createResolverStream'])
  * @return {import("@babel/core").PluginObj}
  */
 module.exports = (_api, pluginOptions = {}) => {
-	const options = { root: process.cwd(), ...pluginOptions }
+  const options = { root: process.cwd(), ...pluginOptions }
 
-	/**
-	 * @param {string} filename
-	 * @param {string | RegExp} pattern
-	 *
-	 * @return {boolean}
-	 */
-	function isRemotePattern(filename, pattern) {
-		if (pattern instanceof RegExp) {
-			return pattern.test(filename)
-		}
+  /**
+   * @param {string} filename
+   * @param {string | RegExp} pattern
+   *
+   * @return {boolean}
+   */
+  function isRemotePattern(filename, pattern) {
+    if (pattern instanceof RegExp) {
+      return pattern.test(filename)
+    }
 
-		return (
-			filename.startsWith(pattern) ||
-			minimatch(filename, pattern, { matchBase: true })
-		)
-	}
+    return (
+      filename.startsWith(pattern) ||
+      minimatch(filename, pattern, { matchBase: true })
+    )
+  }
 
-	return {
-		name: '@convey/babel-plugin',
+  return {
+    name: '@convey/babel-plugin',
 
-		visitor: {
-			Program(programPath, state) {
-				const { filename } = state.file.opts
+    visitor: {
+      Program(programPath, state) {
+        const { filename } = state.file.opts
 
-				if (!filename) {
-					return
-				}
+        if (!filename) {
+          return
+        }
 
-				/** @type {Map<t.Node, {callee: CallNode, name: string}>} */
-				const references = new Map()
-				/** @type {Set<string>} */
-				const referenceVars = new Set()
+        /** @type {Map<t.Node, {callee: CallNode, name: string}>} */
+        const references = new Map()
+        /** @type {Set<string>} */
+        const referenceVars = new Set()
 
-				programPath.traverse({
-					ImportDeclaration(importPath) {
-						const { source, specifiers } = importPath.node
+        programPath.traverse({
+          ImportDeclaration(importPath) {
+            const { source, specifiers } = importPath.node
 
-						if (!source.value.startsWith(NAMESPACE)) {
-							return
-						}
+            if (!source.value.startsWith(NAMESPACE)) {
+              return
+            }
 
-						for (const spec of specifiers) {
-							if (!t.isImportSpecifier(spec)) continue
+            for (const spec of specifiers) {
+              if (!t.isImportSpecifier(spec)) continue
 
-							const name = t.isStringLiteral(spec.imported)
-								? spec.imported.value
-								: spec.imported.name
-							const binding = importPath.scope.getBinding(name)
+              const name = t.isStringLiteral(spec.imported)
+                ? spec.imported.value
+                : spec.imported.name
+              const binding = importPath.scope.getBinding(name)
 
-							if (!RESOLVER_CREATORS.has(name) || !binding) continue
+              if (!RESOLVER_CREATORS.has(name) || !binding) continue
 
-							for (const ref of binding.referencePaths) {
-								const { parentPath } = ref
+              for (const ref of binding.referencePaths) {
+                const { parentPath } = ref
 
-								if (!parentPath?.isCallExpression()) {
-									continue
-								}
+                if (!parentPath?.isCallExpression()) {
+                  continue
+                }
 
-								const parentVariable = parentPath.parentPath
-								const topParent = parentVariable?.parentPath?.parentPath
+                const parentVariable = parentPath.parentPath
+                const topParent = parentVariable?.parentPath?.parentPath
 
-								if (
-									!(
-										parentVariable?.isVariableDeclarator() &&
-										t.isIdentifier(parentVariable.node.id) &&
-										(topParent?.isProgram() ||
-											topParent?.isExportNamedDeclaration())
-									)
-								) {
-									continue
-								}
+                if (
+                  !(
+                    parentVariable?.isVariableDeclarator() &&
+                    t.isIdentifier(parentVariable.node.id) &&
+                    (topParent?.isProgram() ||
+                      topParent?.isExportNamedDeclaration())
+                  )
+                ) {
+                  continue
+                }
 
-								const name = parentVariable.node.id.name
+                const name = parentVariable.node.id.name
 
-								referenceVars.add(name)
-								references.set(parentPath.node, {
-									callee: parentPath,
-									name,
-								})
-							}
-						}
+                referenceVars.add(name)
+                references.set(parentPath.node, {
+                  callee: parentPath,
+                  name,
+                })
+              }
+            }
 
-						importPath.stop()
-					},
-				})
+            importPath.stop()
+          },
+        })
 
-				const isRemoteResolver = options.remote?.find((pattern) => {
-					if (typeof pattern === 'string' || pattern instanceof RegExp) {
-						return isRemotePattern(filename, pattern)
-					}
+        const isRemoteResolver = options.remote?.find((pattern) => {
+          if (typeof pattern === 'string' || pattern instanceof RegExp) {
+            return isRemotePattern(filename, pattern)
+          }
 
-					return isRemotePattern(filename, pattern.test)
-				})
+          return isRemotePattern(filename, pattern.test)
+        })
 
-				const fileHash = stringHash(nodePath.relative(options.root, filename))
+        const fileHash = stringHash(nodePath.relative(options.root, filename))
 
-				for (const ref of references.values()) {
-					const resolverName = ref.name
+        for (const ref of references.values()) {
+          const resolverName = ref.name
 
-					const resolverOptions = t.objectExpression([
-						t.objectProperty(
-							t.identifier('id'),
-							t.stringLiteral(`${fileHash}:${resolverName}`),
-						),
-					])
+          const resolverOptions = t.objectExpression([
+            t.objectProperty(
+              t.identifier('id'),
+              t.stringLiteral(`${fileHash}:${resolverName}`),
+            ),
+          ])
 
-					const [, optionsPath] = ref.callee.get('arguments')
+          const [, optionsPath] = ref.callee.get('arguments')
 
-					if (isRemoteResolver) {
-						// replace to createResolver(null, {id: 'hash'})
-						ref.callee.node.arguments = [
-							// TODO: consider null
-							t.objectExpression([]),
-							resolverOptions,
-						]
+          if (isRemoteResolver) {
+            // replace to createResolver(null, {id: 'hash'})
+            ref.callee.node.arguments = [
+              // TODO: consider null
+              t.objectExpression([]),
+              resolverOptions,
+            ]
 
-						continue
-					}
+            continue
+          }
 
-					if (!optionsPath) {
-						ref.callee.pushContainer('arguments', resolverOptions)
+          if (!optionsPath) {
+            ref.callee.pushContainer('arguments', resolverOptions)
 
-						continue
-					}
+            continue
+          }
 
-					if (optionsPath.isSpreadElement()) {
-						optionsPath.replaceWith(
-							spreadTemplate({
-								NEW: resolverOptions,
-								SPREAD: optionsPath.node,
-							}),
-						)
+          if (optionsPath.isSpreadElement()) {
+            optionsPath.replaceWith(
+              spreadTemplate({
+                NEW: resolverOptions,
+                SPREAD: optionsPath.node,
+              }),
+            )
 
-						continue
-					}
+            continue
+          }
 
-					optionsPath.replaceWith(
-						objectAssignTemplate({
-							NEW: resolverOptions,
-							OLD: optionsPath.node,
-						}),
-					)
-				}
+          optionsPath.replaceWith(
+            objectAssignTemplate({
+              NEW: resolverOptions,
+              OLD: optionsPath.node,
+            }),
+          )
+        }
 
-				if (!isRemoteResolver) return
+        if (!isRemoteResolver) return
 
-				programPath.node.body = programPath.node.body.filter((node) => {
-					if (t.isImportDeclaration(node)) {
-						return node.source.value.startsWith(NAMESPACE)
-					}
+        programPath.node.body = programPath.node.body.filter((node) => {
+          if (t.isImportDeclaration(node)) {
+            return node.source.value.startsWith(NAMESPACE)
+          }
 
-					if (t.isVariableDeclaration(node)) {
-						return node.declarations.every((decl) => has(references, decl.init))
-					}
+          if (t.isVariableDeclaration(node)) {
+            return node.declarations.every((decl) => has(references, decl.init))
+          }
 
-					if (t.isExportAllDeclaration(node)) {
-						return true
-					}
+          if (t.isExportAllDeclaration(node)) {
+            return true
+          }
 
-					if (t.isExportNamedDeclaration(node)) {
-						if (node.source) {
-							return true
-						}
+          if (t.isExportNamedDeclaration(node)) {
+            if (node.source) {
+              return true
+            }
 
-						if (t.isVariableDeclaration(node.declaration)) {
-							return node.declaration.declarations.every((decl) =>
-								has(references, decl.init),
-							)
-						}
+            if (t.isVariableDeclaration(node.declaration)) {
+              return node.declaration.declarations.every((decl) =>
+                has(references, decl.init),
+              )
+            }
 
-						return node.specifiers.every((spec) =>
-							has(referenceVars, 'local' in spec && spec.local?.name),
-						)
-					}
+            return node.specifiers.every((spec) =>
+              has(referenceVars, 'local' in spec && spec.local?.name),
+            )
+          }
 
-					if (t.isExportDefaultDeclaration(node)) {
-						// allow only identifier export
-						return t.isIdentifier(node.declaration)
-					}
+          if (t.isExportDefaultDeclaration(node)) {
+            // allow only identifier export
+            return t.isIdentifier(node.declaration)
+          }
 
-					return false
-				})
-			},
-		},
-	}
+          return false
+        })
+      },
+    },
+  }
 }

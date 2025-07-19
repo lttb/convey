@@ -46,19 +46,19 @@ Add `@convey/babel-plugin` to your babel config:
 // babel.config.js
 
 module.exports = {
-	plugins: [
-		[
-			'@convey',
-			{
-				/**
-				 * Determine "remote" resolvers
-				 *
-				 * "server" resolvers will be processed as remote for the "client" code, and vice versa
-				 */
-				remote: process.env.TARGET === 'client' ? /resolvers\/server/ : /resolvers\/client/,
-			},
-		],
-	],
+  plugins: [
+    [
+      '@convey',
+      {
+        /**
+         * Determine "remote" resolvers
+         *
+         * "server" resolvers will be processed as remote for the "client" code, and vice versa
+         */
+        remote: process.env.TARGET === 'client' ? /resolvers\/server/ : /resolvers\/client/,
+      },
+    ],
+  ],
 }
 ```
 
@@ -74,7 +74,7 @@ import * as resolvers from '@app/resolvers/server'
 const handleResolver = createResolverHandler(resolvers)
 
 export default async function handle(req, res) {
-	await handleResolver(req, res)
+  await handleResolver(req, res)
 }
 ```
 
@@ -87,7 +87,7 @@ import {setConfig} from '@convey/core'
 import {createResolverFetcher} from '@convey/core/client'
 
 setConfig({
-	fetch: createResolverFetcher(),
+  fetch: createResolverFetcher(),
 })
 ```
 
@@ -117,13 +117,13 @@ export const getServerHello = createResolver((name: string) => `Hello, ${name}`)
  * By default, the data will be streamed by SSE (Server Sent Events)
  */
 export const getServerHelloStream = createResolverStream(async function* (name: string) {
-	while (true) {
-		/**
-		 * Resolvers could be called as normal functions on server side too
-		 */
-		yield await getServerHello(`${name}-${await getServerDate()}`)
-		await wait(1000)
-	}
+  while (true) {
+    /**
+     * Resolvers could be called as normal functions on server side too
+     */
+    yield await getServerHello(`${name}-${await getServerDate()}`)
+    await wait(1000)
+  }
 })
 ```
 
@@ -137,17 +137,17 @@ import {createResolver, createResolverStream} from '@convey/core'
  */
 
 export const getServerDate = createResolver(
-	{},
-	{
-		id: '3296945930:getServerDate',
-	},
+  {},
+  {
+    id: '3296945930:getServerDate',
+  },
 )
 
 export const getServerHello = createResolver(
-	{},
-	{
-		id: '3296945930:getServerHello',
-	},
+  {},
+  {
+    id: '3296945930:getServerHello',
+  },
 )
 
 /**
@@ -155,10 +155,10 @@ export const getServerHello = createResolver(
  * By default, the data will be streamed by SSE (Server Sent Events)
  */
 export const getServerHelloStream = createResolverStream(
-	{},
-	{
-		id: '3296945930:getServerHelloStream',
-	},
+  {},
+  {
+    id: '3296945930:getServerHelloStream',
+  },
 )
 ```
 
@@ -172,7 +172,7 @@ import {getServerHello, getServerHelloStream} from '@app/resolvers/server'
 console.log(await getServerHello('world')) // `Hello, world`
 
 for await (let hello of getServerHelloStream('world')) {
-	console.log(hello) // `Hello, world-1637759100546` every second
+  console.log(hello) // `Hello, world-1637759100546` every second
 }
 ```
 
@@ -183,22 +183,22 @@ import {useResolver} from '@convey/react'
 import {getServerHello, getServerHelloStream} from '@app/resolvers/server'
 
 export const HelloComponent = () => {
-	/**
-	 * Component will be automatically rerendered on data invalidation
-	 */
-	const [hello] = useResolver(getServerHello('world'))
-	/**
-	 * If resolver is a stream, then component will be rerendered
-	 * on each new chunk of data
-	 */
-	const [helloStream] = useResolver(getServerHelloStream('world'))
+  /**
+   * Component will be automatically rerendered on data invalidation
+   */
+  const [hello] = useResolver(getServerHello('world'))
+  /**
+   * If resolver is a stream, then component will be rerendered
+   * on each new chunk of data
+   */
+  const [helloStream] = useResolver(getServerHelloStream('world'))
 
-	return (
-		<div>
-			<p>Single hello: {hello}</p>
-			<p>Stream hello: {helloStream}</p>
-		</div>
-	)
+  return (
+    <div>
+      <p>Single hello: {hello}</p>
+      <p>Stream hello: {helloStream}</p>
+    </div>
+  )
 }
 ```
 

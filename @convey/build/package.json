@@ -1,10 +1,10 @@
 {
-	"name": "@convey/build",
-	"private": true,
-	"type": "module",
-	"main": "build.ts",
-	"devDependencies": {
-		"@rollup/plugin-typescript": "^12.1.2",
-		"rollup": "^4.32.0"
-	}
+  "name": "@convey/build",
+  "private": true,
+  "type": "module",
+  "main": "build.ts",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup": "^4.32.0"
+  }
 }
