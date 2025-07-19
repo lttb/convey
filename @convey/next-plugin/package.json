@@ -1,6 +1,6 @@
 {
   "name": "@convey/next-plugin",
-  "version": "0.20.1-a.0",
+  "version": "0.21.0",
   "author": "Kenzhaev Artur <kenzhaev.artur@gmail.com>",
   "license": "MIT",
   "type": "commonjs",
