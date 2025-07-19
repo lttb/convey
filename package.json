@@ -2,6 +2,9 @@
   "name": "convey",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "@convey/*"
+  ],
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "@types/bun": "*",
